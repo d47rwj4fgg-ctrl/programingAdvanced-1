@@ -445,12 +445,12 @@ body {
 
 /* Theme styles */
 .timeline-item.theme-routine .icon-circle {
-    background-color: #a855f7;
-    color: #ffffff;
+    background-color: #e9d5ff;
+    color: #7e22ce;
 }
 .timeline-item.theme-routine .task-card {
-    background-color: #f3e8ff;
-    border-left: 4px solid #a855f7;
+    background-color: #f5ebff;
+    border-left: 4px solid #c084fc;
 }
 .timeline-item.theme-routine .task-duration {
     color: #7e22ce;
@@ -458,70 +458,68 @@ body {
 }
 
 .timeline-item.theme-work .icon-circle {
-    background-color: #3b82f6;
-    color: #ffffff;
+    background-color: #bae6fd;
+    color: #0369a1;
 }
 .timeline-item.theme-work .task-card {
-    background-color: #eff6ff;
-    border-left: 4px solid #3b82f6;
+    background-color: #e0f2fe;
+    border-left: 4px solid #7dd3fc;
 }
 .timeline-item.theme-work .task-duration {
-    color: #1d4ed8;
-    background-color: rgba(59, 130, 246, 0.1);
+    color: #0369a1;
+    background-color: rgba(3, 105, 161, 0.1);
 }
 
 .timeline-item.theme-social .icon-circle {
-    background-color: #ff5e62;
-    color: #ffffff;
+    background-color: #fecdd3;
+    color: #be123c;
 }
 .timeline-item.theme-social .task-card {
-    background-color: #fff1f2;
-    border-left: 4px solid #ff5e62;
+    background-color: #ffe4e6;
+    border-left: 4px solid #fda4af;
 }
 .timeline-item.theme-social .task-duration {
-    color: #9f1239;
-    background-color: rgba(255, 94, 98, 0.1);
+    color: #be123c;
+    background-color: rgba(190, 18, 60, 0.1);
 }
 
 .timeline-item.theme-study .icon-circle {
-    background-color: #6366f1;
-    color: #ffffff;
+    background-color: #c7d2fe;
+    color: #4338ca;
 }
 .timeline-item.theme-study .task-card {
-    background-color: #eef2ff;
-    border-left: 4px solid #6366f1;
+    background-color: #e0e7ff;
+    border-left: 4px solid #a5b4fc;
 }
 .timeline-item.theme-study .task-duration {
-    color: #3730a3;
-    background-color: rgba(99, 102, 241, 0.1);
+    color: #4338ca;
+    background-color: rgba(67, 56, 202, 0.1);
 }
 
 .timeline-item.theme-health .icon-circle {
-    background-color: #10b981;
-    color: #ffffff;
+    background-color: #bbf7d0;
+    color: #15803d;
 }
 .timeline-item.theme-health .task-card {
-    background-color: #ecfdf5;
-    border-left: 4px solid #10b981;
+    background-color: #dcfce7;
+    border-left: 4px solid #86efac;
 }
 .timeline-item.theme-health .task-duration {
-    color: #065f46;
-    background-color: rgba(16, 185, 129, 0.1);
+    color: #15803d;
+    background-color: rgba(21, 128, 61, 0.1);
 }
 
 .timeline-item.theme-home .icon-circle {
-    background-color: #64748b;
-    color: #ffffff;
+    background-color: #fde68a;
+    color: #b45309;
 }
 .timeline-item.theme-home .task-card {
-    background-color: #f8fafc;
-    border-left: 4px solid #64748b;
-    border: 1px solid #e2e8f0;
-    border-left-width: 4px;
+    background-color: #fef3c7;
+    border-left: 4px solid #fcd34d;
 }
 .timeline-item.theme-home .task-duration {
-    color: #334155;
-    background-color: rgba(100, 116, 139, 0.1);
+    color: #b45309;
+    background-color: rgba(180, 83, 9, 0.1);
 }
 
 /* Gap Item */
