@@ -6,7 +6,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 /* 全体リセット・共通設定 */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
@@ -14,13 +16,14 @@
    1. デイリーカレンダー画面 (0602_Kanae_dailymain)
    ========================================================================== */
 body.daily-main-page {
-    background-color: #0b0f19; /* PCブラウザ用の極暗背景 */
+    background-color: #0b0f19;
+    /* PCブラウザ用の極暗背景 */
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     overflow: hidden;
-    background-image: 
+    background-image:
         radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
         radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.15) 0px, transparent 50%);
 }
@@ -56,7 +59,7 @@ body.daily-main-page {
         font-size: 14px;
         line-height: 1.6;
         display: block;
-        
+
         h2 {
             color: #ffffff;
             font-family: var(--font-display);
@@ -66,10 +69,12 @@ body.daily-main-page {
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
         ul {
             margin-top: 16px;
             padding-left: 20px;
         }
+
         li {
             margin-bottom: 8px;
         }
@@ -115,7 +120,7 @@ body.daily-main-page {
         z-index: 999;
         background-color: var(--phone-bg);
         font-family: var(--font-display);
-        
+
         .right-icons {
             display: flex;
             gap: 6px;
@@ -174,7 +179,7 @@ body.daily-main-page {
         color: #475569;
         cursor: pointer;
         transition: all 0.2s ease;
-        
+
         &:active {
             transform: scale(0.9);
             background-color: #e2e8f0;
@@ -193,13 +198,14 @@ body.daily-main-page {
         align-items: center;
         gap: 8px;
         animation: fadeIn 0.3s ease;
-        
+
         h1 {
             font-size: 20px;
             font-weight: 800;
             color: var(--text-main);
             letter-spacing: -0.5px;
         }
+
         .day-badge {
             background-color: #e0e7ff;
             color: #4f46e5;
@@ -230,16 +236,18 @@ body.daily-main-page {
         cursor: pointer;
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         user-select: none;
-        
+
         &:active {
             transform: scale(0.95);
         }
+
         .day-name {
             font-size: 9px;
             font-weight: 700;
             color: #64748b;
             margin-bottom: 3px;
         }
+
         .day-num {
             font-size: 13px;
             font-weight: 800;
@@ -252,18 +260,21 @@ body.daily-main-page {
             border-radius: 50%;
             transition: all 0.2s ease;
         }
+
         &:hover .day-num {
             background-color: rgba(226, 232, 240, 0.8);
         }
+
         &.active {
             background-color: #ffffff;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            
+
             .day-num {
                 background-color: #4f46e5;
                 color: #ffffff;
                 box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
             }
+
             .day-name {
                 color: #4f46e5;
             }
@@ -309,10 +320,11 @@ body.daily-main-page {
         justify-content: space-between;
         padding-top: 10px;
         padding-bottom: 10px;
-        
+
         .time-start {
             color: var(--text-main);
         }
+
         .time-end {
             font-size: 10px;
             color: var(--text-sub);
@@ -376,7 +388,7 @@ body.daily-main-page {
         cursor: pointer;
         box-shadow: var(--shadow-sm);
         min-height: 72px;
-        
+
         &:hover {
             transform: translateY(-1px);
             box-shadow: var(--shadow-md);
@@ -387,13 +399,14 @@ body.daily-main-page {
         display: flex;
         flex-direction: column;
         gap: 4px;
-        
+
         .task-title {
             font-size: 14px;
             font-weight: 800;
             color: var(--text-main);
             letter-spacing: -0.2px;
         }
+
         .task-desc {
             font-size: 11px;
             color: var(--text-sub);
@@ -407,7 +420,7 @@ body.daily-main-page {
         flex-direction: column;
         align-items: flex-end;
         gap: 4px;
-        
+
         .task-duration {
             font-size: 10px;
             font-weight: 700;
@@ -419,49 +432,116 @@ body.daily-main-page {
 
     /* Theme styles */
     .timeline-item.theme-routine {
-        .icon-circle { background-color: #e9d5ff; color: #7e22ce; }
-        .task-card { background-color: #f5ebff; border-left: 4px solid #c084fc; }
-        .task-duration { color: #7e22ce; background-color: rgba(168, 85, 247, 0.1); }
+        .icon-circle {
+            background-color: #e9d5ff;
+            color: #7e22ce;
+        }
+
+        .task-card {
+            background-color: #f5ebff;
+            border-left: 4px solid #c084fc;
+        }
+
+        .task-duration {
+            color: #7e22ce;
+            background-color: rgba(168, 85, 247, 0.1);
+        }
     }
 
     .timeline-item.theme-work {
-        .icon-circle { background-color: #bae6fd; color: #0369a1; }
-        .task-card { background-color: #e0f2fe; border-left: 4px solid #7dd3fc; }
-        .task-duration { color: #0369a1; background-color: rgba(3, 105, 161, 0.1); }
+        .icon-circle {
+            background-color: #bae6fd;
+            color: #0369a1;
+        }
+
+        .task-card {
+            background-color: #e0f2fe;
+            border-left: 4px solid #7dd3fc;
+        }
+
+        .task-duration {
+            color: #0369a1;
+            background-color: rgba(3, 105, 161, 0.1);
+        }
     }
 
     .timeline-item.theme-social {
-        .icon-circle { background-color: #fecdd3; color: #be123c; }
-        .task-card { background-color: #ffe4e6; border-left: 4px solid #fda4af; }
-        .task-duration { color: #be123c; background-color: rgba(190, 18, 60, 0.1); }
+        .icon-circle {
+            background-color: #fecdd3;
+            color: #be123c;
+        }
+
+        .task-card {
+            background-color: #ffe4e6;
+            border-left: 4px solid #fda4af;
+        }
+
+        .task-duration {
+            color: #be123c;
+            background-color: rgba(190, 18, 60, 0.1);
+        }
     }
 
     .timeline-item.theme-study {
-        .icon-circle { background-color: #c7d2fe; color: #4338ca; }
-        .task-card { background-color: #e0e7ff; border-left: 4px solid #a5b4fc; }
-        .task-duration { color: #4338ca; background-color: rgba(67, 56, 202, 0.1); }
+        .icon-circle {
+            background-color: #c7d2fe;
+            color: #4338ca;
+        }
+
+        .task-card {
+            background-color: #e0e7ff;
+            border-left: 4px solid #a5b4fc;
+        }
+
+        .task-duration {
+            color: #4338ca;
+            background-color: rgba(67, 56, 202, 0.1);
+        }
     }
 
     .timeline-item.theme-health {
-        .icon-circle { background-color: #bbf7d0; color: #15803d; }
-        .task-card { background-color: #dcfce7; border-left: 4px solid #86efac; }
-        .task-duration { color: #15803d; background-color: rgba(21, 128, 61, 0.1); }
+        .icon-circle {
+            background-color: #bbf7d0;
+            color: #15803d;
+        }
+
+        .task-card {
+            background-color: #dcfce7;
+            border-left: 4px solid #86efac;
+        }
+
+        .task-duration {
+            color: #15803d;
+            background-color: rgba(21, 128, 61, 0.1);
+        }
     }
 
     .timeline-item.theme-home {
-        .icon-circle { background-color: #fde68a; color: #b45309; }
-        .task-card { background-color: #fef3c7; border-left: 4px solid #fcd34d; }
-        .task-duration { color: #b45309; background-color: rgba(180, 83, 9, 0.1); }
+        .icon-circle {
+            background-color: #fde68a;
+            color: #b45309;
+        }
+
+        .task-card {
+            background-color: #fef3c7;
+            border-left: 4px solid #fcd34d;
+        }
+
+        .task-duration {
+            color: #b45309;
+            background-color: rgba(180, 83, 9, 0.1);
+        }
     }
 
     /* Gap Item */
     .timeline-item.gap-item {
         min-height: 48px;
-        
+
         .item-time-col {
             padding-top: 4px;
             padding-bottom: 4px;
         }
+
         .icon-circle {
             width: 8px;
             height: 8px;
@@ -470,6 +550,7 @@ body.daily-main-page {
             box-shadow: none;
             margin-top: 12px;
         }
+
         .item-card-col {
             padding-top: 4px;
             padding-bottom: 8px;
@@ -502,7 +583,7 @@ body.daily-main-page {
         pointer-events: none;
         transform: translateY(-50%);
         transition: top 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        
+
         .now-badge {
             width: 54px;
             flex-shrink: 0;
@@ -517,11 +598,12 @@ body.daily-main-page {
             box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
             margin-right: 12px;
         }
+
         .now-line {
             flex-grow: 1;
             border-top: 2px solid #ef4444;
             position: relative;
-            
+
             &::before {
                 content: '';
                 position: absolute;
@@ -552,7 +634,7 @@ body.daily-main-page {
         text-decoration: none;
         z-index: 999;
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        
+
         svg {
             width: 26px;
             height: 26px;
@@ -562,14 +644,16 @@ body.daily-main-page {
             stroke-linecap: round;
             transition: transform 0.3s ease;
         }
+
         &:hover {
             transform: scale(1.1);
             box-shadow: 0 15px 30px rgba(99, 102, 241, 0.5);
-            
+
             svg {
                 transform: rotate(90deg);
             }
         }
+
         &:active {
             transform: scale(0.95);
         }
@@ -601,7 +685,7 @@ body.daily-main-page {
         opacity: 0;
         pointer-events: none;
         transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        
+
         &.active {
             opacity: 1;
             pointer-events: auto;
@@ -621,7 +705,7 @@ body.daily-main-page {
         display: flex;
         flex-direction: column;
         box-shadow: 10px 0 30px rgba(15, 23, 42, 0.15);
-        
+
         &.active {
             transform: translateX(0);
         }
@@ -657,11 +741,12 @@ body.daily-main-page {
         justify-content: center;
         cursor: pointer;
         transition: all 0.2s ease;
-        
+
         &:hover {
             background-color: #e2e8f0;
             color: #0f172a;
         }
+
         &:active {
             transform: scale(0.9);
         }
@@ -726,11 +811,12 @@ body.daily-main-page {
         font-size: 14px;
         font-weight: 600;
         transition: all 0.2s ease;
-        
+
         &:hover {
             background-color: #f1f5f9;
             color: #0f172a;
         }
+
         &.active {
             background-color: #e0e7ff;
             color: #4f46e5;
@@ -763,6 +849,7 @@ body.daily-main-page {
         & {
             background: var(--phone-bg) !important;
         }
+
         .phone-frame {
             max-width: 100%;
             height: 100vh;
@@ -771,9 +858,13 @@ body.daily-main-page {
             border: none;
             box-shadow: none;
         }
-        .phone-notch, .phone-home-indicator, .status-bar {
+
+        .phone-notch,
+        .phone-home-indicator,
+        .status-bar {
             display: none;
         }
+
         .pc-info {
             display: none;
         }
@@ -823,7 +914,7 @@ body.monthly-main-page {
         border-radius: 48px;
         border: 4px solid rgba(255, 255, 255, 0.12);
         box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7),
-                    inset 0 0 20px rgba(255, 255, 255, 0.05);
+            inset 0 0 20px rgba(255, 255, 255, 0.05);
         display: flex;
         flex-direction: column;
         position: relative;
@@ -844,7 +935,7 @@ body.monthly-main-page {
         opacity: 0;
         pointer-events: none;
         transition: opacity 0.3s ease;
-        
+
         &.open {
             opacity: 1;
             pointer-events: auto;
@@ -866,7 +957,7 @@ body.monthly-main-page {
         display: flex;
         flex-direction: column;
         padding: 32px 24px;
-        
+
         &.open {
             transform: translateX(0);
         }
@@ -901,7 +992,7 @@ body.monthly-main-page {
         font-size: 0.9rem;
         font-weight: 500;
         transition: all 0.2s ease;
-        
+
         &:hover {
             background: #e5e5ea;
             transform: scale(1.05);
@@ -968,11 +1059,12 @@ body.monthly-main-page {
         font-size: 0.9rem;
         font-weight: 600;
         transition: all 0.2s ease;
-        
+
         &:hover {
             background: #f2f2f7;
             color: #1c1c1e;
         }
+
         &.active {
             background: #e0e7ff;
             color: #4f46e5;
@@ -996,7 +1088,7 @@ body.monthly-main-page {
         font-size: 0.9rem;
         font-weight: 600;
         transition: all 0.2s ease;
-        
+
         &:hover {
             background: #f2f2f7;
         }
@@ -1024,7 +1116,7 @@ body.monthly-main-page {
         font-weight: 500;
         letter-spacing: -0.02em;
         color: var(--text-secondary);
-        
+
         .icons {
             display: flex;
             gap: 8px;
@@ -1066,7 +1158,7 @@ body.monthly-main-page {
         height: 38px;
         border-radius: 50%;
         transition: all 0.2s ease;
-        
+
         &:hover {
             background: rgba(255, 255, 255, 0.08);
         }
@@ -1122,11 +1214,12 @@ body.monthly-main-page {
         font-size: 1rem;
         font-weight: bold;
         transition: all 0.2s ease;
-        
+
         &:hover {
             background: rgba(255, 255, 255, 0.12);
             transform: scale(1.05);
         }
+
         &:active {
             transform: scale(0.95);
         }
@@ -1153,9 +1246,14 @@ body.monthly-main-page {
         font-weight: 600;
         color: var(--text-secondary);
         padding: 4px 0;
-        
-        &.sun { color: var(--color-sunday); }
-        &.sat { color: var(--color-saturday); }
+
+        &.sun {
+            color: var(--color-sunday);
+        }
+
+        &.sat {
+            color: var(--color-saturday);
+        }
     }
 
     .days-grid {
@@ -1164,7 +1262,7 @@ body.monthly-main-page {
         grid-template-columns: repeat(7, 1fr);
         grid-template-rows: repeat(5, 1fr);
         gap: 6px;
-        
+
         &.six-rows {
             grid-template-rows: repeat(6, 1fr);
         }
@@ -1183,21 +1281,24 @@ body.monthly-main-page {
         position: relative;
         cursor: pointer;
         min-width: 0;
-        
+
         &:hover {
             background: rgba(255, 255, 255, 0.06);
             border-color: rgba(255, 255, 255, 0.08);
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
-        &.prev-month, &.next-month {
+
+        &.prev-month,
+        &.next-month {
             opacity: 0.25;
         }
+
         &.today {
             background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%);
             border: 1px solid rgba(168, 85, 247, 0.4);
             box-shadow: inset 0 0 10px rgba(168, 85, 247, 0.1);
-            
+
             .day-num {
                 background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
                 color: #ffffff;
@@ -1240,22 +1341,25 @@ body.monthly-main-page {
         overflow: hidden;
         text-overflow: ellipsis;
         line-height: 1.2;
-        
+
         &.work {
             background: var(--color-work-bg);
             color: #60a5fa;
             border-left: 2px solid var(--color-work);
         }
+
         &.mtg {
             background: var(--color-mtg-bg);
             color: #34d399;
             border-left: 2px solid var(--color-mtg);
         }
+
         &.party {
             background: var(--color-party-bg);
             color: #f472b6;
             border-left: 2px solid var(--color-party);
         }
+
         &.clinic {
             background: var(--color-clinic-bg);
             color: #fbbf24;
@@ -1279,16 +1383,17 @@ body.monthly-main-page {
         font-weight: 500;
         text-decoration: none;
         box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4),
-                    inset 0 1px 1px rgba(255, 255, 255, 0.2);
+            inset 0 1px 1px rgba(255, 255, 255, 0.2);
         z-index: 90;
         transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         cursor: pointer;
-        
+
         &:hover {
             transform: translateY(-2px) scale(1.05);
             box-shadow: 0 12px 30px rgba(99, 102, 241, 0.6),
-                        inset 0 1px 1px rgba(255, 255, 255, 0.3);
+                inset 0 1px 1px rgba(255, 255, 255, 0.3);
         }
+
         &:active {
             transform: translateY(1px) scale(0.95);
             box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
@@ -1339,7 +1444,7 @@ body.task-list-page {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .header-title {
@@ -1358,7 +1463,7 @@ body.task-list-page {
         cursor: pointer;
         text-decoration: none;
         font-weight: bold;
-        
+
         &:active {
             background-color: rgba(255, 255, 255, 0.4);
         }
@@ -1412,7 +1517,7 @@ body.task-list-page {
     }
 
     #completed-list {
-        margin-bottom: 80px; 
+        margin-bottom: 80px;
     }
 
     .task-item {
@@ -1421,7 +1526,7 @@ body.task-list-page {
         border-radius: 12px;
         padding: 12px;
         margin-bottom: 10px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
 
     .task-view {
@@ -1537,7 +1642,10 @@ body.task-list-page {
         white-space: nowrap;
     }
 
-    .edit-btn { background-color: #ffb300; color: white; }
+    .edit-btn {
+        background-color: #ffb300;
+        color: white;
+    }
 
     .trash-btn {
         background: none;
@@ -1548,23 +1656,33 @@ body.task-list-page {
         line-height: 1;
         color: #ff5252;
         transition: transform 0.1s;
-        
-        &:hover { transform: scale(1.1); }
+
+        &:hover {
+            transform: scale(1.1);
+        }
     }
 
-    .save-btn { background-color: #2196f3; color: white; width: 100%; padding: 8px; margin-top: 5px; }
+    .save-btn {
+        background-color: #2196f3;
+        color: white;
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+    }
 
     .task-edit-form {
         display: none;
         flex-direction: column;
         gap: 8px;
     }
+
     .edit-label {
         font-size: 0.7rem;
         color: #777;
         margin-bottom: -6px;
         font-weight: bold;
     }
+
     .edit-input {
         width: 100%;
         padding: 6px;
@@ -1573,11 +1691,13 @@ body.task-list-page {
         box-sizing: border-box;
         font-size: 0.85rem;
     }
+
     .inline-container {
         display: flex;
         align-items: center;
         gap: 6px;
     }
+
     .select-group {
         flex: 1;
         display: flex;
@@ -1586,6 +1706,7 @@ body.task-list-page {
         font-size: 0.8rem;
         color: #333;
     }
+
     .edit-select {
         flex: 1;
         padding: 6px;
@@ -1601,7 +1722,10 @@ body.task-list-page {
             color: #aaaaaa;
             font-weight: normal;
         }
-        .task-deadline, .task-time, .task-memo-box {
+
+        .task-deadline,
+        .task-time,
+        .task-memo-box {
             background-color: #f0f0f0;
             color: #bbbbbb;
             border-color: #dddddd;
@@ -1620,25 +1744,29 @@ body.task-list-page {
         justify-content: center;
         align-items: center;
     }
+
     .modal-box {
         width: 260px;
         background-color: white;
         border-radius: 14px;
         padding: 20px;
         text-align: center;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
+
     .modal-title {
         font-size: 0.95rem;
         font-weight: bold;
         color: #333;
         margin-bottom: 16px;
     }
+
     .modal-buttons {
         display: flex;
         justify-content: center;
         gap: 12px;
     }
+
     .modal-btn {
         flex: 1;
         border: none;
@@ -1648,8 +1776,16 @@ body.task-list-page {
         font-weight: bold;
         cursor: pointer;
     }
-    .modal-cancel { background-color: #e0e0e0; color: #333; }
-    .modal-confirm { background-color: #ff5252; color: white; }
+
+    .modal-cancel {
+        background-color: #e0e0e0;
+        color: #333;
+    }
+
+    .modal-confirm {
+        background-color: #ff5252;
+        color: white;
+    }
 
     .add-button {
         position: absolute;
@@ -1665,11 +1801,13 @@ body.task-list-page {
         align-items: center;
         font-size: 2rem;
         text-decoration: none;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         transition: transform 0.1s;
         z-index: 10;
-        
-        &:active { transform: scale(0.95); }
+
+        &:active {
+            transform: scale(0.95);
+        }
     }
 }
 
@@ -1678,7 +1816,7 @@ body.task-list-page {
    4. 新規登録画面 (styleDemo)
    ========================================================================== */
 body.register-page {
-    background-color: #f2f2f6; 
+    background-color: #f2f2f6;
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -1703,7 +1841,7 @@ body.register-page {
         align-items: center;
         padding: 16px;
         background-color: #f2f2f6;
-        
+
         button {
             background: none;
             border: none;
@@ -1711,13 +1849,16 @@ body.register-page {
             font-size: 16px;
             cursor: pointer;
         }
+
         .cancel-btn {
             font-size: 20px;
             color: #666;
         }
+
         .save-btn {
             font-weight: bold;
         }
+
         h1 {
             margin: 0;
             font-size: 17px;
@@ -1732,6 +1873,7 @@ body.register-page {
         margin: 0 16px 16px 16px;
         padding: 2px;
     }
+
     .segment-btn {
         flex: 1;
         background: none;
@@ -1740,10 +1882,10 @@ body.register-page {
         font-size: 13px;
         border-radius: 6px;
         cursor: pointer;
-        
+
         &.active {
             background-color: #fff;
-            box-shadow: 0px 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
             font-weight: bold;
         }
     }
@@ -1754,6 +1896,7 @@ body.register-page {
         margin: 0 16px 16px 16px;
         padding: 0 16px;
     }
+
     .form-row {
         display: flex;
         align-items: center;
@@ -1761,10 +1904,11 @@ body.register-page {
         min-height: 44px;
         border-bottom: 0.5px solid #e5e5ea;
         padding: 4px 0;
-        
+
         &:last-child {
             border-bottom: none;
         }
+
         input[type="text"] {
             width: 100%;
             border: none;
@@ -1772,6 +1916,7 @@ body.register-page {
             font-size: 17px;
             padding: 8px 0;
         }
+
         label {
             font-size: 17px;
         }
@@ -1780,7 +1925,7 @@ body.register-page {
     .date-time-inputs {
         display: flex;
         gap: 8px;
-        
+
         input {
             border: none;
             background-color: #eee;
@@ -1797,38 +1942,44 @@ body.register-page {
         display: inline-block;
         width: 51px;
         height: 31px;
-        
+
         input {
             opacity: 0;
             width: 0;
             height: 0;
-            
-            &:checked + .slider {
+
+            &:checked+.slider {
                 background-color: #34c759;
-                
+
                 &::before {
                     transform: translateX(20px);
                 }
             }
         }
     }
+
     .slider {
         position: absolute;
         cursor: pointer;
-        top: 0; left: 0; right: 0; bottom: 0;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
         background-color: #e3e3e9;
         transition: .3s;
         border-radius: 34px;
-        
+
         &::before {
             position: absolute;
             content: "";
-            height: 27px; width: 27px;
-            left: 2px; bottom: 2px;
+            height: 27px;
+            width: 27px;
+            left: 2px;
+            bottom: 2px;
             background-color: white;
             transition: .3s;
             border-radius: 50%;
-            box-shadow: 0px 3px 8px rgba(0,0,0,0.15);
+            box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.15);
         }
     }
 }
@@ -1838,8 +1989,15 @@ body.register-page {
    5. アニメーション定義 (グローバル)
    ========================================================================== */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes slideUpFade {

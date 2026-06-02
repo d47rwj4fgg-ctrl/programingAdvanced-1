@@ -1,59 +1,62 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>新規登録</title>
     <link rel="stylesheet" href="0602_all.css">
 </head>
+
 <body class="register-page">
 
-<div class="app-container">
-    <div class="header">
-        <button class="cancel-btn">✕</button>
-        <h1>新規</h1>
-        <button class="save-btn" id="saveBtn">保存</button>
-    </div>
-
-    <div class="segmented-control">
-        <button class="segment-btn active">予定</button>
-        <button class="segment-btn">リマインダー</button>
-    </div>
-
-    <div class="card">
-        <div class="form-row">
-            <input type="text" id="taskTitle" placeholder="タイトル" value="おきる">
+    <div class="app-container">
+        <div class="header">
+            <button class="cancel-btn">✕</button>
+            <h1>新規</h1>
+            <button class="save-btn" id="saveBtn">保存</button>
         </div>
-        <div class="form-row">
-            <input type="text" id="taskLocation" placeholder="場所またはビデオ通話">
-        </div>
-    </div>
 
-    <div class="card">
-        <div class="form-row">
-            <label>終日</label>
-            <label class="switch">
-                <input type="checkbox" id="allDayToggle">
-                <span class="slider"></span>
-            </label>
+        <div class="segmented-control">
+            <button class="segment-btn active">予定</button>
+            <button class="segment-btn">リマインダー</button>
         </div>
-        <div class="form-row">
-            <label>開始</label>
-            <div class="date-time-inputs">
-                <input type="date" id="startDate" value="2026-06-02">
-                <input type="time" id="startTime" value="10:00">
+
+        <div class="card">
+            <div class="form-row">
+                <input type="text" id="taskTitle" placeholder="タイトル" value="おきる">
+            </div>
+            <div class="form-row">
+                <input type="text" id="taskLocation" placeholder="場所またはビデオ通話">
             </div>
         </div>
-        <div class="form-row">
-            <label>終了</label>
-            <div class="date-time-inputs">
-                <input type="date" id="endDate" value="2026-06-02">
-                <input type="time" id="endTime" value="11:00">
+
+        <div class="card">
+            <div class="form-row">
+                <label>終日</label>
+                <label class="switch">
+                    <input type="checkbox" id="allDayToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="form-row">
+                <label>開始</label>
+                <div class="date-time-inputs">
+                    <input type="date" id="startDate" value="2026-06-02">
+                    <input type="time" id="startTime" value="10:00">
+                </div>
+            </div>
+            <div class="form-row">
+                <label>終了</label>
+                <div class="date-time-inputs">
+                    <input type="date" id="endDate" value="2026-06-02">
+                    <input type="time" id="endTime" value="11:00">
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script src="taskManager.js"></script>
+    <script src="taskManager.js"></script>
 </body>
+
 </html>

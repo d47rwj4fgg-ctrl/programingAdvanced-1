@@ -31,13 +31,15 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
 .header-title {
     font-size: 1.2rem;
     font-weight: bold;
     margin: 0;
 }
+
 /* 🛠️ 完了したタスクへ一気に飛ぶボタン（文言変更） */
 .jump-btn {
     font-size: 0.75rem;
@@ -50,7 +52,10 @@ header {
     text-decoration: none;
     font-weight: bold;
 }
-.jump-btn:active { background-color: rgba(255, 255, 255, 0.4); }
+
+.jump-btn:active {
+    background-color: rgba(255, 255, 255, 0.4);
+}
 
 /* 全体のスクロールコンテナ */
 .task-container {
@@ -68,11 +73,13 @@ header {
     margin: 4px 4px 10px 4px;
     gap: 10px;
 }
+
 .ui-note {
     font-size: 0.7rem;
     color: #888888;
     flex: 1;
 }
+
 /* 並び替えプルダウン */
 .sort-select {
     font-size: 0.75rem;
@@ -104,7 +111,7 @@ header {
 
 /* ＋ボタンと被らないようにする余白 */
 #completed-list {
-    margin-bottom: 80px; 
+    margin-bottom: 80px;
 }
 
 /* 1つのタスクカード */
@@ -114,7 +121,7 @@ header {
     border-radius: 12px;
     padding: 12px;
     margin-bottom: 10px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 /* 通常表示モードのレイアウト */
@@ -237,22 +244,35 @@ header {
     white-space: nowrap;
 }
 
-.edit-btn { background-color: #ffb300; color: white; }
+.edit-btn {
+    background-color: #ffb300;
+    color: white;
+}
 
 /* 🛠️ 【調整】ゴミ箱ボタンを少し大きく、押しやすく調整 */
 .trash-btn {
     background: none;
     border: none;
-    font-size: 1.3rem; /* サイズを拡大 */
+    font-size: 1.3rem;
+    /* サイズを拡大 */
     cursor: pointer;
     padding: 0 4px;
     line-height: 1;
     color: #ff5252;
     transition: transform 0.1s;
 }
-.trash-btn:hover { transform: scale(1.1); }
 
-.save-btn { background-color: #2196f3; color: white; width: 100%; padding: 8px; margin-top: 5px; }
+.trash-btn:hover {
+    transform: scale(1.1);
+}
+
+.save-btn {
+    background-color: #2196f3;
+    color: white;
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+}
 
 /* --- 編集モード用の入力欄スタイル --- */
 .task-edit-form {
@@ -260,12 +280,14 @@ header {
     flex-direction: column;
     gap: 8px;
 }
+
 .edit-label {
     font-size: 0.7rem;
     color: #777;
     margin-bottom: -6px;
     font-weight: bold;
 }
+
 .edit-input {
     width: 100%;
     padding: 6px;
@@ -274,11 +296,13 @@ header {
     box-sizing: border-box;
     font-size: 0.85rem;
 }
+
 .inline-container {
     display: flex;
     align-items: center;
     gap: 6px;
 }
+
 .select-group {
     flex: 1;
     display: flex;
@@ -287,6 +311,7 @@ header {
     font-size: 0.8rem;
     color: #333;
 }
+
 .edit-select {
     flex: 1;
     padding: 6px;
@@ -302,7 +327,10 @@ header {
     color: #aaaaaa;
     font-weight: normal;
 }
-.completed .task-deadline, .completed .task-time, .completed .task-memo-box {
+
+.completed .task-deadline,
+.completed .task-time,
+.completed .task-memo-box {
     background-color: #f0f0f0;
     color: #bbbbbb;
     border-color: #dddddd;
@@ -321,25 +349,29 @@ header {
     justify-content: center;
     align-items: center;
 }
+
 .modal-box {
     width: 260px;
     background-color: white;
     border-radius: 14px;
     padding: 20px;
     text-align: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
+
 .modal-title {
     font-size: 0.95rem;
     font-weight: bold;
     color: #333;
     margin-bottom: 16px;
 }
+
 .modal-buttons {
     display: flex;
     justify-content: center;
     gap: 12px;
 }
+
 .modal-btn {
     flex: 1;
     border: none;
@@ -349,8 +381,16 @@ header {
     font-weight: bold;
     cursor: pointer;
 }
-.modal-cancel { background-color: #e0e0e0; color: #333; }
-.modal-confirm { background-color: #ff5252; color: white; }
+
+.modal-cancel {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+.modal-confirm {
+    background-color: #ff5252;
+    color: white;
+}
 
 /* --- 登録画面へのプラスボタン --- */
 .add-button {
@@ -367,8 +407,11 @@ header {
     align-items: center;
     font-size: 2rem;
     text-decoration: none;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: transform 0.1s;
     z-index: 10;
 }
-.add-button:active { transform: scale(0.95); }
+
+.add-button:active {
+    transform: scale(0.95);
+}

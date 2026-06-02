@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>タスクリストメイン画面</title>
     <link rel="stylesheet" href="0602_all.css">
 </head>
+
 <body class="task-list-page">
 
     <div class="phone-container">
@@ -15,7 +17,7 @@
         </header>
 
         <div class="task-container" id="scroll-container">
-            
+
             <div class="control-bar">
                 <div class="ui-note">💡 チェックを入れると完了、外すと戻ります</div>
                 <select class="sort-select" onchange="sortTasks(this.value)">
@@ -26,7 +28,7 @@
             </div>
 
             <ul id="task-list" class="task-list">
-                
+
                 <li class="task-item" data-date="2026-06-03T23:59" data-minutes="30">
                     <div class="task-view">
                         <div class="task-top-row">
@@ -55,8 +57,10 @@
                         <input type="datetime-local" class="edit-input edit-date" value="2026-06-03T23:59">
                         <span class="edit-label">予定時間</span>
                         <div class="inline-container">
-                            <div class="select-group"><select class="edit-select edit-hours" data-default="0"></select>時間</div>
-                            <div class="select-group"><select class="edit-select edit-minutes" data-default="30"></select>分</div>
+                            <div class="select-group"><select class="edit-select edit-hours"
+                                    data-default="0"></select>時間</div>
+                            <div class="select-group"><select class="edit-select edit-minutes"
+                                    data-default="30"></select>分</div>
                         </div>
                         <span class="edit-label">一言メモ</span>
                         <input type="text" class="edit-input edit-memo" value="教授のメールにPDF形式で添付して提出すること。">
@@ -92,8 +96,10 @@
                         <input type="datetime-local" class="edit-input edit-date" value="2026-06-05T12:00">
                         <span class="edit-label">予定時間</span>
                         <div class="inline-container">
-                            <div class="select-group"><select class="edit-select edit-hours" data-default="0"></select>時間</div>
-                            <div class="select-group"><select class="edit-select edit-minutes" data-default="45"></select>分</div>
+                            <div class="select-group"><select class="edit-select edit-hours"
+                                    data-default="0"></select>時間</div>
+                            <div class="select-group"><select class="edit-select edit-minutes"
+                                    data-default="45"></select>分</div>
                         </div>
                         <span class="edit-label">一言メモ</span>
                         <input type="text" class="edit-input edit-memo" value="3C分析のページを重点的に読み込んでおく。">
@@ -129,8 +135,10 @@
                         <input type="datetime-local" class="edit-input edit-date" value="2026-06-04T10:00">
                         <span class="edit-label">予定時間</span>
                         <div class="inline-container">
-                            <div class="select-group"><select class="edit-select edit-hours" data-default="0"></select>時間</div>
-                            <div class="select-group"><select class="edit-select edit-minutes" data-default="5"></select>分</div>
+                            <div class="select-group"><select class="edit-select edit-hours"
+                                    data-default="0"></select>時間</div>
+                            <div class="select-group"><select class="edit-select edit-minutes"
+                                    data-default="5"></select>分</div>
                         </div>
                         <span class="edit-label">一言メモ</span>
                         <input type="text" class="edit-input edit-memo" value="スプリント1の決定事項をLINEのノートに貼る。">
@@ -166,8 +174,10 @@
                         <input type="datetime-local" class="edit-input edit-date" value="2026-06-03T12:00">
                         <span class="edit-label">予定時間</span>
                         <div class="inline-container">
-                            <div class="select-group"><select class="edit-select edit-hours" data-default="0"></select>時間</div>
-                            <div class="select-group"><select class="edit-select edit-minutes" data-default="3"></select>分</div>
+                            <div class="select-group"><select class="edit-select edit-hours"
+                                    data-default="0"></select>時間</div>
+                            <div class="select-group"><select class="edit-select edit-minutes"
+                                    data-default="3"></select>分</div>
                         </div>
                         <span class="edit-label">一言メモ</span>
                         <input type="text" class="edit-input edit-memo" value="来週の懇親会、遅れて参加する旨を伝える。">
@@ -203,8 +213,10 @@
                         <input type="datetime-local" class="edit-input edit-date" value="2026-06-10T16:45">
                         <span class="edit-label">予定時間</span>
                         <div class="inline-container">
-                            <div class="select-group"><select class="edit-select edit-hours" data-default="0"></select>時間</div>
-                            <div class="select-group"><select class="edit-select edit-minutes" data-default="10"></select>分</div>
+                            <div class="select-group"><select class="edit-select edit-hours"
+                                    data-default="0"></select>時間</div>
+                            <div class="select-group"><select class="edit-select edit-minutes"
+                                    data-default="10"></select>分</div>
                         </div>
                         <span class="edit-label">一言メモ</span>
                         <input type="text" class="edit-input edit-memo" value="エラーが出ていないか、学務システムを確認。">
@@ -240,8 +252,10 @@
                         <input type="datetime-local" class="edit-input edit-date" value="2026-06-05T21:00">
                         <span class="edit-label">予定時間</span>
                         <div class="inline-container">
-                            <div class="select-group"><select class="edit-select edit-hours" data-default="0"></select>時間</div>
-                            <div class="select-group"><select class="edit-select edit-minutes" data-default="5"></select>分</div>
+                            <div class="select-group"><select class="edit-select edit-hours"
+                                    data-default="0"></select>時間</div>
+                            <div class="select-group"><select class="edit-select edit-minutes"
+                                    data-default="5"></select>分</div>
                         </div>
                         <span class="edit-label">一言メモ</span>
                         <input type="text" class="edit-input edit-memo" value="後半はテスト期間に入るから少なめで出す。">
@@ -277,8 +291,10 @@
                         <input type="datetime-local" class="edit-input edit-date" value="2026-06-08T15:00">
                         <span class="edit-label">予定時間</span>
                         <div class="inline-container">
-                            <div class="select-group"><select class="edit-select edit-hours" data-default="1"></select>時間</div>
-                            <div class="select-group"><select class="edit-select edit-minutes" data-default="0"></select>分</div>
+                            <div class="select-group"><select class="edit-select edit-hours"
+                                    data-default="1"></select>時間</div>
+                            <div class="select-group"><select class="edit-select edit-minutes"
+                                    data-default="0"></select>分</div>
                         </div>
                         <span class="edit-label">一言メモ</span>
                         <input type="text" class="edit-input edit-memo" value="ターゲットユーザーへのインタビュー項目を3つ考える。">
@@ -306,10 +322,7 @@
 
     </div>
 
-    <script {
-  "type": "uploaded file",
-  "fileName": "image_b80ca5.png"
-}>
+    <script { "type" : "uploaded file" , "fileName" : "image_b80ca5.png" }>
         window.addEventListener('DOMContentLoaded', () => {
             const hourSelects = document.querySelectorAll('.edit-hours');
             const minuteSelects = document.querySelectorAll('.edit-minutes');
@@ -366,7 +379,7 @@
         function toggleMemo(button) {
             let taskItem = button.closest('.task-item');
             let memoBox = taskItem.querySelector('.task-memo-box');
-            
+
             if (memoBox.style.display === 'block') {
                 memoBox.style.display = 'none';
                 button.textContent = 'メモを表示';
@@ -380,7 +393,7 @@
             let taskItem = checkbox.closest('.task-item');
             let taskView = checkbox.closest('.task-view');
             let editBtn = taskView.querySelector('.edit-btn');
-            
+
             if (checkbox.checked) {
                 document.getElementById('completed-list').appendChild(taskItem);
                 taskItem.classList.add('completed');
@@ -407,16 +420,16 @@
             let view = taskItem.querySelector('.task-view');
             let form = taskItem.querySelector('.task-edit-form');
 
-            let rawDateTime = form.querySelector('.edit-date').value; 
+            let rawDateTime = form.querySelector('.edit-date').value;
             let formattedDeadline = "締切: なし";
 
-            if(rawDateTime) {
+            if (rawDateTime) {
                 let dateObj = new Date(rawDateTime);
                 let month = dateObj.getMonth() + 1;
                 let date = dateObj.getDate();
                 let hours = String(dateObj.getHours()).padStart(2, '0');
                 let minutes = String(dateObj.getMinutes()).padStart(2, '0');
-                
+
                 let dayOfWeekStr = ["日", "月", "火", "水", "木", "金", "土"];
                 let dayStr = dayOfWeekStr[dateObj.getDay()];
 
@@ -430,7 +443,7 @@
             let totalMinutes = (h * 60) + m;
 
             taskItem.setAttribute('data-minutes', totalMinutes);
-            
+
             if (h > 0 && m > 0) {
                 formattedTime = `${h}時間${m}分`;
             } else if (h > 0 && m === 0) {
@@ -474,4 +487,5 @@
     </script>
 
 </body>
+
 </html>
