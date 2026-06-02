@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プレミアム モバイル カレンダー デモ</title>
+    <link rel="stylesheet" href="0602_Mizuki_Monthlymain.css">
+</head>
+
+<body>
+    <!-- モバイル端末のモックアップコンテナ -->
+    <div class="phone-mockup" id="phone-container">
+        <!-- メニュー用オーバーレイ（背景ぼかしと暗転） -->
+        <div class="menu-overlay" id="menu-overlay"></div>
+
+        <!-- スライドアウト式メニュー（サイドバー） -->
+        <aside class="menu-drawer" id="menu-drawer">
+            <div class="menu-header">
+                <span class="menu-logo">Timeline</span>
+                <button class="close-btn" id="menu-close-btn" aria-label="メニューを閉じる">&times;</button>
+            </div>
+
+            <!-- プロフィール -->
+            <div class="profile-card">
+                <div class="avatar-badge-large">KH</div>
+                <div class="profile-info">
+                    <h3 class="profile-name">肥後 佳苗</h3>
+                    <p class="profile-role">大学開発メンバー</p>
+                </div>
+            </div>
+
+            <!-- メニュー項目 -->
+            <nav class="menu-nav">
+                <a href="#" class="menu-item"><span class="menu-icon">📅</span>デイリーカレンダー</a>
+                <a href="#" class="menu-item active"><span class="menu-icon">📅</span>月間カレンダー</a>
+                <a href="#" class="menu-item"><span class="menu-icon">📋</span>タスクリスト</a>
+
+                <div class="menu-divider"></div>
+
+                <a href="#" class="menu-action"><span class="menu-icon">＋</span>新規予定の登録</a>
+            </nav>
+
+            <!-- メニューフッター -->
+            <footer class="menu-footer">
+                Timeline App v1.0.0
+            </footer>
+        </aside>
+
+        <!-- ステータスバー（スマホらしさを演出するデコレーション） -->
+        <div class="status-bar">
+            <span class="time">9:41</span>
+            <div class="icons">
+                <span class="signal">📶</span>
+                <span class="wifi">📶</span>
+                <span class="battery">🔋 80%</span>
+            </div>
+        </div>
+
+        <!-- メインのアプリバー（サイトタイトルとメニューボタン、アイコン類） -->
+        <div class="main-appbar">
+            <div class="appbar-left">
+                <button class="appbar-btn" id="menu-toggle-btn" aria-label="メニューを開く">
+                    <span class="menu-hamburger">☰</span>
+                </button>
+                <h1 class="site-title">Timeline</h1>
+            </div>
+            <div class="appbar-right">
+                <button class="appbar-btn" aria-label="通知">
+                    <span class="bell-icon">🔔</span>
+                </button>
+                <div class="avatar-badge-small">KH</div>
+            </div>
+        </div>
+
+        <!-- カレンダーの月切り替えヘッダー -->
+        <header class="app-header">
+            <button class="nav-btn" id="prev-month-btn" aria-label="前月">&lt;</button>
+            <h2 class="month-title" id="month-title">2026年 6月</h2>
+            <button class="nav-btn" id="next-month-btn" aria-label="翌月">&gt;</button>
+        </header>
+
+        <!-- カレンダーのメイン部分 -->
+        <main class="calendar-container">
+            <!-- 曜日ヘッダー (7列) -->
+            <div class="weekdays-grid">
+                <div class="weekday">月</div>
+                <div class="weekday">火</div>
+                <div class="weekday">水</div>
+                <div class="weekday">木</div>
+                <div class="weekday">金</div>
+                <div class="weekday sat">土</div>
+                <div class="weekday sun">日</div>
+            </div>
+
+            <!-- 日付グリッド (JavaScriptで動的に生成) -->
+            <div class="days-grid" id="days-grid"></div>
+        </main>
+
+        <!-- フローティングアクションボタン（＋ 予定追加） -->
+        <a href="register.html" class="fab-btn" aria-label="予定追加">＋</a>
+
+        <!-- ホームインジケーター（スマホらしさを演出するデコレーション） -->
+        <div class="home-indicator"></div>
+    </div>
+
+    <!-- メニュー開閉およびカレンダー用JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- メニュー開閉制御 ---
+            const menuToggleBtn = document.getElementById('menu-toggle-btn');
+            const menuCloseBtn = document.getElementById('menu-close-btn');
+            const menuDrawer = document.getElementById('menu-drawer');
+            const menuOverlay = document.getElementById('menu-overlay');
+
+            const openMenu = () => {
+                menuDrawer.classList.add('open');
+                menuOverlay.classList.add('open');
+            };
+
+            const closeMenu = () => {
+                menuDrawer.classList.remove('open');
+                menuOverlay.classList.remove('open');
+            };
+
+            menuToggleBtn.addEventListener('click', openMenu);
+            menuCloseBtn.addEventListener('click', closeMenu);
+            menuOverlay.addEventListener('click', closeMenu);
+
+            // --- カレンダー動的生成制御 ---
+            const prevMonthBtn = document.getElementById('prev-month-btn');
+            const nextMonthBtn = document.getElementById('next-month-btn');
+            const monthTitle = document.getElementById('month-title');
+            const daysGrid = document.getElementById('days-grid');
+
+            // 表示する初期年月（2026年6月）
+            let currentYear = 2026;
+            let currentMonth = 5; // 0 = 1月, 5 = 6月
+
+            // リアルタイムの今日（ハイライト用）
+            const today = new Date();
+            const todayYear = today.getFullYear();
+            const todayMonth = today.getMonth();
+            const todayDate = today.getDate();
+
+            // 既存のデモ用イベントデータ
+            const events = [
+                { date: '2026-06-02', time: '11:00', text: 'バイト（カフェのシフト）', type: 'work', title: '11:00 バイト（カフェのシフト・ロングシフト）' },
+                { date: '2026-06-10', time: '13:00', text: '定期ミーティング（進捗報告）', type: 'mtg', title: '13:00 定期ミーティング（進捗報告とデモの確認）' },
+                { date: '2026-06-19', time: '19:00', text: 'サークル新歓飲み会', type: 'party', title: '19:00 サークル新歓飲み会（渋谷駅前集合）' },
+                { date: '2026-06-25', time: '15:00', text: '定期検診とクリーニング', type: 'clinic', title: '15:00 定期検診とクリーニング' }
+            ];
+
+            // 日付を YYYY-MM-DD 形式にフォーマットする補助関数
+            const formatDateStr = (y, m, d) => {
+                const mm = String(m + 1).padStart(2, '0');
+                const dd = String(d).padStart(2, '0');
+                return `${y}-${mm}-${dd}`;
+            };
+
+            // セルにイベントを追加する補助関数
+            const addEventsToCell = (cell, dateStr) => {
+                const dayEvents = events.filter(e => e.date === dateStr);
+                if (dayEvents.length > 0) {
+                    const eventListDiv = document.createElement('div');
+                    eventListDiv.className = 'event-list';
+
+                    dayEvents.forEach(e => {
+                        const eventItemDiv = document.createElement('div');
+                        eventItemDiv.className = `event-item ${e.type}`;
+                        eventItemDiv.title = e.title;
+                        eventItemDiv.textContent = `${e.time} ${e.text}`;
+                        eventListDiv.appendChild(eventItemDiv);
+                    });
+
+                    cell.appendChild(eventListDiv);
+                }
+            };
+
+            // カレンダー描画関数
+            const renderCalendar = (year, month) => {
+                // 月タイトルの更新
+                monthTitle.textContent = `${year}年 ${month + 1}月`;
+
+                // グリッドのリセット
+                daysGrid.innerHTML = '';
+                daysGrid.classList.remove('six-rows');
+
+                // 月曜始まりの算出
+                const firstDay = new Date(year, month, 1).getDay(); // 0:日, 1:月, ..., 6:土
+                const prevMonthDaysToShow = (firstDay - 1 + 7) % 7; // 月曜がインデックス0になるように調整
+
+                const currentMonthDays = new Date(year, month + 1, 0).getDate(); // 当月の日数
+                const prevMonthDays = new Date(year, month, 0).getDate(); // 前月の日数
+
+                // 総マス数の決定 (35マスで収まらない場合は42マスにする)
+                const totalCells = prevMonthDaysToShow + currentMonthDays;
+                const gridCellsCount = totalCells <= 35 ? 35 : 42;
+
+                if (gridCellsCount === 42) {
+                    daysGrid.classList.add('six-rows');
+                }
+
+                // 1. 前月の日付を描画
+                for (let i = prevMonthDaysToShow; i > 0; i--) {
+                    const d = prevMonthDays - i + 1;
+                    const cell = document.createElement('div');
+                    cell.className = 'day-cell prev-month';
+                    cell.innerHTML = `<span class="day-num">${d}</span>`;
+
+                    let pYear = year;
+                    let pMonth = month - 1;
+                    if (pMonth < 0) {
+                        pMonth = 11;
+                        pYear--;
+                    }
+                    const dateStr = formatDateStr(pYear, pMonth, d);
+                    addEventsToCell(cell, dateStr);
+
+                    daysGrid.appendChild(cell);
+                }
+
+                // 2. 当月の日付を描画
+                for (let d = 1; d <= currentMonthDays; d++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'day-cell';
+
+                    // 「今日」のハイライト判定
+                    if (year === todayYear && month === todayMonth && d === todayDate) {
+                        cell.classList.add('today');
+                    }
+
+                    cell.innerHTML = `<span class="day-num">${d}</span>`;
+
+                    const dateStr = formatDateStr(year, month, d);
+                    addEventsToCell(cell, dateStr);
+
+                    daysGrid.appendChild(cell);
+                }
+
+                // 3. 翌月の日付を描画
+                const nextMonthDaysToShow = gridCellsCount - totalCells;
+                for (let d = 1; d <= nextMonthDaysToShow; d++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'day-cell next-month';
+                    cell.innerHTML = `<span class="day-num">${d}</span>`;
+
+                    let nYear = year;
+                    let nMonth = month + 1;
+                    if (nMonth > 11) {
+                        nMonth = 0;
+                        nYear++;
+                    }
+                    const dateStr = formatDateStr(nYear, nMonth, d);
+                    addEventsToCell(cell, dateStr);
+
+                    daysGrid.appendChild(cell);
+                }
+            };
+
+            // イベントリスナーの登録
+            prevMonthBtn.addEventListener('click', () => {
+                currentMonth--;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+                renderCalendar(currentYear, currentMonth);
+            });
+
+            nextMonthBtn.addEventListener('click', () => {
+                currentMonth++;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+                renderCalendar(currentYear, currentMonth);
+            });
+
+            // 初期読み込み時の描画
+            renderCalendar(currentYear, currentMonth);
+        });
+    </script>
+</body>
+
+</html>
