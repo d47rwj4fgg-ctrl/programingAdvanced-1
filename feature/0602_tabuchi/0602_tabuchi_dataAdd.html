@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新規登録</title>
+    <style>
+        /* --- 全体の基本スタイル（スマホ風のベース） --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f2f2f6; /* iOS風の薄いグレー */
+            margin: 0;
+            padding: 0;
+            color: #000;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* スマホの画面幅に擬似的に固定する枠（開発・確認用） */
+        .app-container {
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            background-color: #f2f2f6;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- ヘッダー領域 --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background-color: #f2f2f6;
+        }
+        .header button {
+            background: none;
+            border: none;
+            color: #007aff; /* iOSの標準的な青色 */
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .header .cancel-btn {
+            font-size: 20px; /* 「X」を少し大きめに */
+            color: #666;
+        }
+        .header .save-btn {
+            font-weight: bold;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        /* --- セグメントコントロール（予定 / リマインダー） --- */
+        .segmented-control {
+            display: flex;
+            background-color: #e3e3e9;
+            border-radius: 8px;
+            margin: 0 16px 16px 16px;
+            padding: 2px;
+        }
+        .segment-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 6px 0;
+            font-size: 13px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .segment-btn.active {
+            background-color: #fff;
+            box-shadow: 0px 1px 3px rgba(0,0,0,0.1);
+            font-weight: bold;
+        }
+
+        /* --- 白いカードのまとまり --- */
+        .card {
+            background-color: #fff;
+            border-radius: 10px;
+            margin: 0 16px 16px 16px;
+            padding: 0 16px;
+        }
+
+        /* カード内の各行のレイアウト */
+        .form-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 44px;
+            border-bottom: 0.5px solid #e5e5ea;
+            padding: 4px 0;
+        }
+        .form-row:last-child {
+            border-bottom: none; /* 最後の行の線は消す */
+        }
+
+        /* --- 入力欄（インプット）のスタイル --- */
+        .form-row input[type="text"] {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-size: 17px;
+            padding: 8px 0;
+        }
+        .form-row label {
+            font-size: 17px;
+        }
+        .date-time-inputs {
+            display: flex;
+            gap: 8px;
+        }
+        /* 日付・時間選択の見た目をiOS風にスッキリさせる */
+        .date-time-inputs input {
+            border: none;
+            background-color: #eee;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+        }
+
+        /* --- 終日トグルスイッチの自作 --- */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 51px;
+            height: 31px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #e3e3e9;
+            transition: .3s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 27px; width: 27px;
+            left: 2px; bottom: 2px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+            box-shadow: 0px 3px 8px rgba(0,0,0,0.15);
+        }
+        input:checked + .slider {
+            background-color: #34c759; /* iOSの黄緑色 */
+        }
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <button class="cancel-btn">✕</button>
+        <h1>新規</h1>
+        <button class="save-btn" id="saveBtn">保存</button>
+    </div>
+
+    <div class="segmented-control">
+        <button class="segment-btn active">予定</button>
+        <button class="segment-btn">リマインダー</button>
+    </div>
+
+    <div class="card">
+        <div class="form-row">
+            <input type="text" id="taskTitle" placeholder="タイトル" value="おきる">
+        </div>
+        <div class="form-row">
+            <input type="text" id="taskLocation" placeholder="場所またはビデオ通話">
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="form-row">
+            <label>終日</label>
+            <label class="switch">
+                <input type="checkbox" id="allDayToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="form-row">
+            <label>開始</label>
+            <div class="date-time-inputs">
+                <input type="date" id="startDate" value="2026-06-02">
+                <input type="time" id="startTime" value="10:00">
+            </div>
+        </div>
+        <div class="form-row">
+            <label>終了</label>
+            <div class="date-time-inputs">
+                <input type="date" id="endDate" value="2026-06-02">
+                <input type="time" id="endTime" value="11:00">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const allDayToggle = document.getElementById('allDayToggle');
+    const startTimeInput = document.getElementById('startTime');
+    const endTimeInput = document.getElementById('endTime');
+    const saveBtn = document.getElementById('saveBtn');
+
+    // 1. 「終日」スイッチが切り替わったら時間を隠す/表示する処理
+    allDayToggle.addEventListener('change', () => {
+        if (allDayToggle.checked) {
+            startTimeInput.style.display = 'none';
+            endTimeInput.style.display = 'none';
+        } else {
+            startTimeInput.style.display = 'inline-block';
+            endTimeInput.style.display = 'inline-block';
+        }
+    });
+
+    // 2. 「保存」ボタンが押された時の処理（金庫への保存）
+    saveBtn.addEventListener('click', () => {
+        // 画面に入力された内容をかき集める
+        const taskData = {
+            id: Date.now(), // 重複しない一意の番号として現在の時間をIDにする
+            title: document.getElementById('taskTitle').value,
+            location: document.getElementById('taskLocation').value,
+            isAllDay: allDayToggle.checked,
+            startDate: document.getElementById('startDate').value,
+            startTime: allDayToggle.checked ? "" : startTimeInput.value,
+            endDate: document.getElementById('endDate').value,
+            endTime: allDayToggle.checked ? "" : endTimeInput.value
+        };
+
+        // タイトルが空っぽなら警告して止める
+        if (!taskData.title.trim()) {
+            alert('タイトルを入力してください！');
+            return;
+        }
+
+        // 既存のタスクリストを金庫（localStorage）から取り出す（無ければ空の配列）
+        let currentTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+        
+        // 新しいタスクをリストに追加
+        currentTasks.push(taskData);
+
+        // 金庫（localStorage）を最新の状態に上書き保存する
+        localStorage.setItem('savedTasks', JSON.stringify(currentTasks));
+
+        // 成功メッセージ（実際はここで前の画面に戻る処理などを入れます）
+        alert(`「${taskData.title}」を保存しました！\n（localStorageの'savedTasks'を確認してください）`);
+        
+        // テスト用に中身をコンソールにも表示
+        console.log('現在の全保存データ:', currentTasks);
+    });
+</script>
+
+</body>
+</html>
