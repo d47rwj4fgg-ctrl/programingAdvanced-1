@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新規登録</title>
+    <link rel="stylesheet" href="styleDemo.css">
+</head>
+
+<body>
+
+    <div class="app-container">
+        <div class="header">
+            <button class="cancel-btn">✕</button>
+            <h1>新規</h1>
+            <button class="save-btn" id="saveBtn">保存</button>
+        </div>
+
+        <div class="segmented-control" id="categorySegment">
+            <button class="segment-btn active" data-category="schedule">予定</button>
+            <button class="segment-btn" data-category="task">タスク</button>
+        </div>
+
+        <div class="card">
+            <div class="form-row">
+                <input type="text" id="taskTitle" placeholder="タイトル" value="">
+            </div>
+            <div class="form-row" id="locationRow">
+                <input type="text" id="taskLocation" placeholder="場所またはビデオ通話">
+            </div>
+        </div>
+
+        <!-- 予定用の入力項目 -->
+        <div class="card" id="scheduleFields">
+            <div class="form-row">
+                <label>終日</label>
+                <label class="switch">
+                    <input type="checkbox" id="allDayToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="form-row">
+                <label>開始</label>
+                <div class="date-time-inputs">
+                    <input type="date" id="startDate" value="2026-06-09">
+                    <input type="time" id="startTime" value="10:00">
+                </div>
+            </div>
+            <div class="form-row">
+                <label>終了</label>
+                <div class="date-time-inputs">
+                    <input type="date" id="endDate" value="2026-06-09">
+                    <input type="time" id="endTime" value="11:00">
+                </div>
+            </div>
+        </div>
+
+        <!-- タスク用の入力項目 -->
+        <div class="card hidden" id="taskFields">
+            <div class="form-row">
+                <label>期限</label>
+                <div class="date-time-inputs">
+                    <input type="date" id="deadlineDate" value="2026-06-09">
+                    <input type="time" id="deadlineTime" value="18:00">
+                </div>
+            </div>
+            <div class="form-row">
+                <label>かかる時間</label>
+                <div class="time-duration-inputs">
+                    <input type="number" id="estimatedHours" min="0" max="23" value="0"> 時間
+                    <input type="number" id="estimatedMinutes" min="0" max="59" value="30"> 分
+                </div>
+            </div>
+            <div class="form-row">
+                <label>繰り返し</label>
+                <select id="recurrence">
+                    <option value="none">なし</option>
+                    <option value="daily">毎日</option>
+                    <option value="weekly">毎週</option>
+                    <option value="monthly">毎月</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 登録データ一覧の表示領域 -->
+        <div class="task-list-title">登録済みの予定・タスク</div>
+        <div class="task-list-container">
+            <div class="card" id="taskListCard">
+                <div style="text-align: center; color: #8e8e93; padding: 16px; font-size: 14px;">
+                    登録されているデータはありません
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="taskManager.js"></script>
+</body>
+
+</html>
