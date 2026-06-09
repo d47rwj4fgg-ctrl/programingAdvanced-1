@@ -34,11 +34,6 @@ header {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.header-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin: 0;
-}
 
 /* 🛠️ 完了したタスクへ一気に飛ぶボタン（文言変更） */
 .jump-btn {
