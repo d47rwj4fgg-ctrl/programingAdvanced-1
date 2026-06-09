@@ -875,7 +875,7 @@ body.daily-main-page {
 /* ==========================================================================
    2. 月間カレンダー画面 (0602_Mizuki_Monthlymain)
    ========================================================================== */
-body.monthly-main-page {
+body.monthly-main-page:not(.daily-main-page) {
     background: radial-gradient(circle at 50% 50%, #1e1e26 0%, #0a0a0c 100%);
     min-height: 100vh;
     display: flex;
@@ -886,22 +886,22 @@ body.monthly-main-page {
 }
 
 .monthly-main-page {
-    --bg-color: #0f0f12;
-    --phone-bg: rgba(22, 22, 28, 0.85);
-    --border-color: rgba(255, 255, 255, 0.08);
-    --text-primary: #ffffff;
-    --text-secondary: rgba(255, 255, 255, 0.6);
-    --text-muted: rgba(255, 255, 255, 0.3);
-    --color-sunday: #ff6b6b;
-    --color-saturday: #4dadff;
-    --color-work: #3b82f6;
-    --color-work-bg: rgba(59, 130, 246, 0.15);
-    --color-mtg: #10b981;
-    --color-mtg-bg: rgba(16, 185, 129, 0.15);
-    --color-party: #ec4899;
-    --color-party-bg: rgba(236, 72, 153, 0.15);
-    --color-clinic: #f59e0b;
-    --color-clinic-bg: rgba(245, 158, 11, 0.15);
+    --bg-color: #f8fafc;
+    --phone-bg: #f8fafc;
+    --border-color: #e2e8f0;
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    --color-sunday: #ef4444;
+    --color-saturday: #3b82f6;
+    --color-work: #0288d1;
+    --color-work-bg: #e1f5fe;
+    --color-mtg: #15803d;
+    --color-mtg-bg: #dcfce7;
+    --color-party: #be123c;
+    --color-party-bg: #ffe4e6;
+    --color-clinic: #b45309;
+    --color-clinic-bg: #fef3c7;
     --font-sans: 'Outfit', 'Noto Sans JP', sans-serif;
 
     color: var(--text-primary);
@@ -1187,36 +1187,39 @@ body.monthly-main-page {
         font-weight: 600;
     }
 
-    .app-header {
+    .month-selector-bar {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 12px 24px;
+        padding: 4px 8px;
+        margin-top: 4px;
     }
 
     .month-title {
-        font-size: 1.35rem;
-        font-weight: 700;
+        font-size: 1.25rem;
+        font-weight: 800;
         letter-spacing: -0.03em;
+        color: var(--text-primary);
+        margin: 0;
     }
 
     .nav-btn {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid var(--border-color);
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
         color: var(--text-primary);
-        width: 36px;
-        height: 36px;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1rem;
+        font-size: 0.9rem;
         font-weight: bold;
         transition: all 0.2s ease;
 
         &:hover {
-            background: rgba(255, 255, 255, 0.12);
+            background: #cbd5e1;
             transform: scale(1.05);
         }
 
@@ -1236,7 +1239,7 @@ body.monthly-main-page {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
         margin-bottom: 8px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid #e2e8f0;
         padding-bottom: 8px;
     }
 
@@ -1269,8 +1272,8 @@ body.monthly-main-page {
     }
 
     .day-cell {
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid rgba(255, 255, 255, 0.02);
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
         border-radius: 12px;
         padding: 6px;
         display: flex;
@@ -1283,15 +1286,15 @@ body.monthly-main-page {
         min-width: 0;
 
         &:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(255, 255, 255, 0.08);
+            background: #f1f5f9;
+            border-color: #cbd5e1;
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
         }
 
         &.prev-month,
         &.next-month {
-            opacity: 0.25;
+            opacity: 0.4;
         }
 
         &.today {
@@ -1344,25 +1347,25 @@ body.monthly-main-page {
 
         &.work {
             background: var(--color-work-bg);
-            color: #60a5fa;
+            color: var(--color-work);
             border-left: 2px solid var(--color-work);
         }
 
         &.mtg {
             background: var(--color-mtg-bg);
-            color: #34d399;
+            color: var(--color-mtg);
             border-left: 2px solid var(--color-mtg);
         }
 
         &.party {
             background: var(--color-party-bg);
-            color: #f472b6;
+            color: var(--color-party);
             border-left: 2px solid var(--color-party);
         }
 
         &.clinic {
             background: var(--color-clinic-bg);
-            color: #fbbf24;
+            color: var(--color-clinic);
             border-left: 2px solid var(--color-clinic);
         }
     }
@@ -1413,101 +1416,49 @@ body.monthly-main-page {
 /* ==========================================================================
    3. タスクリスト画面 (0602_東瀬優花_タスクリスト1)
    ========================================================================== */
-body.task-list-page {
-    background-color: #f0f2f5;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .task-list-page {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    color: #333;
-
-    .phone-container {
-        width: 360px;
-        height: 640px;
-        background-color: #ffffff;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        border-radius: 20px;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-    }
-
-    header {
-        background-color: #4a90e2;
-        color: white;
-        padding: 15px 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .header-title {
-        font-size: 1.2rem;
-        font-weight: bold;
-        margin: 0;
-    }
-
-    .jump-btn {
-        font-size: 0.75rem;
-        background-color: rgba(255, 255, 255, 0.2);
-        color: white;
-        border: 1px solid white;
-        padding: 4px 8px;
-        border-radius: 12px;
-        cursor: pointer;
-        text-decoration: none;
-        font-weight: bold;
-
-        &:active {
-            background-color: rgba(255, 255, 255, 0.4);
-        }
-    }
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #0f172a;
 
     .task-container {
         flex: 1;
-        padding: 12px;
+        padding: 16px;
         overflow-y: auto;
         scroll-behavior: smooth;
+        background-color: #f8fafc;
     }
 
     .control-bar {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin: 4px 4px 10px 4px;
+        margin: 4px 4px 12px 4px;
         gap: 10px;
     }
 
-    .ui-note {
-        font-size: 0.7rem;
-        color: #888888;
-        flex: 1;
+    .sort-tag-wrapper {
+        display: inline-flex;
+        background-color: rgba(15, 23, 42, 0.05);
+        padding: 4px 10px;
+        border-radius: 6px;
+    }
+
+    .sort-tag {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #64748b;
     }
 
     .sort-select {
         font-size: 0.75rem;
-        padding: 4px 8px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
+        padding: 6px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
         background-color: #fff;
-        color: #333;
+        color: #0f172a;
         font-weight: bold;
         cursor: pointer;
-    }
-
-    .section-title {
-        font-size: 0.85rem;
-        color: #666;
-        margin: 20px 0 8px 4px;
-        font-weight: bold;
-        border-top: 1px solid #eeeeee;
-        padding-top: 15px;
+        outline: none;
     }
 
     .task-list {
@@ -1516,297 +1467,335 @@ body.task-list-page {
         margin: 4px 0 0 0;
     }
 
-    #completed-list {
-        margin-bottom: 80px;
-    }
-
     .task-item {
-        background-color: #fafafa;
-        border: 1px solid #e0e0e0;
-        border-radius: 12px;
-        padding: 12px;
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
         margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        overflow: hidden;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+        &:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
     }
 
-    .task-view {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .task-top-row {
+    .task-view-slim {
         display: flex;
         align-items: center;
-        gap: 10px;
+        padding: 12px 16px;
+        gap: 16px;
+        min-height: 60px;
     }
 
-    .task-checkbox {
-        width: 18px;
-        height: 18px;
+    /* Microsoft To Do 風カスタム丸型チェックボックス */
+    .todo-checkbox-wrapper {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
         cursor: pointer;
-        margin: 0;
+        flex-shrink: 0;
+
+        .task-checkbox {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+
+            &:checked ~ .todo-checkbox-circle {
+                background-color: transparent;
+                border-color: #94a3b8;
+
+                &::after {
+                    display: block;
+                    border-color: #94a3b8;
+                }
+            }
+        }
+
+        .todo-checkbox-circle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 22px;
+            width: 22px;
+            background-color: transparent;
+            border: 1.5px solid #64748b;
+            border-radius: 50%;
+            transition: all 0.15s ease;
+
+            &::after {
+                content: "";
+                position: absolute;
+                display: none;
+                left: 7px;
+                top: 3px;
+                width: 5px;
+                height: 9px;
+                border: solid #6366f1;
+                border-width: 0 2px 2px 0;
+                transform: rotate(45deg);
+            }
+
+            &:hover {
+                border-color: #6366f1;
+                background-color: rgba(99, 102, 241, 0.05);
+            }
+        }
+    }
+
+    /* 星マークボタン */
+    .todo-star-btn {
+        background: none;
+        border: none;
+        font-size: 1.25rem;
+        color: #cbd5e1;
+        cursor: pointer;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.15s, transform 0.15s;
+        flex-shrink: 0;
+
+        &:hover {
+            color: #f59e0b;
+            transform: scale(1.1);
+        }
+
+        &.active {
+            color: #f59e0b;
+        }
+    }
+
+    /* テキストと期限のレイアウト */
+    .todo-content {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        flex: 1;
+        min-width: 0;
     }
 
     .task-text {
-        font-size: 0.95rem;
-        font-weight: bold;
-        color: #333;
-        flex: 1;
-        word-break: break-all;
+        font-size: 0.92rem;
+        font-weight: 600;
+        color: #1e293b;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        transition: color 0.2s;
     }
 
-    .memo-toggle-btn {
-        font-size: 0.7rem;
-        color: #4a90e2;
-        text-decoration: none;
+    .task-deadline-slim {
+        border-radius: 8px;
+        font-weight: 700;
         cursor: pointer;
-        white-space: nowrap;
-        background: none;
-        border: none;
-        padding: 2px 0;
-        margin-top: 2px;
-        width: fit-content;
-        text-align: left;
-    }
-
-    .task-memo-box {
-        display: none;
-        background-color: #f1f8ff;
-        border-left: 3px solid #4a90e2;
-        padding: 6px 10px;
-        font-size: 0.8rem;
-        color: #555;
-        border-radius: 0 4px 4px 0;
-        margin-top: 2px;
-    }
-
-    .task-bottom-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        border-top: 1px solid #f0f0f0;
-        padding-top: 8px;
-        padding-left: 28px;
-    }
-
-    .badges-group {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        flex: 1;
-    }
-
-    .badges-inline {
-        display: flex;
-        gap: 4px;
-        flex-wrap: wrap;
-    }
-
-    .task-deadline {
-        font-size: 0.65rem;
-        background-color: #fff3e0;
-        color: #e65100;
-        padding: 2px 6px;
-        border-radius: 4px;
-        border: 1px solid #ffe0b2;
-        font-weight: bold;
-        white-space: nowrap;
-    }
-
-    .task-time {
-        font-size: 0.65rem;
-        background-color: #e1f5fe;
-        color: #0288d1;
-        padding: 2px 6px;
-        border-radius: 4px;
-        border: 1px solid #b3e5fc;
-        font-weight: bold;
-        white-space: nowrap;
-        width: fit-content;
-    }
-
-    .buttons-group {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-    }
-
-    .btn {
-        border: none;
-        padding: 5px 8px;
-        border-radius: 4px;
-        font-size: 0.7rem;
-        font-weight: bold;
-        cursor: pointer;
-        white-space: nowrap;
-    }
-
-    .edit-btn {
-        background-color: #ffb300;
-        color: white;
-    }
-
-    .trash-btn {
-        background: none;
-        border: none;
-        font-size: 1.3rem;
-        cursor: pointer;
-        padding: 0 4px;
-        line-height: 1;
-        color: #ff5252;
-        transition: transform 0.1s;
+        transition: background-color 0.2s;
 
         &:hover {
-            transform: scale(1.1);
+            background-color: #fecaca;
         }
     }
 
-    .save-btn {
-        background-color: #2196f3;
-        color: white;
-        width: 100%;
-        padding: 8px;
-        margin-top: 5px;
-    }
-
-    .task-edit-form {
-        display: none;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .edit-label {
-        font-size: 0.7rem;
-        color: #777;
-        margin-bottom: -6px;
-        font-weight: bold;
-    }
-
-    .edit-input {
-        width: 100%;
-        padding: 6px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-        font-size: 0.85rem;
-    }
-
-    .inline-container {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-
-    .select-group {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 0.8rem;
-        color: #333;
-    }
-
-    .edit-select {
-        flex: 1;
-        padding: 6px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 0.85rem;
-        background-color: #fff;
-    }
-
-    .completed {
-        .task-text {
-            text-decoration: line-through;
-            color: #aaaaaa;
-            font-weight: normal;
-        }
-
-        .task-deadline,
-        .task-time,
-        .task-memo-box {
-            background-color: #f0f0f0;
-            color: #bbbbbb;
-            border-color: #dddddd;
-        }
-    }
-
+    /* ポップアップモーダル（新規登録・編集） */
     .modal-overlay {
-        display: none;
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.4);
-        z-index: 100;
+        background-color: rgba(15, 23, 42, 0.4);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 2000;
+        display: flex;
         justify-content: center;
         align-items: center;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s;
+
+        &.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+
+            .modal-box {
+                transform: scale(1) translateY(0);
+            }
+        }
     }
 
     .modal-box {
-        width: 260px;
-        background-color: white;
-        border-radius: 14px;
-        padding: 20px;
-        text-align: center;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .modal-title {
-        font-size: 0.95rem;
-        font-weight: bold;
-        color: #333;
-        margin-bottom: 16px;
-    }
-
-    .modal-buttons {
+        width: 320px;
+        max-width: 90%;
+        background-color: #ffffff;
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15);
         display: flex;
-        justify-content: center;
+        flex-direction: column;
+        gap: 16px;
+        transform: scale(0.9) translateY(10px);
+        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #f1f5f9;
+        padding-bottom: 12px;
+
+        h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .modal-close-btn {
+            background: #f1f5f9;
+            border: none;
+            color: #64748b;
+            font-size: 20px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+
+            &:hover {
+                background-color: #e2e8f0;
+                color: #0f172a;
+            }
+        }
+    }
+
+    .modal-body {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .modal-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #64748b;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    .modal-input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 0.9rem;
+        font-family: inherit;
+        color: #0f172a;
+        background-color: #f8fafc;
+        outline: none;
+        transition: all 0.2s ease;
+
+        &:focus {
+            border-color: #6366f1;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        &::placeholder {
+            color: #94a3b8;
+        }
+    }
+
+    .modal-time-inputs {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #475569;
+    }
+
+    .modal-select {
+        padding: 8px 12px;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-family: inherit;
+        color: #0f172a;
+        background-color: #f8fafc;
+        outline: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:focus {
+            border-color: #6366f1;
+            background-color: #ffffff;
+        }
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
         gap: 12px;
+        border-top: 1px solid #f1f5f9;
+        padding-top: 16px;
+        margin-top: 8px;
     }
 
     .modal-btn {
-        flex: 1;
+        padding: 10px 20px;
         border: none;
-        padding: 8px;
-        border-radius: 6px;
-        font-size: 0.8rem;
-        font-weight: bold;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 700;
         cursor: pointer;
-    }
-
-    .modal-cancel {
-        background-color: #e0e0e0;
-        color: #333;
-    }
-
-    .modal-confirm {
-        background-color: #ff5252;
-        color: white;
-    }
-
-    .add-button {
-        position: absolute;
-        bottom: 30px;
-        right: 20px;
-        width: 60px;
-        height: 60px;
-        background-color: #ff5722;
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 2rem;
-        text-decoration: none;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        transition: transform 0.1s;
-        z-index: 10;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
         &:active {
             transform: scale(0.95);
+        }
+    }
+
+    .modal-delete-btn {
+        background-color: #fee2e2;
+        color: #ef4444;
+
+        &:hover {
+            background-color: #fecaca;
+        }
+    }
+
+    .modal-save-btn {
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+
+        &:hover {
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
         }
     }
 }
@@ -1815,7 +1804,7 @@ body.task-list-page {
 /* ==========================================================================
    4. 新規登録画面 (styleDemo)
    ========================================================================== */
-body.register-page {
+body.register-page:not(.daily-main-page) {
     background-color: #f2f2f6;
     min-height: 100vh;
     display: flex;
@@ -1828,8 +1817,7 @@ body.register-page {
 
     .app-container {
         width: 100%;
-        max-width: 400px;
-        height: 100vh;
+        height: 100%;
         background-color: #f2f2f6;
         display: flex;
         flex-direction: column;

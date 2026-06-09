@@ -3,353 +3,525 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>タスクリストメイン画面</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="0602_all.css">
 </head>
 
-<body class="task-list-page">
+<body class="daily-main-page task-list-page">
 
-    <div class="phone-container">
-        <header>
-            <span class="header-title">タスクリスト</span>
-            <button class="jump-btn" onclick="scrollToCompleted()">完了したタスクへ ⬇</button>
-        </header>
-
-        <div class="task-container" id="scroll-container">
-
-            <div class="control-bar">
-                <div class="ui-note">💡 チェックを入れると完了、外すと戻ります</div>
-                <select class="sort-select" onchange="sortTasks(this.value)">
-                    <option value="deadline">締め切り順</option>
-                    <option value="time-asc">時間（短い順）</option>
-                    <option value="time-desc">時間（長い順）</option>
-                </select>
-            </div>
-
-            <ul id="task-list" class="task-list">
-
-                <li class="task-item" data-date="2026-06-03T23:59" data-minutes="30">
-                    <div class="task-view">
-                        <div class="task-top-row">
-                            <input type="checkbox" class="task-checkbox" onclick="toggleComplete(this)">
-                            <span class="task-text">経済学のレポートを出す</span>
-                        </div>
-                        <div class="task-memo-box">メモ：教授のメールにPDF形式で添付して提出すること。</div>
-                        <div class="task-bottom-row">
-                            <div class="badges-group">
-                                <div class="badges-inline">
-                                    <span class="task-deadline">締切: 6/3(水) 23:59</span>
-                                    <span class="task-time">30分</span>
-                                </div>
-                                <button class="memo-toggle-btn" onclick="toggleMemo(this)">メモを表示</button>
-                            </div>
-                            <div class="buttons-group">
-                                <button class="btn edit-btn" onclick="startEdit(this)">編集</button>
-                                <button class="trash-btn" onclick="openDeleteModal(this)">🗑</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="task-edit-form">
-                        <span class="edit-label">タスク名</span>
-                        <input type="text" class="edit-input edit-name" value="経済学のレポートを出す">
-                        <span class="edit-label">締め切り</span>
-                        <input type="datetime-local" class="edit-input edit-date" value="2026-06-03T23:59">
-                        <span class="edit-label">予定時間</span>
-                        <div class="inline-container">
-                            <div class="select-group"><select class="edit-select edit-hours"
-                                    data-default="0"></select>時間</div>
-                            <div class="select-group"><select class="edit-select edit-minutes"
-                                    data-default="30"></select>分</div>
-                        </div>
-                        <span class="edit-label">一言メモ</span>
-                        <input type="text" class="edit-input edit-memo" value="教授のメールにPDF形式で添付して提出すること。">
-                        <button class="btn save-btn" onclick="saveEdit(this)">保存する</button>
-                    </div>
-                </li>
-
-                <li class="task-item" data-date="2026-06-05T12:00" data-minutes="45">
-                    <div class="task-view">
-                        <div class="task-top-row">
-                            <input type="checkbox" class="task-checkbox" onclick="toggleComplete(this)">
-                            <span class="task-text">マーケティングの教科書3章を読む</span>
-                        </div>
-                        <div class="task-memo-box">メモ：3C分析のページを重点的に読み込んでおく。</div>
-                        <div class="task-bottom-row">
-                            <div class="badges-group">
-                                <div class="badges-inline">
-                                    <span class="task-deadline">締切: 6/5(金) 12:00</span>
-                                    <span class="task-time">45分</span>
-                                </div>
-                                <button class="memo-toggle-btn" onclick="toggleMemo(this)">メモを表示</button>
-                            </div>
-                            <div class="buttons-group">
-                                <button class="btn edit-btn" onclick="startEdit(this)">編集</button>
-                                <button class="trash-btn" onclick="openDeleteModal(this)">🗑</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="task-edit-form">
-                        <span class="edit-label">タスク名</span>
-                        <input type="text" class="edit-input edit-name" value="マーケティングの教科書3章を読む">
-                        <span class="edit-label">締め切り</span>
-                        <input type="datetime-local" class="edit-input edit-date" value="2026-06-05T12:00">
-                        <span class="edit-label">予定時間</span>
-                        <div class="inline-container">
-                            <div class="select-group"><select class="edit-select edit-hours"
-                                    data-default="0"></select>時間</div>
-                            <div class="select-group"><select class="edit-select edit-minutes"
-                                    data-default="45"></select>分</div>
-                        </div>
-                        <span class="edit-label">一言メモ</span>
-                        <input type="text" class="edit-input edit-memo" value="3C分析のページを重点的に読み込んでおく。">
-                        <button class="btn save-btn" onclick="saveEdit(this)">保存する</button>
-                    </div>
-                </li>
-
-                <li class="task-item" data-date="2026-06-04T10:00" data-minutes="5">
-                    <div class="task-view">
-                        <div class="task-top-row">
-                            <input type="checkbox" class="task-checkbox" onclick="toggleComplete(this)">
-                            <span class="task-text">グループワークの議事録共有</span>
-                        </div>
-                        <div class="task-memo-box">メモ：スプリント1の決定事項をLINEのノートに貼る。</div>
-                        <div class="task-bottom-row">
-                            <div class="badges-group">
-                                <div class="badges-inline">
-                                    <span class="task-deadline">締切: 6/4(木) 10:00</span>
-                                    <span class="task-time">5分</span>
-                                </div>
-                                <button class="memo-toggle-btn" onclick="toggleMemo(this)">メモを表示</button>
-                            </div>
-                            <div class="buttons-group">
-                                <button class="btn edit-btn" onclick="startEdit(this)">編集</button>
-                                <button class="trash-btn" onclick="openDeleteModal(this)">🗑</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="task-edit-form">
-                        <span class="edit-label">タスク名</span>
-                        <input type="text" class="edit-input edit-name" value="グループワークの議事録共有">
-                        <span class="edit-label">締め切り</span>
-                        <input type="datetime-local" class="edit-input edit-date" value="2026-06-04T10:00">
-                        <span class="edit-label">予定時間</span>
-                        <div class="inline-container">
-                            <div class="select-group"><select class="edit-select edit-hours"
-                                    data-default="0"></select>時間</div>
-                            <div class="select-group"><select class="edit-select edit-minutes"
-                                    data-default="5"></select>分</div>
-                        </div>
-                        <span class="edit-label">一言メモ</span>
-                        <input type="text" class="edit-input edit-memo" value="スプリント1の決定事項をLINEのノートに貼る。">
-                        <button class="btn save-btn" onclick="saveEdit(this)">保存する</button>
-                    </div>
-                </li>
-
-                <li class="task-item" data-date="2026-06-03T12:00" data-minutes="3">
-                    <div class="task-view">
-                        <div class="task-top-row">
-                            <input type="checkbox" class="task-checkbox" onclick="toggleComplete(this)">
-                            <span class="task-text">サークルの出欠連絡を入れる</span>
-                        </div>
-                        <div class="task-memo-box">メモ：来週の懇親会、遅れて参加する旨を伝える。</div>
-                        <div class="task-bottom-row">
-                            <div class="badges-group">
-                                <div class="badges-inline">
-                                    <span class="task-deadline">締切: 6/3(水) 12:00</span>
-                                    <span class="task-time">3分</span>
-                                </div>
-                                <button class="memo-toggle-btn" onclick="toggleMemo(this)">メモを表示</button>
-                            </div>
-                            <div class="buttons-group">
-                                <button class="btn edit-btn" onclick="startEdit(this)">編集</button>
-                                <button class="trash-btn" onclick="openDeleteModal(this)">🗑</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="task-edit-form">
-                        <span class="edit-label">タスク名</span>
-                        <input type="text" class="edit-input edit-name" value="サークルの出欠連絡を入れる">
-                        <span class="edit-label">締め切り</span>
-                        <input type="datetime-local" class="edit-input edit-date" value="2026-06-03T12:00">
-                        <span class="edit-label">予定時間</span>
-                        <div class="inline-container">
-                            <div class="select-group"><select class="edit-select edit-hours"
-                                    data-default="0"></select>時間</div>
-                            <div class="select-group"><select class="edit-select edit-minutes"
-                                    data-default="3"></select>分</div>
-                        </div>
-                        <span class="edit-label">一言メモ</span>
-                        <input type="text" class="edit-input edit-memo" value="来週の懇親会、遅れて参加する旨を伝える。">
-                        <button class="btn save-btn" onclick="saveEdit(this)">保存する</button>
-                    </div>
-                </li>
-
-                <li class="task-item" data-date="2026-06-10T16:45" data-minutes="10">
-                    <div class="task-view">
-                        <div class="task-top-row">
-                            <input type="checkbox" class="task-checkbox" onclick="toggleComplete(this)">
-                            <span class="task-text">履修登録の最終確認</span>
-                        </div>
-                        <div class="task-memo-box">メモ：エラーが出ていないか、学務システムを確認。</div>
-                        <div class="task-bottom-row">
-                            <div class="badges-group">
-                                <div class="badges-inline">
-                                    <span class="task-deadline">締切: 6/10(水) 16:45</span>
-                                    <span class="task-time">10分</span>
-                                </div>
-                                <button class="memo-toggle-btn" onclick="toggleMemo(this)">メモを表示</button>
-                            </div>
-                            <div class="buttons-group">
-                                <button class="btn edit-btn" onclick="startEdit(this)">編集</button>
-                                <button class="trash-btn" onclick="openDeleteModal(this)">🗑</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="task-edit-form">
-                        <span class="edit-label">タスク名</span>
-                        <input type="text" class="edit-input edit-name" value="履修登録の最終確認">
-                        <span class="edit-label">締め切り</span>
-                        <input type="datetime-local" class="edit-input edit-date" value="2026-06-10T16:45">
-                        <span class="edit-label">予定時間</span>
-                        <div class="inline-container">
-                            <div class="select-group"><select class="edit-select edit-hours"
-                                    data-default="0"></select>時間</div>
-                            <div class="select-group"><select class="edit-select edit-minutes"
-                                    data-default="10"></select>分</div>
-                        </div>
-                        <span class="edit-label">一言メモ</span>
-                        <input type="text" class="edit-input edit-memo" value="エラーが出ていないか、学務システムを確認。">
-                        <button class="btn save-btn" onclick="saveEdit(this)">保存する</button>
-                    </div>
-                </li>
-
-                <li class="task-item" data-date="2026-06-05T21:00" data-minutes="5">
-                    <div class="task-view">
-                        <div class="task-top-row">
-                            <input type="checkbox" class="task-checkbox" onclick="toggleComplete(this)">
-                            <span class="task-text">バイトのシフト希望提出</span>
-                        </div>
-                        <div class="task-memo-box">メモ：後半はテスト期間に入るから少なめで出す。</div>
-                        <div class="task-bottom-row">
-                            <div class="badges-group">
-                                <div class="badges-inline">
-                                    <span class="task-deadline">締切: 6/5(金) 21:00</span>
-                                    <span class="task-time">5分</span>
-                                </div>
-                                <button class="memo-toggle-btn" onclick="toggleMemo(this)">メモを表示</button>
-                            </div>
-                            <div class="buttons-group">
-                                <button class="btn edit-btn" onclick="startEdit(this)">編集</button>
-                                <button class="trash-btn" onclick="openDeleteModal(this)">🗑</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="task-edit-form">
-                        <span class="edit-label">タスク名</span>
-                        <input type="text" class="edit-input edit-name" value="バイトのシフト希望提出">
-                        <span class="edit-label">締め切り</span>
-                        <input type="datetime-local" class="edit-input edit-date" value="2026-06-05T21:00">
-                        <span class="edit-label">予定時間</span>
-                        <div class="inline-container">
-                            <div class="select-group"><select class="edit-select edit-hours"
-                                    data-default="0"></select>時間</div>
-                            <div class="select-group"><select class="edit-select edit-minutes"
-                                    data-default="5"></select>分</div>
-                        </div>
-                        <span class="edit-label">一言メモ</span>
-                        <input type="text" class="edit-input edit-memo" value="後半はテスト期間に入るから少なめで出す。">
-                        <button class="btn save-btn" onclick="saveEdit(this)">保存する</button>
-                    </div>
-                </li>
-
-                <li class="task-item" data-date="2026-06-08T15:00" data-minutes="60">
-                    <div class="task-view">
-                        <div class="task-top-row">
-                            <input type="checkbox" class="task-checkbox" onclick="toggleComplete(this)">
-                            <span class="task-text">デザイン思考の課題リサーチ</span>
-                        </div>
-                        <div class="task-memo-box">メモ：ターゲットユーザーへのインタビュー項目を3つ考える。</div>
-                        <div class="task-bottom-row">
-                            <div class="badges-group">
-                                <div class="badges-inline">
-                                    <span class="task-deadline">締切: 6/8(月) 15:00</span>
-                                    <span class="task-time">1時間</span>
-                                </div>
-                                <button class="memo-toggle-btn" onclick="toggleMemo(this)">メモを表示</button>
-                            </div>
-                            <div class="buttons-group">
-                                <button class="btn edit-btn" onclick="startEdit(this)">編集</button>
-                                <button class="trash-btn" onclick="openDeleteModal(this)">🗑</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="task-edit-form">
-                        <span class="edit-label">タスク名</span>
-                        <input type="text" class="edit-input edit-name" value="デザイン思考の課題リサーチ">
-                        <span class="edit-label">締め切り</span>
-                        <input type="datetime-local" class="edit-input edit-date" value="2026-06-08T15:00">
-                        <span class="edit-label">予定時間</span>
-                        <div class="inline-container">
-                            <div class="select-group"><select class="edit-select edit-hours"
-                                    data-default="1"></select>時間</div>
-                            <div class="select-group"><select class="edit-select edit-minutes"
-                                    data-default="0"></select>分</div>
-                        </div>
-                        <span class="edit-label">一言メモ</span>
-                        <input type="text" class="edit-input edit-memo" value="ターゲットユーザーへのインタビュー項目を3つ考える。">
-                        <button class="btn save-btn" onclick="saveEdit(this)">保存する</button>
-                    </div>
-                </li>
-
-            </ul>
-
-            <div class="section-title" id="completed-section">完了したタスク</div>
-            <ul id="completed-list" class="task-list"></ul>
-        </div>
-
-        <a href="register.html" class="add-button">＋</a>
-
-        <div id="delete-modal" class="modal-overlay">
-            <div class="modal-box">
-                <div class="modal-title">本当にタスクを削除しますか？</div>
-                <div class="modal-buttons">
-                    <button class="modal-btn modal-cancel" onclick="closeDeleteModal()">キャンセル</button>
-                    <button class="modal-btn modal-confirm" onclick="executeDelete()">削除する</button>
-                </div>
-            </div>
-        </div>
-
+    <div class="pc-info">
+        <h2>Timeline App</h2>
+        <p>「Structured」アプリにインスパイアされた、クリーンで視覚的なデイリープランナーのプロトタイプです。</p>
+        <ul>
+            <li>タスクリスト画面で、締切や所要時間に合わせてタスクを整理・管理できます。</li>
+            <li>項目をクリックするとポップアップが開き、タスクの編集・登録・削除が可能です。</li>
+        </ul>
+        <p style="margin-top: 24px; font-size: 12px; color: #64748b;">※スマホ実機やデベロッパーツールで開くと、全画面表示のスマホUIになります。</p>
     </div>
 
-    <script { "type" : "uploaded file" , "fileName" : "image_b80ca5.png" }>
-        window.addEventListener('DOMContentLoaded', () => {
-            const hourSelects = document.querySelectorAll('.edit-hours');
-            const minuteSelects = document.querySelectorAll('.edit-minutes');
+    <!-- スマホ本体フレーム -->
+    <div class="phone-frame">
+        <div class="phone-notch"></div>
 
-            hourSelects.forEach(select => {
-                const defaultVal = select.getAttribute('data-default');
-                for (let i = 0; i <= 23; i++) {
-                    let opt = document.createElement('option');
-                    opt.value = i; opt.textContent = i;
-                    if (i == defaultVal) opt.selected = true;
-                    select.appendChild(opt);
-                }
+        <!-- 仮想ステータスバー -->
+        <div class="status-bar">
+            <span>9:41</span>
+            <div class="right-icons">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                    <path
+                        d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.07 19.58 10.48 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z" />
+                </svg>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                    <path
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                </svg>
+            </div>
+        </div>
+
+        <!-- サイドバー (TimeTree風ドロワー) -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+        <div class="sidebar-drawer" id="sidebar-drawer">
+            <div class="sidebar-header">
+                <span class="sidebar-logo">Timeline</span>
+                <button class="sidebar-close-btn" id="sidebar-close-btn" aria-label="閉じる">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="sidebar-profile">
+                <div class="profile-avatar">KH</div>
+                <div class="profile-info">
+                    <span class="profile-name">肥後 佳苗</span>
+                    <span class="profile-role">大学開発メンバー</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="Kanae_dailymain.html" class="nav-item">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-text">デイリーカレンダー</span>
+                </a>
+                <a href="Mizuki_Monthlymain.html" class="nav-item">
+                    <span class="nav-icon">🗓️</span>
+                    <span class="nav-text">月間カレンダー</span>
+                </a>
+                <a href="Yuuka_task.html" class="nav-item active">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-text">タスクリスト</span>
+                </a>
+                <div class="sidebar-divider"></div>
+                <a href="register.html" class="nav-item">
+                    <span class="nav-icon">➕</span>
+                    <span class="nav-text">新規予定の登録</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <span>Timeline App v1.0.0</span>
+            </div>
+        </div>
+
+        <div class="app-container">
+            <!-- アプリヘッダー -->
+            <header class="app-header">
+                <div class="header-top">
+                    <button class="icon-btn" id="menu-toggle-btn" aria-label="メニュー" style="margin-right: 8px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                    <span class="app-logo" style="flex: 1;">Timeline</span>
+                    <div class="header-icons">
+                        <button class="jump-btn" onclick="scrollToCompleted()"
+                            style="font-size: 11px; padding: 4px 8px; border-radius: 12px; background: #e0e7ff; color: #4f46e5; border: none; font-weight: bold; cursor: pointer; transition: all 0.2s ease;">完了タスク
+                            ⬇</button>
+                    </div>
+                </div>
+
+                <div class="date-container">
+                    <div class="date-title">
+                        <h1 style="font-size: 24px; font-weight: 800; color: var(--text-main); margin: 0;">3年前期</h1>
+                    </div>
+                </div>
+            </header>
+
+            <div class="task-container" id="scroll-container">
+                <div class="control-bar">
+                    <div class="sort-tag-wrapper">
+                        <span class="sort-tag">期限順に並べ替え済み ▴</span>
+                    </div>
+                    <select class="sort-select" onchange="sortTasks(this.value)">
+                        <option value="deadline">締め切り順</option>
+                        <option value="time-asc">時間（短い順）</option>
+                        <option value="time-desc">時間（長い順）</option>
+                    </select>
+                </div>
+
+                <ul id="task-list" class="task-list">
+                    <li class="task-item" data-date="2026-06-03T23:59" data-minutes="30"
+                        data-memo="教授のメールにPDF形式で添付して提出すること。" onclick="openTaskModal(this, event)">
+                        <div class="task-view-slim">
+                            <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
+                                <input type="checkbox" class="task-checkbox"
+                                    onclick="toggleComplete(this); event.stopPropagation();">
+                                <span class="todo-checkbox-circle"></span>
+                            </label>
+                            <div class="todo-content">
+                                <span class="task-text">経済学のレポートを出す</span>
+                                <span class="task-deadline-slim">📅 6/3 23:59</span>
+                            </div>
+                            <button class="todo-star-btn"
+                                onclick="toggleStar(this); event.stopPropagation();">☆</button>
+                        </div>
+                    </li>
+                    <li class="task-item" data-date="2026-06-05T12:00" data-minutes="45"
+                        data-memo="3C分析のページを重点的に読み込んでおく。" onclick="openTaskModal(this, event)">
+                        <div class="task-view-slim">
+                            <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
+                                <input type="checkbox" class="task-checkbox"
+                                    onclick="toggleComplete(this); event.stopPropagation();">
+                                <span class="todo-checkbox-circle"></span>
+                            </label>
+                            <div class="todo-content">
+                                <span class="task-text">マーケティングの教科書3章を読む</span>
+                                <span class="task-deadline-slim">📅 6/5 12:00</span>
+                            </div>
+                            <button class="todo-star-btn"
+                                onclick="toggleStar(this); event.stopPropagation();">☆</button>
+                        </div>
+                    </li>
+                    <li class="task-item" data-date="2026-06-04T10:00" data-minutes="5"
+                        data-memo="スプリント1の決定事項をLINEのノートに貼る。" onclick="openTaskModal(this, event)">
+                        <div class="task-view-slim">
+                            <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
+                                <input type="checkbox" class="task-checkbox"
+                                    onclick="toggleComplete(this); event.stopPropagation();">
+                                <span class="todo-checkbox-circle"></span>
+                            </label>
+                            <div class="todo-content">
+                                <span class="task-text">グループワークの議事録共有</span>
+                                <span class="task-deadline-slim">📅 6/4 10:00</span>
+                            </div>
+                            <button class="todo-star-btn"
+                                onclick="toggleStar(this); event.stopPropagation();">☆</button>
+                        </div>
+                    </li>
+                    <li class="task-item" data-date="2026-06-03T12:00" data-minutes="3" data-memo="来週の懇親会、遅れて参加する旨を伝える。"
+                        onclick="openTaskModal(this, event)">
+                        <div class="task-view-slim">
+                            <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
+                                <input type="checkbox" class="task-checkbox"
+                                    onclick="toggleComplete(this); event.stopPropagation();">
+                                <span class="todo-checkbox-circle"></span>
+                            </label>
+                            <div class="todo-content">
+                                <span class="task-text">サークルの出欠連絡を入れる</span>
+                                <span class="task-deadline-slim">📅 6/3 12:00</span>
+                            </div>
+                            <button class="todo-star-btn"
+                                onclick="toggleStar(this); event.stopPropagation();">☆</button>
+                        </div>
+                    </li>
+                    <li class="task-item" data-date="2026-06-10T16:45" data-minutes="10"
+                        data-memo="エラーが出ていないか、学務システムを確認。" onclick="openTaskModal(this, event)">
+                        <div class="task-view-slim">
+                            <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
+                                <input type="checkbox" class="task-checkbox"
+                                    onclick="toggleComplete(this); event.stopPropagation();">
+                                <span class="todo-checkbox-circle"></span>
+                            </label>
+                            <div class="todo-content">
+                                <span class="task-text">履修登録の最終確認</span>
+                                <span class="task-deadline-slim">📅 6/10 16:45</span>
+                            </div>
+                            <button class="todo-star-btn"
+                                onclick="toggleStar(this); event.stopPropagation();">☆</button>
+                        </div>
+                    </li>
+                    <li class="task-item" data-date="2026-06-05T21:00" data-minutes="5" data-memo="後半はテスト期間に入るから少なめで出す。"
+                        onclick="openTaskModal(this, event)">
+                        <div class="task-view-slim">
+                            <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
+                                <input type="checkbox" class="task-checkbox"
+                                    onclick="toggleComplete(this); event.stopPropagation();">
+                                <span class="todo-checkbox-circle"></span>
+                            </label>
+                            <div class="todo-content">
+                                <span class="task-text">バイトのシフト希望提出</span>
+                                <span class="task-deadline-slim">📅 6/5 21:00</span>
+                            </div>
+                            <button class="todo-star-btn"
+                                onclick="toggleStar(this); event.stopPropagation();">☆</button>
+                        </div>
+                    </li>
+                    <li class="task-item" data-date="2026-06-08T15:00" data-minutes="60"
+                        data-memo="ターゲットユーザーへのインタビュー項目を3つ考える。" onclick="openTaskModal(this, event)">
+                        <div class="task-view-slim">
+                            <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
+                                <input type="checkbox" class="task-checkbox"
+                                    onclick="toggleComplete(this); event.stopPropagation();">
+                                <span class="todo-checkbox-circle"></span>
+                            </label>
+                            <div class="todo-content">
+                                <span class="task-text">デザイン思考の課題リサーチ</span>
+                                <span class="task-deadline-slim">📅 6/8 15:00</span>
+                            </div>
+                            <button class="todo-star-btn"
+                                onclick="toggleStar(this); event.stopPropagation();">☆</button>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="completed-header" onclick="toggleCompletedSection()">
+                    <span class="completed-arrow" id="completed-arrow">∨</span>
+                    <span class="completed-title">完了済み</span>
+                </div>
+                <ul id="completed-list" class="task-list"></ul>
+            </div>
+
+            <!-- 予定追加ボタン (FAB) -> モーダルを開くように変更 -->
+            <a href="javascript:void(0)" class="fab-btn" aria-label="予定を追加" onclick="openNewTaskModal()">
+                <svg viewBox="0 0 24 24">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+            </a>
+
+            <!-- 新規登録・編集用ポップアップモーダル -->
+            <div id="task-form-modal" class="modal-overlay">
+                <div class="modal-box task-modal-box">
+                    <div class="modal-header">
+                        <h3 id="modal-title-text">タスクの編集</h3>
+                        <button class="modal-close-btn" onclick="closeTaskModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="modal-label">タスク名</label>
+                            <input type="text" id="modal-task-name" class="modal-input" placeholder="タスク名を入力">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="modal-label">締め切り</label>
+                            <input type="datetime-local" id="modal-task-date" class="modal-input">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="modal-label">予定時間</label>
+                            <div class="modal-time-inputs">
+                                <select id="modal-task-hours" class="modal-select"></select>時間
+                                <select id="modal-task-minutes" class="modal-select"></select>分
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="modal-label">一言メモ</label>
+                            <input type="text" id="modal-task-memo" class="modal-input" placeholder="メモを入力">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="modal-btn modal-delete-btn" id="modal-delete-btn"
+                            onclick="deleteFromModal()">削除</button>
+                        <button class="modal-btn modal-save-btn" onclick="saveFromModal()">保存</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- iOS風ホームインジケータ -->
+            <div class="phone-home-indicator"></div>
+        </div>
+    </div>
+
+    <script>
+        // サイドバーの開閉イベント設定
+        function initSidebar() {
+            const drawer = document.getElementById('sidebar-drawer');
+            const overlay = document.getElementById('sidebar-overlay');
+            const openBtn = document.getElementById('menu-toggle-btn');
+            const closeBtn = document.getElementById('sidebar-close-btn');
+
+            if (!drawer || !overlay || !openBtn || !closeBtn) return;
+
+            openBtn.addEventListener('click', () => {
+                drawer.classList.add('active');
+                overlay.classList.add('active');
             });
 
-            minuteSelects.forEach(select => {
-                const defaultVal = select.getAttribute('data-default');
-                for (let i = 0; i <= 60; i++) {
-                    let opt = document.createElement('option');
-                    opt.value = i; opt.textContent = i;
-                    if (i == defaultVal) opt.selected = true;
-                    select.appendChild(opt);
+            closeBtn.addEventListener('click', () => {
+                drawer.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+
+            overlay.addEventListener('click', () => {
+                drawer.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        }
+
+        // 時間・分のセレクトボックス生成
+        function initTimeSelects() {
+            const hourSelect = document.getElementById('modal-task-hours');
+            const minuteSelect = document.getElementById('modal-task-minutes');
+
+            hourSelect.innerHTML = '';
+            minuteSelect.innerHTML = '';
+
+            for (let i = 0; i <= 23; i++) {
+                let opt = document.createElement('option');
+                opt.value = i; opt.textContent = i;
+                hourSelect.appendChild(opt);
+            }
+
+            for (let i = 0; i <= 59; i++) {
+                let opt = document.createElement('option');
+                opt.value = i; opt.textContent = i;
+                minuteSelect.appendChild(opt);
+            }
+        }
+
+        let currentEditingItem = null;
+
+        // モーダルを開く（編集モード）
+        function openTaskModal(taskItem, event) {
+            currentEditingItem = taskItem;
+
+            document.getElementById('modal-title-text').textContent = 'タスクの編集';
+            document.getElementById('modal-delete-btn').style.display = 'block';
+
+            // データの読み込み
+            const title = taskItem.querySelector('.task-text').textContent;
+            const dateVal = taskItem.getAttribute('data-date') || '';
+            const minutesVal = parseInt(taskItem.getAttribute('data-minutes') || 0);
+            const memo = taskItem.getAttribute('data-memo') || '';
+
+            document.getElementById('modal-task-name').value = title;
+            document.getElementById('modal-task-date').value = dateVal;
+            document.getElementById('modal-task-memo').value = memo;
+
+            const h = Math.floor(minutesVal / 60);
+            const m = minutesVal % 60;
+            document.getElementById('modal-task-hours').value = h;
+            document.getElementById('modal-task-minutes').value = m;
+
+            document.getElementById('task-form-modal').classList.add('active');
+        }
+
+        // モーダルを開く（新規登録モード）
+        function openNewTaskModal() {
+            currentEditingItem = null;
+
+            document.getElementById('modal-title-text').textContent = 'タスクの登録';
+            document.getElementById('modal-delete-btn').style.display = 'none';
+
+            // フォームのクリア
+            document.getElementById('modal-task-name').value = '';
+
+            // デフォルトの日付を設定 (現在時刻)
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('modal-task-date').value = now.toISOString().slice(0, 16);
+
+            document.getElementById('modal-task-memo').value = '';
+            document.getElementById('modal-task-hours').value = 0;
+            document.getElementById('modal-task-minutes').value = 30; // デフォルト30分
+
+            document.getElementById('task-form-modal').classList.add('active');
+        }
+
+        // モーダルを閉じる
+        function closeTaskModal() {
+            document.getElementById('task-form-modal').classList.remove('active');
+            currentEditingItem = null;
+        }
+
+        // モーダルから削除
+        function deleteFromModal() {
+            if (currentEditingItem) {
+                currentEditingItem.remove();
+            }
+            closeTaskModal();
+        }
+
+        // 日付のフォーマットユーティリティ (例: "2026-06-03T23:59" -> "6/3 23:59")
+        function formatDeadline(rawDateTime) {
+            if (!rawDateTime) return '';
+            const dateObj = new Date(rawDateTime);
+            const month = dateObj.getMonth() + 1;
+            const date = dateObj.getDate();
+            const hours = String(dateObj.getHours()).padStart(2, '0');
+            const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+            return `📅 ${month}/${date} ${hours}:${minutes}`;
+        }
+
+        // モーダルから保存
+        function saveFromModal() {
+            const title = document.getElementById('modal-task-name').value || '無題のタスク';
+            const dateVal = document.getElementById('modal-task-date').value;
+            const hours = parseInt(document.getElementById('modal-task-hours').value || 0);
+            const minutes = parseInt(document.getElementById('modal-task-minutes').value || 0);
+            const totalMinutes = (hours * 60) + minutes;
+            const memo = document.getElementById('modal-task-memo').value;
+
+            if (currentEditingItem) {
+                // 既存の編集
+                currentEditingItem.setAttribute('data-date', dateVal);
+                currentEditingItem.setAttribute('data-minutes', totalMinutes);
+                currentEditingItem.setAttribute('data-memo', memo);
+
+                currentEditingItem.querySelector('.task-text').textContent = title;
+                currentEditingItem.querySelector('.task-deadline-slim').textContent = formatDeadline(dateVal);
+            } else {
+                // 新規登録
+                const list = document.getElementById('task-list');
+                const newItem = document.createElement('li');
+                newItem.className = 'task-item';
+                newItem.setAttribute('data-date', dateVal);
+                newItem.setAttribute('data-minutes', totalMinutes);
+                newItem.setAttribute('data-memo', memo);
+                newItem.onclick = function (e) { openTaskModal(newItem, e); };
+
+                newItem.innerHTML = `
+                    <div class="task-view-slim">
+                        <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
+                            <input type="checkbox" class="task-checkbox" onclick="toggleComplete(this); event.stopPropagation();">
+                            <span class="todo-checkbox-circle"></span>
+                        </label>
+                        <div class="todo-content">
+                            <span class="task-text">${title}</span>
+                            <span class="task-deadline-slim">${formatDeadline(dateVal)}</span>
+                        </div>
+                        <button class="todo-star-btn" onclick="toggleStar(this); event.stopPropagation();">☆</button>
+                    </div>
+                `;
+                list.appendChild(newItem);
+            }
+
+            closeTaskModal();
+            const sortSelect = document.querySelector('.sort-select');
+            sortTasks(sortSelect.value);
+        }
+
+        // 星マーク（重要度）のトグル処理
+        function toggleStar(button) {
+            button.classList.toggle('active');
+            if (button.classList.contains('active')) {
+                button.textContent = '★';
+            } else {
+                button.textContent = '☆';
+            }
+        }
+
+        // 完了済みセクションの折りたたみトグル
+        function toggleCompletedSection() {
+            const list = document.getElementById('completed-list');
+            const arrow = document.getElementById('completed-arrow');
+            if (list.style.display === 'none') {
+                list.style.display = 'block';
+                arrow.textContent = '∨';
+            } else {
+                list.style.display = 'none';
+                arrow.textContent = '＞';
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initSidebar();
+            initTimeSelects();
+
+            // モーダルの背景（オーバーレイ）をクリックした時に閉じる
+            const modalOverlay = document.getElementById('task-form-modal');
+            if (modalOverlay) {
+                modalOverlay.addEventListener('click', (e) => {
+                    if (e.target === modalOverlay) {
+                        closeTaskModal();
+                    }
+                });
+            }
+
+            // 初期タスクの締切表記をスリムな形式にフォーマットする
+            document.querySelectorAll('.task-item').forEach(item => {
+                const rawDate = item.getAttribute('data-date');
+                if (rawDate) {
+                    item.querySelector('.task-deadline-slim').textContent = formatDeadline(rawDate);
                 }
             });
         });
 
         function scrollToCompleted() {
             const section = document.getElementById('completed-section');
+            if (document.getElementById('completed-list').style.display === 'none') {
+                toggleCompletedSection();
+            }
             section.scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -376,116 +548,20 @@
             items.forEach(item => list.appendChild(item));
         }
 
-        function toggleMemo(button) {
-            let taskItem = button.closest('.task-item');
-            let memoBox = taskItem.querySelector('.task-memo-box');
-
-            if (memoBox.style.display === 'block') {
-                memoBox.style.display = 'none';
-                button.textContent = 'メモを表示';
-            } else {
-                memoBox.style.display = 'block';
-                button.textContent = 'メモを閉じる';
-            }
-        }
-
         function toggleComplete(checkbox) {
             let taskItem = checkbox.closest('.task-item');
-            let taskView = checkbox.closest('.task-view');
-            let editBtn = taskView.querySelector('.edit-btn');
 
             if (checkbox.checked) {
                 document.getElementById('completed-list').appendChild(taskItem);
                 taskItem.classList.add('completed');
-                editBtn.style.display = 'none';
-                taskItem.querySelector('.task-memo-box').style.display = 'none';
-                taskView.querySelector('.memo-toggle-btn').textContent = 'メモを表示';
             } else {
                 document.getElementById('task-list').appendChild(taskItem);
                 taskItem.classList.remove('completed');
-                editBtn.style.display = 'inline-block';
                 const sortSelect = document.querySelector('.sort-select');
                 sortTasks(sortSelect.value);
             }
         }
-
-        function startEdit(button) {
-            let taskItem = button.closest('.task-item');
-            taskItem.querySelector('.task-view').style.display = 'none';
-            taskItem.querySelector('.task-edit-form').style.display = 'flex';
-        }
-
-        function saveEdit(button) {
-            let taskItem = button.closest('.task-item');
-            let view = taskItem.querySelector('.task-view');
-            let form = taskItem.querySelector('.task-edit-form');
-
-            let rawDateTime = form.querySelector('.edit-date').value;
-            let formattedDeadline = "締切: なし";
-
-            if (rawDateTime) {
-                let dateObj = new Date(rawDateTime);
-                let month = dateObj.getMonth() + 1;
-                let date = dateObj.getDate();
-                let hours = String(dateObj.getHours()).padStart(2, '0');
-                let minutes = String(dateObj.getMinutes()).padStart(2, '0');
-
-                let dayOfWeekStr = ["日", "月", "火", "水", "木", "金", "土"];
-                let dayStr = dayOfWeekStr[dateObj.getDay()];
-
-                formattedDeadline = `締切: ${month}/${date}(${dayStr}) ${hours}:${minutes}`;
-                taskItem.setAttribute('data-date', rawDateTime);
-            }
-
-            let h = parseInt(form.querySelector('.edit-hours').value || 0);
-            let m = parseInt(form.querySelector('.edit-minutes').value || 0);
-            let formattedTime = "なし";
-            let totalMinutes = (h * 60) + m;
-
-            taskItem.setAttribute('data-minutes', totalMinutes);
-
-            if (h > 0 && m > 0) {
-                formattedTime = `${h}時間${m}分`;
-            } else if (h > 0 && m === 0) {
-                formattedTime = `${h}時間`;
-            } else if (h === 0 && m > 0) {
-                formattedTime = `${m}分`;
-            } else {
-                formattedTime = `0分`;
-            }
-
-            view.querySelector('.task-text').textContent = form.querySelector('.edit-name').value;
-            view.querySelector('.task-deadline').textContent = formattedDeadline;
-            view.querySelector('.task-time').textContent = formattedTime;
-            view.querySelector('.task-memo-box').textContent = 'メモ：' + form.querySelector('.edit-memo').value;
-
-            form.style.display = 'none';
-            view.style.display = 'flex';
-
-            const sortSelect = document.querySelector('.sort-select');
-            sortTasks(sortSelect.value);
-        }
-
-        let currentTargetTaskItem = null;
-
-        function openDeleteModal(button) {
-            currentTargetTaskItem = button.closest('.task-item');
-            document.getElementById('delete-modal').style.display = 'flex';
-        }
-
-        function closeDeleteModal() {
-            document.getElementById('delete-modal').style.display = 'none';
-            currentTargetTaskItem = null;
-        }
-
-        function executeDelete() {
-            if (currentTargetTaskItem) {
-                currentTargetTaskItem.remove();
-            }
-            closeDeleteModal();
-        }
     </script>
-
 </body>
 
 </html>
