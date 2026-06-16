@@ -8,7 +8,9 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="0602_all.css">
 </head>
 
@@ -45,7 +47,8 @@
 
         <div class="app-container">
             <div class="header">
-                <button class="cancel-btn" onclick="window.history.length > 1 ? window.history.back() : window.location.href = 'Kanae_dailymain.html'">✕</button>
+                <button class="cancel-btn"
+                    onclick="window.history.length > 1 ? window.history.back() : window.location.href = 'Kanae_dailymain.html'">✕</button>
                 <h1>新規</h1>
                 <button class="save-btn" id="saveBtn">保存</button>
             </div>
@@ -55,38 +58,38 @@
                 <button class="segment-btn">リマインダー</button>
             </div>
 
-        <div class="card">
-            <div class="form-row">
-                <input type="text" id="taskTitle" placeholder="タイトル" value="おきる">
+            <div class="card">
+                <div class="form-row">
+                    <input type="text" id="taskTitle" placeholder="タイトル" value="おきる">
+                </div>
+                <div class="form-row">
+                    <input type="text" id="taskLocation" placeholder="場所またはビデオ通話">
+                </div>
             </div>
-            <div class="form-row">
-                <input type="text" id="taskLocation" placeholder="場所またはビデオ通話">
-            </div>
-        </div>
 
-        <div class="card">
-            <div class="form-row">
-                <label>終日</label>
-                <label class="switch">
-                    <input type="checkbox" id="allDayToggle">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="form-row">
-                <label>開始</label>
-                <div class="date-time-inputs">
-                    <input type="date" id="startDate" value="2026-06-02">
-                    <input type="time" id="startTime" value="10:00">
+            <div class="card">
+                <div class="form-row">
+                    <label>終日</label>
+                    <label class="switch">
+                        <input type="checkbox" id="allDayToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label>開始</label>
+                    <div class="date-time-inputs">
+                        <input type="date" id="startDate" value="2026-06-02">
+                        <input type="time" id="startTime" value="10:00">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label>終了</label>
+                    <div class="date-time-inputs">
+                        <input type="date" id="endDate" value="2026-06-02">
+                        <input type="time" id="endTime" value="11:00">
+                    </div>
                 </div>
             </div>
-            <div class="form-row">
-                <label>終了</label>
-                <div class="date-time-inputs">
-                    <input type="date" id="endDate" value="2026-06-02">
-                    <input type="time" id="endTime" value="11:00">
-                </div>
-            </div>
-        </div>
             <!-- iOS風ホームインジケータ -->
             <div class="phone-home-indicator"></div>
         </div>

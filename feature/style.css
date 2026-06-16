@@ -1498,7 +1498,8 @@ body.monthly-main-page:not(.daily-main-page) {
         justify-content: center;
         width: 32px;
         height: 32px;
-        background-color: #fff0f1; /* 非常に淡いピンク背景 */
+        background-color: #fff0f1;
+        /* 非常に淡いピンク背景 */
         border-radius: 8px;
         flex-shrink: 0;
     }
@@ -1521,7 +1522,7 @@ body.monthly-main-page:not(.daily-main-page) {
             height: 0;
             width: 0;
 
-            &:checked ~ .todo-checkbox-circle {
+            &:checked~.todo-checkbox-circle {
                 background-color: transparent;
                 border-color: #94a3b8;
 
