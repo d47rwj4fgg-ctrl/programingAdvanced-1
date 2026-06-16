@@ -150,12 +150,7 @@
                     <button class="modal-close-btn" onclick="closeScheduleModal()">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <div class="segmented-control" style="margin-bottom: 8px;">
-                        <button class="segment-btn active" id="segment-btn-event"
-                            onclick="setScheduleType('event')">予定</button>
-                        <button class="segment-btn" id="segment-btn-reminder"
-                            onclick="setScheduleType('reminder')">リマインダー</button>
-                    </div>
+
 
                     <div class="form-group">
                         <label class="modal-label">タイトル</label>
@@ -242,13 +237,19 @@
                     label = '明日';
                 }
 
+                const year = d.getFullYear();
+                const mm = String(month).padStart(2, '0');
+                const dd = String(dateNum).padStart(2, '0');
+                const isoDate = `${year}-${mm}-${dd}`;
+
                 weekDays.push({
                     id: i,
                     date: `${month}/${dateNum}`,
                     name: dayNames[i],
                     num: dateNum,
                     fullName: `${month}月${dateNum}日（${dayNames[i]}）`,
-                    label: label
+                    label: label,
+                    isoDate: isoDate
                 });
             }
         }
@@ -643,11 +644,10 @@
 
         // --- 予定登録・編集モーダル制御ロジック ---
         let currentEditingId = null;
-        let currentScheduleType = 'event'; // 'event' or 'reminder'
 
         function openNewScheduleModal() {
             currentEditingId = null;
-            document.getElementById('schedule-modal-title').textContent = '予定の登録';
+            document.getElementById('schedule-modal-title').textContent = '予定 of 登録';
             document.getElementById('schedule-delete-btn').style.display = 'none';
 
             // フォーム初期化
@@ -664,7 +664,6 @@
             document.getElementById('schedule-enddate').value = defaultDate;
             document.getElementById('schedule-endtime').value = '11:00';
 
-            setScheduleType('event');
             toggleAllDay();
 
             document.getElementById('schedule-modal').classList.add('active');
@@ -672,7 +671,7 @@
 
         function openEditScheduleModal(id) {
             currentEditingId = id;
-            document.getElementById('schedule-modal-title').textContent = '予定の編集';
+            document.getElementById('schedule-modal-title').textContent = '予定 of 編集';
             document.getElementById('schedule-delete-btn').style.display = 'block';
 
             const allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
@@ -687,7 +686,6 @@
             document.getElementById('schedule-enddate').value = task.endDate || task.startDate;
             document.getElementById('schedule-endtime').value = task.endTime || '11:00';
 
-            setScheduleType(task.type || 'event');
             toggleAllDay();
 
             document.getElementById('schedule-modal').classList.add('active');
@@ -696,26 +694,6 @@
         function closeScheduleModal() {
             document.getElementById('schedule-modal').classList.remove('active');
             currentEditingId = null;
-        }
-
-        function setScheduleType(type) {
-            currentScheduleType = type;
-            const eventBtn = document.getElementById('segment-btn-event');
-            const reminderBtn = document.getElementById('segment-btn-reminder');
-            const locationGroup = document.getElementById('schedule-location-group');
-            const endGroup = document.getElementById('schedule-end-group');
-
-            if (type === 'event') {
-                eventBtn.classList.add('active');
-                reminderBtn.classList.remove('active');
-                locationGroup.style.display = 'flex';
-                endGroup.style.display = 'flex';
-            } else {
-                eventBtn.classList.remove('active');
-                reminderBtn.classList.add('active');
-                locationGroup.style.display = 'none';
-                endGroup.style.display = 'none';
-            }
         }
 
         function toggleAllDay() {
@@ -743,36 +721,28 @@
             const isAllDay = document.getElementById('schedule-allday').checked;
             const startDate = document.getElementById('schedule-startdate').value;
             const startTime = isAllDay ? '' : document.getElementById('schedule-starttime').value;
-            const endDate = currentScheduleType === 'event' ? document.getElementById('schedule-enddate').value : startDate;
-            const endTime = (currentScheduleType === 'event' && !isAllDay) ? document.getElementById('schedule-endtime').value : '';
+            const endDate = document.getElementById('schedule-enddate').value;
+            const endTime = !isAllDay ? document.getElementById('schedule-endtime').value : '';
 
             // アイコンの設定
             let icon = "📅";
-            if (currentScheduleType === 'reminder') {
-                icon = "🔔";
-            } else {
-                if (title.includes("起床") || title.includes("朝") || title.includes("起き")) icon = "🌅";
-                else if (title.includes("バイト") || title.includes("仕事") || title.includes("勤務")) icon = "💼";
-                else if (title.includes("大学") || title.includes("講義") || title.includes("授業") || title.includes("勉強") || title.includes("自習")) icon = "📚";
-                else if (title.includes("カフェ") || title.includes("友達") || title.includes("しゃべ") || title.includes("コーヒー")) icon = "☕️";
-                else if (title.includes("映画") || title.includes("シネマ")) icon = "🎬";
-                else if (title.includes("電車") || title.includes("移動") || title.includes("通学")) icon = "🚃";
-                else if (title.includes("ジム") || title.includes("トレ") || title.includes("走")) icon = "🏃";
-                else if (title.includes("ヨガ") || title.includes("ストレッチ")) icon = "🧘";
-                else if (title.includes("飯") || title.includes("食") || title.includes("ランチ") || title.includes("ディナー")) icon = "🍔";
-            }
+            if (title.includes("起床") || title.includes("朝") || title.includes("起き")) icon = "🌅";
+            else if (title.includes("バイト") || title.includes("仕事") || title.includes("勤務")) icon = "💼";
+            else if (title.includes("大学") || title.includes("講義") || title.includes("授業") || title.includes("勉強") || title.includes("自習")) icon = "📚";
+            else if (title.includes("カフェ") || title.includes("友達") || title.includes("しゃべ") || title.includes("コーヒー")) icon = "☕️";
+            else if (title.includes("映画") || title.includes("シネマ")) icon = "🎬";
+            else if (title.includes("電車") || title.includes("移動") || title.includes("通学")) icon = "🚃";
+            else if (title.includes("ジム") || title.includes("トレ") || title.includes("走")) icon = "🏃";
+            else if (title.includes("ヨガ") || title.includes("ストレッチ")) icon = "🧘";
+            else if (title.includes("飯") || title.includes("食") || title.includes("ランチ") || title.includes("ディナー")) icon = "🍔";
 
             // タイプの設定
             let type = "routine";
-            if (currentScheduleType === 'reminder') {
-                type = "health"; // リマインダー用のカラーに仮割り当て
-            } else {
-                if (title.includes("バイト") || title.includes("仕事")) type = "work";
-                else if (title.includes("カフェ") || title.includes("友達") || title.includes("飲み") || title.includes("おしゃべり")) type = "social";
-                else if (title.includes("大学") || title.includes("講義") || title.includes("授業") || title.includes("勉強") || title.includes("自習") || title.includes("図書館") || title.includes("レポート")) type = "study";
-                else if (title.includes("ジム") || title.includes("ヨガ") || title.includes("トレ")) type = "health";
-                else if (title.includes("掃除") || title.includes("洗濯") || title.includes("自炊") || title.includes("買い物")) type = "home";
-            }
+            if (title.includes("バイト") || title.includes("仕事")) type = "work";
+            else if (title.includes("カフェ") || title.includes("友達") || title.includes("飲み") || title.includes("おしゃべり")) type = "social";
+            else if (title.includes("大学") || title.includes("講義") || title.includes("授業") || title.includes("勉強") || title.includes("自習") || title.includes("図書館") || title.includes("レポート")) type = "study";
+            else if (title.includes("ジム") || title.includes("ヨガ") || title.includes("トレ")) type = "health";
+            else if (title.includes("掃除") || title.includes("洗濯") || title.includes("自炊") || title.includes("買い物")) type = "home";
 
             let allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
 
@@ -846,6 +816,7 @@
 
         // 初期化処理
         window.addEventListener('DOMContentLoaded', () => {
+            initLocalStorageData(); // localStorage初期化
             setupWeeklyCalendarData(); // 週間データを今日基準で生成
             initCalendar();
             initSidebar();
