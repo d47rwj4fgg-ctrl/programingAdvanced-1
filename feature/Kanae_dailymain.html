@@ -12,7 +12,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="0602_all.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="daily-main-page">
@@ -72,10 +72,6 @@
                     <span class="nav-icon">📅</span>
                     <span class="nav-text">デイリーカレンダー</span>
                 </a>
-                <a href="Mizuki_Monthlymain.html" class="nav-item">
-                    <span class="nav-icon">🗓️</span>
-                    <span class="nav-text">月間カレンダー</span>
-                </a>
                 <a href="Yuuka_task.html" class="nav-item">
                     <span class="nav-icon">📋</span>
                     <span class="nav-text">タスクリスト</span>
@@ -103,7 +99,13 @@
                             <line x1="3" y1="18" x2="21" y2="18"></line>
                         </svg>
                     </button>
-                    <span class="app-logo" style="flex: 1;">Timeline</span>
+                    <div class="header-center-title"
+                        style="flex: 1; text-align: center; display: flex; justify-content: center; align-items: center; gap: 6px;">
+                        <span id="header-date-title"
+                            style="font-weight: 800; font-size: 16px; color: var(--text-main);">6月2日（火）</span>
+                        <span id="header-date-badge" class="day-badge"
+                            style="font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 8px; background-color: #FFE4E6; color: #FF7082; display: none;">今日</span>
+                    </div>
                     <div class="header-icons">
                         <button class="icon-btn" aria-label="通知">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -112,17 +114,6 @@
                                 <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                             </svg>
                         </button>
-                        <button class="icon-btn" aria-label="設定">
-                            <span style="font-size: 12px; font-weight: 800; color: #4f46e5;">KH</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- 動的日付見出し -->
-                <div class="date-container">
-                    <div class="date-title">
-                        <h1 id="active-date-title">6月2日（火）</h1>
-                        <span id="active-date-badge" class="day-badge" style="display: none;">今日</span>
                     </div>
                 </div>
 
@@ -213,16 +204,54 @@
     </div>
 
     <script>
-        // 週間カレンダーデータ (6月1日〜6月7日、月曜スタート)
-        const weekDays = [
-            { id: 0, date: '6/1', name: '月', num: 1, fullName: '6月1日（月）', label: '月曜日', isoDate: '2026-06-01' },
-            { id: 1, date: '6/2', name: '火', num: 2, fullName: '6月2日（火）', label: '今日', isoDate: '2026-06-02' },
-            { id: 2, date: '6/3', name: '水', num: 3, fullName: '6月3日（水）', label: '明日', isoDate: '2026-06-03' },
-            { id: 3, date: '6/4', name: '木', num: 4, fullName: '6月4日（木）', label: '木曜日', isoDate: '2026-06-04' },
-            { id: 4, date: '6/5', name: '金', num: 5, fullName: '6月5日（金）', label: '金曜日', isoDate: '2026-06-05' },
-            { id: 5, date: '6/6', name: '土', num: 6, fullName: '6月6日（土）', label: '土曜日', isoDate: '2026-06-06' },
-            { id: 6, date: '6/7', name: '日', num: 7, fullName: '6月7日（日）', label: '日曜日', isoDate: '2026-06-07' }
-        ];
+        // 週間カレンダーデータ (動的生成)
+        let weekDays = [];
+        let currentActiveDay = 1; // デフォルトのアクティブ曜日インデックス (0: 月, 1: 火, ..., 6: 日)
+
+        function setupWeeklyCalendarData() {
+            const today = new Date();
+            const dayOfWeek = today.getDay(); // 0: 日, 1: 月, ..., 6: 土
+            // 月曜日を週の始まりとするためのオフセット計算
+            const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+
+            const monday = new Date(today);
+            monday.setDate(today.getDate() + diffToMonday);
+
+            const dayNames = ['月', '火', '水', '木', '金', '土', '日'];
+            const labels = ['月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日', '日曜日'];
+
+            weekDays = [];
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(monday);
+                d.setDate(monday.getDate() + i);
+
+                const month = d.getMonth() + 1;
+                const dateNum = d.getDate();
+                const isToday = d.toDateString() === today.toDateString();
+
+                // 明日の判定
+                const tomorrow = new Date(today);
+                tomorrow.setDate(today.getDate() + 1);
+                const isTomorrow = d.toDateString() === tomorrow.toDateString();
+
+                let label = labels[i];
+                if (isToday) {
+                    label = '今日';
+                    currentActiveDay = i;
+                } else if (isTomorrow) {
+                    label = '明日';
+                }
+
+                weekDays.push({
+                    id: i,
+                    date: `${month}/${dateNum}`,
+                    name: dayNames[i],
+                    num: dateNum,
+                    fullName: `${month}月${dateNum}日（${dayNames[i]}）`,
+                    label: label
+                });
+            }
+        }
 
         // 各曜日のスケジュール初期データ
         const schedules = {
@@ -299,8 +328,6 @@
             }
         }
 
-        let currentActiveDay = 1; // 初期値は火曜日 (今日)
-
         // 時間表記を分数に変換 (例: "09:30" -> 570)
         function timeToMinutes(timeStr) {
             if (!timeStr) return 0;
@@ -360,10 +387,10 @@
             currentActiveDay = dayId;
             const dayInfo = weekDays.find(d => d.id === dayId);
 
-            // ヘッダーテキストの更新
-            document.getElementById('active-date-title').textContent = dayInfo.fullName;
+            // ヘッダーテキストの更新 (中央タイトル)
+            document.getElementById('header-date-title').textContent = dayInfo.fullName;
 
-            const badge = document.getElementById('active-date-badge');
+            const badge = document.getElementById('header-date-badge');
             if (dayInfo.label === '今日' || dayInfo.label === '明日') {
                 badge.textContent = dayInfo.label;
                 badge.className = `day-badge ${dayInfo.label === '明日' ? 'tomorrow' : ''}`;
@@ -524,8 +551,11 @@
             const nowIndicator = document.getElementById('now-indicator');
             if (!nowIndicator) return;
 
-            // プロトタイプとして、火曜日（id: 1）を選択している時のみインジケータを表示する
-            if (currentActiveDay !== 1) {
+            // プロトタイプとして、今日を選択している時のみインジケータを表示する
+            const today = new Date();
+            const todayDayOfWeek = today.getDay();
+            const todayIndex = todayDayOfWeek === 0 ? 6 : todayDayOfWeek - 1;
+            if (currentActiveDay !== todayIndex) {
                 nowIndicator.style.display = 'none';
                 return;
             }
@@ -816,10 +846,10 @@
 
         // 初期化処理
         window.addEventListener('DOMContentLoaded', () => {
-            initLocalStorageData(); // localStorage初期化
+            setupWeeklyCalendarData(); // 週間データを今日基準で生成
             initCalendar();
             initSidebar();
-            switchDay(1); // 初期表示は「火曜日」
+            switchDay(currentActiveDay); // 初期表示は今日にする
 
             // インジケータを定期更新 (1秒ごと)
             setInterval(updateNowIndicator, 1000);

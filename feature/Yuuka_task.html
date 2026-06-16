@@ -11,7 +11,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="0602_all.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="daily-main-page task-list-page">
@@ -70,10 +70,6 @@
                     <span class="nav-icon">📅</span>
                     <span class="nav-text">デイリーカレンダー</span>
                 </a>
-                <a href="Mizuki_Monthlymain.html" class="nav-item">
-                    <span class="nav-icon">🗓️</span>
-                    <span class="nav-text">月間カレンダー</span>
-                </a>
                 <a href="Yuuka_task.html" class="nav-item active">
                     <span class="nav-icon">📋</span>
                     <span class="nav-text">タスクリスト</span>
@@ -101,10 +97,10 @@
                             <line x1="3" y1="18" x2="21" y2="18"></line>
                         </svg>
                     </button>
-                    <span class="app-logo" style="flex: 1;">Timeline</span>
+                    <div style="flex: 1;"></div>
                     <div class="header-icons">
                         <button class="jump-btn" onclick="scrollToCompleted()"
-                            style="font-size: 11px; padding: 4px 8px; border-radius: 12px; background: #e0e7ff; color: #4f46e5; border: none; font-weight: bold; cursor: pointer; transition: all 0.2s ease;">完了タスク
+                            style="font-size: 11px; padding: 4px 8px; border-radius: 12px; background: #FFE4E6; color: #FF7082; border: none; font-weight: bold; cursor: pointer; transition: all 0.2s ease;">完了タスク
                             ⬇</button>
                     </div>
                 </div>
@@ -423,6 +419,43 @@
             return `📅 ${month}/${date} ${hours}:${minutes}`;
         }
 
+        // タスクの名前に沿ったピクトグラムの自動選択
+        function getTaskIcon(title) {
+            if (!title) return '📌';
+            const t = title.toLowerCase();
+            if (t.includes('レポート') || t.includes('提出') || t.includes('課題') || t.includes('宿題') || t.includes('テスト') || t.includes('試験') || t.includes('発表')) {
+                return '📝';
+            }
+            if (t.includes('読') || t.includes('読む') || t.includes('教科書') || t.includes('本') || t.includes('テキスト') || t.includes('文献')) {
+                return '📖';
+            }
+            if (t.includes('共有') || t.includes('ミーティング') || t.includes('会議') || t.includes('打ち合わせ') || t.includes('サークル') || t.includes('グループ') || t.includes('相談') || t.includes('対話') || t.includes('話し合い') || t.includes('面談') || t.includes('面接')) {
+                return '👥';
+            }
+            if (t.includes('メール') || t.includes('連絡') || t.includes('確認') || t.includes('返答') || t.includes('返信') || t.includes('送信')) {
+                return '✉️';
+            }
+            if (t.includes('バイト') || t.includes('シフト') || t.includes('仕事') || t.includes('勤務')) {
+                return '💼';
+            }
+            if (t.includes('買い物') || t.includes('スーパー') || t.includes('買う') || t.includes('購入')) {
+                return '🛒';
+            }
+            if (t.includes('掃除') || t.includes('洗濯') || t.includes('片付け') || t.includes('整理')) {
+                return '🧹';
+            }
+            if (t.includes('運動') || t.includes('走') || t.includes('筋トレ') || t.includes('ヨガ') || t.includes('ジム') || t.includes('トレーニング') || t.includes('ランニング')) {
+                return '🏃';
+            }
+            if (t.includes('ライブ') || t.includes('演奏') || t.includes('練習') || t.includes('スタジオ') || t.includes('バンド') || t.includes('音楽') || t.includes('フェス')) {
+                return '🎸';
+            }
+            if (t.includes('ご飯') || t.includes('ランチ') || t.includes('ディナー') || t.includes('飯') || t.includes('食') || t.includes('飲み会') || t.includes('懇親会')) {
+                return '🍔';
+            }
+            return '📌';
+        }
+
         // モーダルから保存
         function saveFromModal() {
             const title = document.getElementById('modal-task-name').value || '無題のタスク';
@@ -440,6 +473,12 @@
 
                 currentEditingItem.querySelector('.task-text').textContent = title;
                 currentEditingItem.querySelector('.task-deadline-slim').textContent = formatDeadline(dateVal);
+
+                // アイコンの自動更新
+                let iconSpan = currentEditingItem.querySelector('.task-item-icon');
+                if (iconSpan) {
+                    iconSpan.textContent = getTaskIcon(title);
+                }
             } else {
                 // 新規登録
                 const list = document.getElementById('task-list');
@@ -450,12 +489,15 @@
                 newItem.setAttribute('data-memo', memo);
                 newItem.onclick = function (e) { openTaskModal(newItem, e); };
 
+                const icon = getTaskIcon(title);
+
                 newItem.innerHTML = `
                     <div class="task-view-slim">
                         <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
                             <input type="checkbox" class="task-checkbox" onclick="toggleComplete(this); event.stopPropagation();">
                             <span class="todo-checkbox-circle"></span>
                         </label>
+                        <span class="task-item-icon">${icon}</span>
                         <div class="todo-content">
                             <span class="task-text">${title}</span>
                             <span class="task-deadline-slim">${formatDeadline(dateVal)}</span>
@@ -508,12 +550,25 @@
                 });
             }
 
-            // 初期タスクの締切表記をスリムな形式にフォーマットする
+            // 初期タスクの締切表記をスリムな形式にフォーマットする、およびアイコンを自動挿入
             document.querySelectorAll('.task-item').forEach(item => {
                 const rawDate = item.getAttribute('data-date');
                 if (rawDate) {
                     item.querySelector('.task-deadline-slim').textContent = formatDeadline(rawDate);
                 }
+
+                // アイコンの自動挿入
+                const title = item.querySelector('.task-text').textContent;
+                const icon = getTaskIcon(title);
+                
+                const checkboxWrapper = item.querySelector('.todo-checkbox-wrapper');
+                let iconSpan = item.querySelector('.task-item-icon');
+                if (!iconSpan) {
+                    iconSpan = document.createElement('span');
+                    iconSpan.className = 'task-item-icon';
+                    checkboxWrapper.parentNode.insertBefore(iconSpan, checkboxWrapper.nextSibling);
+                }
+                iconSpan.textContent = icon;
             });
         });
 
