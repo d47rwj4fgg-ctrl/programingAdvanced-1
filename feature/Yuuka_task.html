@@ -70,18 +70,14 @@
                     <span class="nav-icon">📅</span>
                     <span class="nav-text">デイリーカレンダー</span>
                 </a>
-                <a href="Mizuki_Monthlymain.html" class="nav-item">
-                    <span class="nav-icon">🗓️</span>
-                    <span class="nav-text">月間カレンダー</span>
-                </a>
                 <a href="Yuuka_task.html" class="nav-item active">
                     <span class="nav-icon">📋</span>
                     <span class="nav-text">タスクリスト</span>
                 </a>
                 <div class="sidebar-divider"></div>
-                <a href="register.html" class="nav-item">
+                <a href="javascript:void(0)" onclick="openNewTaskModalFromNav()" class="nav-item">
                     <span class="nav-icon">➕</span>
-                    <span class="nav-text">新規予定の登録</span>
+                    <span class="nav-text">新規タスクの登録</span>
                 </a>
             </nav>
             <div class="sidebar-footer">
@@ -129,129 +125,20 @@
                 </div>
 
                 <ul id="task-list" class="task-list">
-                    <li class="task-item" data-date="2026-06-03T23:59" data-minutes="30"
-                        data-memo="教授のメールにPDF形式で添付して提出すること。" onclick="openTaskModal(this, event)">
-                        <div class="task-view-slim">
-                            <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
-                                <input type="checkbox" class="task-checkbox"
-                                    onclick="toggleComplete(this); event.stopPropagation();">
-                                <span class="todo-checkbox-circle"></span>
-                            </label>
-                            <div class="todo-content">
-                                <span class="task-text">経済学のレポートを出す</span>
-                                <span class="task-deadline-slim">📅 6/3 23:59</span>
-                            </div>
-                            <button class="todo-star-btn"
-                                onclick="toggleStar(this); event.stopPropagation();">☆</button>
-                        </div>
-                    </li>
-                    <li class="task-item" data-date="2026-06-05T12:00" data-minutes="45"
-                        data-memo="3C分析のページを重点的に読み込んでおく。" onclick="openTaskModal(this, event)">
-                        <div class="task-view-slim">
-                            <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
-                                <input type="checkbox" class="task-checkbox"
-                                    onclick="toggleComplete(this); event.stopPropagation();">
-                                <span class="todo-checkbox-circle"></span>
-                            </label>
-                            <div class="todo-content">
-                                <span class="task-text">マーケティングの教科書3章を読む</span>
-                                <span class="task-deadline-slim">📅 6/5 12:00</span>
-                            </div>
-                            <button class="todo-star-btn"
-                                onclick="toggleStar(this); event.stopPropagation();">☆</button>
-                        </div>
-                    </li>
-                    <li class="task-item" data-date="2026-06-04T10:00" data-minutes="5"
-                        data-memo="スプリント1の決定事項をLINEのノートに貼る。" onclick="openTaskModal(this, event)">
-                        <div class="task-view-slim">
-                            <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
-                                <input type="checkbox" class="task-checkbox"
-                                    onclick="toggleComplete(this); event.stopPropagation();">
-                                <span class="todo-checkbox-circle"></span>
-                            </label>
-                            <div class="todo-content">
-                                <span class="task-text">グループワークの議事録共有</span>
-                                <span class="task-deadline-slim">📅 6/4 10:00</span>
-                            </div>
-                            <button class="todo-star-btn"
-                                onclick="toggleStar(this); event.stopPropagation();">☆</button>
-                        </div>
-                    </li>
-                    <li class="task-item" data-date="2026-06-03T12:00" data-minutes="3" data-memo="来週の懇親会、遅れて参加する旨を伝える。"
-                        onclick="openTaskModal(this, event)">
-                        <div class="task-view-slim">
-                            <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
-                                <input type="checkbox" class="task-checkbox"
-                                    onclick="toggleComplete(this); event.stopPropagation();">
-                                <span class="todo-checkbox-circle"></span>
-                            </label>
-                            <div class="todo-content">
-                                <span class="task-text">サークルの出欠連絡を入れる</span>
-                                <span class="task-deadline-slim">📅 6/3 12:00</span>
-                            </div>
-                            <button class="todo-star-btn"
-                                onclick="toggleStar(this); event.stopPropagation();">☆</button>
-                        </div>
-                    </li>
-                    <li class="task-item" data-date="2026-06-10T16:45" data-minutes="10"
-                        data-memo="エラーが出ていないか、学務システムを確認。" onclick="openTaskModal(this, event)">
-                        <div class="task-view-slim">
-                            <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
-                                <input type="checkbox" class="task-checkbox"
-                                    onclick="toggleComplete(this); event.stopPropagation();">
-                                <span class="todo-checkbox-circle"></span>
-                            </label>
-                            <div class="todo-content">
-                                <span class="task-text">履修登録の最終確認</span>
-                                <span class="task-deadline-slim">📅 6/10 16:45</span>
-                            </div>
-                            <button class="todo-star-btn"
-                                onclick="toggleStar(this); event.stopPropagation();">☆</button>
-                        </div>
-                    </li>
-                    <li class="task-item" data-date="2026-06-05T21:00" data-minutes="5" data-memo="後半はテスト期間に入るから少なめで出す。"
-                        onclick="openTaskModal(this, event)">
-                        <div class="task-view-slim">
-                            <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
-                                <input type="checkbox" class="task-checkbox"
-                                    onclick="toggleComplete(this); event.stopPropagation();">
-                                <span class="todo-checkbox-circle"></span>
-                            </label>
-                            <div class="todo-content">
-                                <span class="task-text">バイトのシフト希望提出</span>
-                                <span class="task-deadline-slim">📅 6/5 21:00</span>
-                            </div>
-                            <button class="todo-star-btn"
-                                onclick="toggleStar(this); event.stopPropagation();">☆</button>
-                        </div>
-                    </li>
-                    <li class="task-item" data-date="2026-06-08T15:00" data-minutes="60"
-                        data-memo="ターゲットユーザーへのインタビュー項目を3つ考える。" onclick="openTaskModal(this, event)">
-                        <div class="task-view-slim">
-                            <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
-                                <input type="checkbox" class="task-checkbox"
-                                    onclick="toggleComplete(this); event.stopPropagation();">
-                                <span class="todo-checkbox-circle"></span>
-                            </label>
-                            <div class="todo-content">
-                                <span class="task-text">デザイン思考の課題リサーチ</span>
-                                <span class="task-deadline-slim">📅 6/8 15:00</span>
-                            </div>
-                            <button class="todo-star-btn"
-                                onclick="toggleStar(this); event.stopPropagation();">☆</button>
-                        </div>
-                    </li>
+                    <!-- JavaScriptで動的生成されます -->
                 </ul>
 
                 <div class="completed-header" onclick="toggleCompletedSection()">
                     <span class="completed-arrow" id="completed-arrow">∨</span>
                     <span class="completed-title">完了済み</span>
                 </div>
-                <ul id="completed-list" class="task-list"></ul>
+                <ul id="completed-list" class="task-list">
+                    <!-- JavaScriptで動的生成されます -->
+                </ul>
             </div>
 
-            <!-- 予定追加ボタン (FAB) -> モーダルを開くように変更 -->
-            <a href="javascript:void(0)" class="fab-btn" aria-label="予定を追加" onclick="openNewTaskModal()">
+            <!-- タスク追加ボタン (FAB) -> モーダルを開くように変更 -->
+            <a href="javascript:void(0)" class="fab-btn" aria-label="タスクを追加" onclick="openNewTaskModal()">
                 <svg viewBox="0 0 24 24">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -277,7 +164,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="modal-label">予定時間</label>
+                            <label class="modal-label">所要時間</label>
                             <div class="modal-time-inputs">
                                 <select id="modal-task-hours" class="modal-select"></select>時間
                                 <select id="modal-task-minutes" class="modal-select"></select>分
@@ -349,27 +236,121 @@
             }
         }
 
-        let currentEditingItem = null;
+        // デフォルトのタスクデータ（初回アクセス用）
+        const defaultTasks = [
+            { id: 1, title: "経済学のレポートを出す", deadline: "2026-06-03T23:59", durationMinutes: 30, memo: "教授のメールにPDF形式で添付して提出すること。", completed: false, starred: false },
+            { id: 2, title: "マーケティングの教科書3章を読む", deadline: "2026-06-05T12:00", durationMinutes: 45, memo: "3C分析のページを重点的に読み込んでおく。", completed: false, starred: false },
+            { id: 3, title: "グループワークの議事録共有", deadline: "2026-06-04T10:00", durationMinutes: 5, memo: "スプリント1 of 決定事項をLINEのノートに貼る。", completed: false, starred: false },
+            { id: 4, title: "サークルの出欠連絡を入れる", deadline: "2026-06-03T12:00", durationMinutes: 3, memo: "来週の懇親会、遅れて参加する旨を伝える。", completed: false, starred: false },
+            { id: 5, title: "履修登録の最終確認", deadline: "2026-06-10T16:45", durationMinutes: 10, memo: "エラーが出ていないか、学務システムを確認。", completed: false, starred: false },
+            { id: 6, title: "バイトのシフト希望提出", deadline: "2026-06-05T21:00", durationMinutes: 5, memo: "後半はテスト期間に入るから少なめで出す。", completed: false, starred: false },
+            { id: 7, title: "デザイン思考の課題リサーチ", deadline: "2026-06-08T15:00", durationMinutes: 60, memo: "ターゲットユーザーへのインタビュー項目を3つ考える。", completed: false, starred: false }
+        ];
+
+        let currentEditingId = null;
+
+        // LocalStorageからタスクを取得
+        function getSavedTasks() {
+            let tasks = JSON.parse(localStorage.getItem('savedTasks'));
+            if (!tasks || tasks.length === 0) {
+                // 初回はデフォルトデータを投入
+                tasks = defaultTasks;
+                localStorage.setItem('savedTasks', JSON.stringify(tasks));
+            }
+            return tasks;
+        }
+
+        // LocalStorageにタスクを保存
+        function saveSavedTasks(tasks) {
+            localStorage.setItem('savedTasks', JSON.stringify(tasks));
+        }
+
+        // 日付のフォーマットユーティリティ (例: "2026-06-03T23:59" -> "6/3 23:59")
+        function formatDeadline(rawDateTime) {
+            if (!rawDateTime) return '';
+            const dateObj = new Date(rawDateTime);
+            if (isNaN(dateObj.getTime())) return '';
+            const month = dateObj.getMonth() + 1;
+            const date = dateObj.getDate();
+            const hours = String(dateObj.getHours()).padStart(2, '0');
+            const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+            return `📅 ${month}/${date} ${hours}:${minutes}`;
+        }
+
+        // タスクの描画処理
+        function renderTasks() {
+            const list = document.getElementById('task-list');
+            const completedList = document.getElementById('completed-list');
+
+            list.innerHTML = '';
+            completedList.innerHTML = '';
+
+            let tasks = getSavedTasks();
+            const sortSelect = document.querySelector('.sort-select');
+            const sortType = sortSelect ? sortSelect.value : 'deadline';
+
+            // ソート処理
+            tasks.sort((a, b) => {
+                if (sortType === 'deadline') {
+                    let dateA = a.deadline || '9999-12-31T23:59';
+                    let dateB = b.deadline || '9999-12-31T23:59';
+                    return dateA.localeCompare(dateB);
+                } else if (sortType === 'time-asc') {
+                    return (a.durationMinutes || 0) - (b.durationMinutes || 0);
+                } else if (sortType === 'time-desc') {
+                    return (b.durationMinutes || 0) - (a.durationMinutes || 0);
+                }
+                return 0;
+            });
+
+            tasks.forEach(task => {
+                const li = document.createElement('li');
+                li.className = `task-item ${task.completed ? 'completed' : ''}`;
+                li.dataset.id = task.id;
+                li.onclick = (e) => openTaskModal(task.id, e);
+
+                li.innerHTML = `
+                    <div class="task-view-slim">
+                        <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
+                            <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}
+                                onclick="toggleComplete(${task.id}, this); event.stopPropagation();">
+                            <span class="todo-checkbox-circle"></span>
+                        </label>
+                        <div class="todo-content">
+                            <span class="task-text">${task.title}</span>
+                            <span class="task-deadline-slim">${formatDeadline(task.deadline)}</span>
+                        </div>
+                        <button class="todo-star-btn ${task.starred ? 'active' : ''}"
+                            onclick="toggleStar(${task.id}, this); event.stopPropagation();">${task.starred ? '★' : '☆'}</button>
+                    </div>
+                `;
+
+                if (task.completed) {
+                    completedList.appendChild(li);
+                } else {
+                    list.appendChild(li);
+                }
+            });
+        }
 
         // モーダルを開く（編集モード）
-        function openTaskModal(taskItem, event) {
-            currentEditingItem = taskItem;
+        function openTaskModal(taskId, event) {
+            currentEditingId = taskId;
 
             document.getElementById('modal-title-text').textContent = 'タスクの編集';
             document.getElementById('modal-delete-btn').style.display = 'block';
 
-            // データの読み込み
-            const title = taskItem.querySelector('.task-text').textContent;
-            const dateVal = taskItem.getAttribute('data-date') || '';
-            const minutesVal = parseInt(taskItem.getAttribute('data-minutes') || 0);
-            const memo = taskItem.getAttribute('data-memo') || '';
+            const tasks = getSavedTasks();
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
 
-            document.getElementById('modal-task-name').value = title;
-            document.getElementById('modal-task-date').value = dateVal;
-            document.getElementById('modal-task-memo').value = memo;
+            document.getElementById('modal-task-name').value = task.title;
+            document.getElementById('modal-task-date').value = task.deadline || '';
+            document.getElementById('modal-task-memo').value = task.memo || '';
 
-            const h = Math.floor(minutesVal / 60);
-            const m = minutesVal % 60;
+            const duration = task.durationMinutes || 0;
+            const h = Math.floor(duration / 60);
+            const m = duration % 60;
             document.getElementById('modal-task-hours').value = h;
             document.getElementById('modal-task-minutes').value = m;
 
@@ -378,7 +359,7 @@
 
         // モーダルを開く（新規登録モード）
         function openNewTaskModal() {
-            currentEditingItem = null;
+            currentEditingId = null;
 
             document.getElementById('modal-title-text').textContent = 'タスクの登録';
             document.getElementById('modal-delete-btn').style.display = 'none';
@@ -398,32 +379,35 @@
             document.getElementById('task-form-modal').classList.add('active');
         }
 
-        // モーダルを閉じる
+        // サイドバーの「新規タスクの登録」からモーダルを開く
+        function openNewTaskModalFromNav() {
+            // サイドバーを閉じる
+            const drawer = document.getElementById('sidebar-drawer');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (drawer && overlay) {
+                drawer.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+            // モーダルを開く
+            openNewTaskModal();
+        }
         function closeTaskModal() {
             document.getElementById('task-form-modal').classList.remove('active');
-            currentEditingItem = null;
+            currentEditingId = null;
         }
 
-        // モーダルから削除
+        // モーダルから削除（永続化対応）
         function deleteFromModal() {
-            if (currentEditingItem) {
-                currentEditingItem.remove();
+            if (currentEditingId !== null) {
+                let tasks = getSavedTasks();
+                tasks = tasks.filter(t => t.id !== currentEditingId);
+                saveSavedTasks(tasks);
+                renderTasks();
             }
             closeTaskModal();
         }
 
-        // 日付のフォーマットユーティリティ (例: "2026-06-03T23:59" -> "6/3 23:59")
-        function formatDeadline(rawDateTime) {
-            if (!rawDateTime) return '';
-            const dateObj = new Date(rawDateTime);
-            const month = dateObj.getMonth() + 1;
-            const date = dateObj.getDate();
-            const hours = String(dateObj.getHours()).padStart(2, '0');
-            const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-            return `📅 ${month}/${date} ${hours}:${minutes}`;
-        }
-
-        // モーダルから保存
+        // モーダルから保存（永続化対応）
         function saveFromModal() {
             const title = document.getElementById('modal-task-name').value || '無題のタスク';
             const dateVal = document.getElementById('modal-task-date').value;
@@ -432,52 +416,50 @@
             const totalMinutes = (hours * 60) + minutes;
             const memo = document.getElementById('modal-task-memo').value;
 
-            if (currentEditingItem) {
-                // 既存の編集
-                currentEditingItem.setAttribute('data-date', dateVal);
-                currentEditingItem.setAttribute('data-minutes', totalMinutes);
-                currentEditingItem.setAttribute('data-memo', memo);
+            let tasks = getSavedTasks();
 
-                currentEditingItem.querySelector('.task-text').textContent = title;
-                currentEditingItem.querySelector('.task-deadline-slim').textContent = formatDeadline(dateVal);
+            if (currentEditingId !== null) {
+                // 既存の編集
+                const index = tasks.findIndex(t => t.id === currentEditingId);
+                if (index !== -1) {
+                    tasks[index].title = title;
+                    tasks[index].deadline = dateVal;
+                    tasks[index].durationMinutes = totalMinutes;
+                    tasks[index].memo = memo;
+                }
             } else {
                 // 新規登録
-                const list = document.getElementById('task-list');
-                const newItem = document.createElement('li');
-                newItem.className = 'task-item';
-                newItem.setAttribute('data-date', dateVal);
-                newItem.setAttribute('data-minutes', totalMinutes);
-                newItem.setAttribute('data-memo', memo);
-                newItem.onclick = function (e) { openTaskModal(newItem, e); };
-
-                newItem.innerHTML = `
-                    <div class="task-view-slim">
-                        <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
-                            <input type="checkbox" class="task-checkbox" onclick="toggleComplete(this); event.stopPropagation();">
-                            <span class="todo-checkbox-circle"></span>
-                        </label>
-                        <div class="todo-content">
-                            <span class="task-text">${title}</span>
-                            <span class="task-deadline-slim">${formatDeadline(dateVal)}</span>
-                        </div>
-                        <button class="todo-star-btn" onclick="toggleStar(this); event.stopPropagation();">☆</button>
-                    </div>
-                `;
-                list.appendChild(newItem);
+                const newTask = {
+                    id: Date.now(),
+                    title: title,
+                    deadline: dateVal,
+                    durationMinutes: totalMinutes,
+                    memo: memo,
+                    completed: false,
+                    starred: false
+                };
+                tasks.push(newTask);
             }
 
+            saveSavedTasks(tasks);
+            renderTasks();
             closeTaskModal();
-            const sortSelect = document.querySelector('.sort-select');
-            sortTasks(sortSelect.value);
         }
 
-        // 星マーク（重要度）のトグル処理
-        function toggleStar(button) {
-            button.classList.toggle('active');
-            if (button.classList.contains('active')) {
-                button.textContent = '★';
-            } else {
-                button.textContent = '☆';
+        // 星マーク（重要度）のトグル処理（永続化対応）
+        function toggleStar(taskId, button) {
+            let tasks = getSavedTasks();
+            const index = tasks.findIndex(t => t.id === taskId);
+            if (index !== -1) {
+                tasks[index].starred = !tasks[index].starred;
+                saveSavedTasks(tasks);
+                
+                button.classList.toggle('active');
+                if (tasks[index].starred) {
+                    button.textContent = '★';
+                } else {
+                    button.textContent = '☆';
+                }
             }
         }
 
@@ -491,6 +473,29 @@
             } else {
                 list.style.display = 'none';
                 arrow.textContent = '＞';
+            }
+        }
+
+        function scrollToCompleted() {
+            const section = document.getElementById('completed-list');
+            if (section.style.display === 'none') {
+                toggleCompletedSection();
+            }
+            section.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function sortTasks(sortType) {
+            renderTasks();
+        }
+
+        // 完了・未完了のトグル処理（永続化対応）
+        function toggleComplete(taskId, checkbox) {
+            let tasks = getSavedTasks();
+            const index = tasks.findIndex(t => t.id === taskId);
+            if (index !== -1) {
+                tasks[index].completed = checkbox.checked;
+                saveSavedTasks(tasks);
+                renderTasks();
             }
         }
 
@@ -508,59 +513,9 @@
                 });
             }
 
-            // 初期タスクの締切表記をスリムな形式にフォーマットする
-            document.querySelectorAll('.task-item').forEach(item => {
-                const rawDate = item.getAttribute('data-date');
-                if (rawDate) {
-                    item.querySelector('.task-deadline-slim').textContent = formatDeadline(rawDate);
-                }
-            });
+            // タスク一覧の初期描画
+            renderTasks();
         });
-
-        function scrollToCompleted() {
-            const section = document.getElementById('completed-section');
-            if (document.getElementById('completed-list').style.display === 'none') {
-                toggleCompletedSection();
-            }
-            section.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function sortTasks(sortType) {
-            const list = document.getElementById('task-list');
-            const items = Array.from(list.getElementsByClassName('task-item'));
-
-            items.sort((a, b) => {
-                if (sortType === 'deadline') {
-                    let dateA = a.getAttribute('data-date') || '9999-12-31T23:59';
-                    let dateB = b.getAttribute('data-date') || '9999-12-31T23:59';
-                    return dateA.localeCompare(dateB);
-                } else if (sortType === 'time-asc') {
-                    let minA = parseInt(a.getAttribute('data-minutes') || 0);
-                    let minB = parseInt(b.getAttribute('data-minutes') || 0);
-                    return minA - minB;
-                } else if (sortType === 'time-desc') {
-                    let minA = parseInt(a.getAttribute('data-minutes') || 0);
-                    let minB = parseInt(b.getAttribute('data-minutes') || 0);
-                    return minB - minA;
-                }
-            });
-
-            items.forEach(item => list.appendChild(item));
-        }
-
-        function toggleComplete(checkbox) {
-            let taskItem = checkbox.closest('.task-item');
-
-            if (checkbox.checked) {
-                document.getElementById('completed-list').appendChild(taskItem);
-                taskItem.classList.add('completed');
-            } else {
-                document.getElementById('task-list').appendChild(taskItem);
-                taskItem.classList.remove('completed');
-                const sortSelect = document.querySelector('.sort-select');
-                sortTasks(sortSelect.value);
-            }
-        }
     </script>
 </body>
 

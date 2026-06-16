@@ -72,18 +72,14 @@
                     <span class="nav-icon">📅</span>
                     <span class="nav-text">デイリーカレンダー</span>
                 </a>
-                <a href="Mizuki_Monthlymain.html" class="nav-item">
-                    <span class="nav-icon">🗓️</span>
-                    <span class="nav-text">月間カレンダー</span>
-                </a>
                 <a href="Yuuka_task.html" class="nav-item">
                     <span class="nav-icon">📋</span>
                     <span class="nav-text">タスクリスト</span>
                 </a>
                 <div class="sidebar-divider"></div>
-                <a href="register.html" class="nav-item">
+                <a href="javascript:void(0)" onclick="openNewTaskModalFromNav()" class="nav-item">
                     <span class="nav-icon">➕</span>
-                    <span class="nav-text">新規予定の登録</span>
+                    <span class="nav-text">新規タスクの登録</span>
                 </a>
             </nav>
             <div class="sidebar-footer">
@@ -139,13 +135,52 @@
                 </div>
             </div>
 
-            <!-- 予定追加ボタン (FAB) -->
-            <a href="register.html" class="fab-btn" aria-label="予定を追加">
+            <!-- タスク追加ボタン (FAB) -->
+            <a href="javascript:void(0)" class="fab-btn" aria-label="タスクを追加" onclick="openNewTaskModal()">
                 <svg viewBox="0 0 24 24">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
             </a>
+
+            <!-- 新規登録・編集用ポップアップモーダル -->
+            <div id="task-form-modal" class="modal-overlay">
+                <div class="modal-box task-modal-box">
+                    <div class="modal-header">
+                        <h3 id="modal-title-text">タスクの編集</h3>
+                        <button class="modal-close-btn" onclick="closeTaskModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="modal-label">タスク名</label>
+                            <input type="text" id="modal-task-name" class="modal-input" placeholder="タスク名を入力">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="modal-label">締め切り</label>
+                            <input type="datetime-local" id="modal-task-date" class="modal-input">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="modal-label">所要時間</label>
+                            <div class="modal-time-inputs">
+                                <select id="modal-task-hours" class="modal-select"></select>時間
+                                <select id="modal-task-minutes" class="modal-select"></select>分
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="modal-label">一言メモ</label>
+                            <input type="text" id="modal-task-memo" class="modal-input" placeholder="メモを入力">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="modal-btn modal-delete-btn" id="modal-delete-btn"
+                            onclick="deleteFromModal()">削除</button>
+                        <button class="modal-btn modal-save-btn" onclick="saveFromModal()">保存</button>
+                    </div>
+                </div>
+            </div>
 
             <!-- iOS風ホームインジケータ -->
             <div class="phone-home-indicator"></div>
@@ -164,7 +199,7 @@
             { id: 6, date: '6/7', name: '日', num: 7, fullName: '6月7日（日）', label: '日曜日' }
         ];
 
-        // 各曜日のスケジュールデータ
+        // 各曜日のスケジュールデータ (初回コンバート用)
         const schedules = {
             0: [ // 月曜日
                 { start: '08:00', end: '09:00', title: '起床・朝食', desc: '朝の身支度とニュースチェック', icon: '🌅', type: 'routine' },
@@ -207,15 +242,17 @@
             6: [ // 日曜日
                 { start: '09:30', end: '11:00', title: '遅めの起床・ブランチ', desc: 'フレンチトーストを焼く', icon: '🥞', type: 'home' },
                 { start: '12:00', end: '15:00', title: '美術館巡り', desc: '特別企画の現代アート展', icon: '🎨', type: 'study' },
-                { start: '16:00', end: '18:00', title: '振り返りと来週の計画', desc: '手帳と予定の整理時間', icon: '📓', type: 'study' },
+                { start: '16:00', end: '18:00', title: '振り返りと来週 of 計画', desc: '手帳と予定の整理時間', icon: '📓', type: 'study' },
                 { start: '22:30', end: '23:30', title: '入浴・リラックス', desc: 'アロマバスソルトを入れて読書', icon: '🛁', type: 'health' }
             ]
         };
 
         let currentActiveDay = 1; // 初期値は火曜日 (今日)
+        let currentEditingId = null;
 
         // 時間表記を分数に変換 (例: "09:30" -> 570)
         function timeToMinutes(timeStr) {
+            if (!timeStr) return 0;
             const [h, m] = timeStr.split(':').map(Number);
             return h * 60 + m;
         }
@@ -239,6 +276,53 @@
             } else {
                 return `${m}分`;
             }
+        }
+
+        // LocalStorageからタスクを取得（無ければschedulesからコンバートして初期登録）
+        function getSavedTasks() {
+            let tasks = JSON.parse(localStorage.getItem('savedTasks'));
+            if (!tasks || tasks.length === 0) {
+                tasks = [];
+                const dateMapping = {
+                    0: '2026-06-01',
+                    1: '2026-06-02',
+                    2: '2026-06-03',
+                    3: '2026-06-04',
+                    4: '2026-06-05',
+                    5: '2026-06-06',
+                    6: '2026-06-07'
+                };
+                let index = 1;
+                for (let dayId in schedules) {
+                    const dayDate = dateMapping[dayId];
+                    schedules[dayId].forEach(sched => {
+                        const duration = timeToMinutes(sched.end) - timeToMinutes(sched.start);
+                        tasks.push({
+                            id: Date.now() + index++,
+                            title: sched.title,
+                            memo: sched.desc || "",
+                            completed: false,
+                            starred: false,
+                            startDate: dayDate,
+                            startTime: sched.start,
+                            endDate: dayDate,
+                            endTime: sched.end,
+                            isAllDay: false,
+                            deadline: `${dayDate}T${sched.start}`,
+                            durationMinutes: duration,
+                            icon: sched.icon || "📝",
+                            type: sched.type || "study"
+                        });
+                    });
+                }
+                localStorage.setItem('savedTasks', JSON.stringify(tasks));
+            }
+            return tasks;
+        }
+
+        // LocalStorageに保存
+        function saveSavedTasks(tasks) {
+            localStorage.setItem('savedTasks', JSON.stringify(tasks));
         }
 
         // 週間カレンダーの生成
@@ -287,14 +371,38 @@
             updateNowIndicator();
         }
 
-        // タイムラインのレンダリング (空き時間の自動挿入)
+        // タイムラインのレンダリング (LocalStorageから動的生成)
         function renderTimeline(dayId) {
             const container = document.getElementById('structured-timeline');
             container.innerHTML = '';
 
-            const rawTasks = schedules[dayId] || [];
-            // 开始時間順にソート
-            const tasks = [...rawTasks].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
+            const dateMapping = {
+                0: '2026-06-01',
+                1: '2026-06-02',
+                2: '2026-06-03',
+                3: '2026-06-04',
+                4: '2026-06-05',
+                5: '2026-06-06',
+                6: '2026-06-07'
+            };
+            const targetDateStr = dateMapping[dayId];
+
+            const allTasks = getSavedTasks();
+            // 該当日のタスクをフィルタリング（終日を除く）
+            const rawTasks = allTasks.filter(t => t.startDate === targetDateStr && !t.isAllDay);
+            
+            // 開始時間順にソートするために、startTime から分数を取得
+            const tasks = rawTasks.map(t => {
+                return {
+                    id: t.id,
+                    start: t.startTime || "07:00",
+                    end: t.endTime || "07:30",
+                    title: t.title,
+                    desc: t.memo || "",
+                    icon: t.icon || "📝",
+                    type: t.type || "study"
+                };
+            }).sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
 
             const dayStart = 7 * 60; // 07:00
             const dayEnd = 23 * 60;  // 23:00
@@ -359,6 +467,8 @@
                     `;
                 } else {
                     itemDiv.className = `timeline-item theme-${item.type}`;
+                    // 通常アイテムにクリックイベントを設定
+                    itemDiv.onclick = (e) => openTaskModal(item.id, e);
                     itemDiv.innerHTML = `
                         <div class="item-time-col">
                             <span class="time-start">${item.start}</span>
@@ -430,12 +540,14 @@
             let targetEnd = 0;
 
             items.forEach(item => {
-                const start = timeToMinutes(item.dataset.start);
-                const end = timeToMinutes(item.dataset.end);
-                if (currentMin >= start && currentMin < end) {
-                    targetItem = item;
-                    targetStart = start;
-                    targetEnd = end;
+                if (item.dataset.start && item.dataset.end) {
+                    const start = timeToMinutes(item.dataset.start);
+                    const end = timeToMinutes(item.dataset.end);
+                    if (currentMin >= start && currentMin < end) {
+                        targetItem = item;
+                        targetStart = start;
+                        targetEnd = end;
+                    }
                 }
             });
 
@@ -485,14 +597,211 @@
             });
         }
 
+        // 時間・分のセレクトボックス生成
+        function initTimeSelects() {
+            const hourSelect = document.getElementById('modal-task-hours');
+            const minuteSelect = document.getElementById('modal-task-minutes');
+
+            hourSelect.innerHTML = '';
+            minuteSelect.innerHTML = '';
+
+            for (let i = 0; i <= 23; i++) {
+                let opt = document.createElement('option');
+                opt.value = i; opt.textContent = i;
+                hourSelect.appendChild(opt);
+            }
+
+            for (let i = 0; i <= 59; i++) {
+                let opt = document.createElement('option');
+                opt.value = i; opt.textContent = i;
+                minuteSelect.appendChild(opt);
+            }
+        }
+
+        // モーダルを開く（編集モード）
+        function openTaskModal(taskId, event) {
+            currentEditingId = taskId;
+
+            document.getElementById('modal-title-text').textContent = 'タスクの編集';
+            document.getElementById('modal-delete-btn').style.display = 'block';
+
+            const tasks = getSavedTasks();
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+
+            document.getElementById('modal-task-name').value = task.title;
+            document.getElementById('modal-task-date').value = task.deadline || '';
+            document.getElementById('modal-task-memo').value = task.memo || '';
+
+            const duration = task.durationMinutes || 0;
+            const h = Math.floor(duration / 60);
+            const m = duration % 60;
+            document.getElementById('modal-task-hours').value = h;
+            document.getElementById('modal-task-minutes').value = m;
+
+            document.getElementById('task-form-modal').classList.add('active');
+        }
+
+        // モーダルを開く（新規登録モード）
+        function openNewTaskModal() {
+            currentEditingId = null;
+
+            document.getElementById('modal-title-text').textContent = 'タスクの登録';
+            document.getElementById('modal-delete-btn').style.display = 'none';
+
+            // フォームのクリア
+            document.getElementById('modal-task-name').value = '';
+
+            // 選択している日付を初期値にする
+            const dateMapping = {
+                0: '2026-06-01',
+                1: '2026-06-02',
+                2: '2026-06-03',
+                3: '2026-06-04',
+                4: '2026-06-05',
+                5: '2026-06-06',
+                6: '2026-06-07'
+            };
+            const activeDateStr = dateMapping[currentActiveDay];
+            
+            // 現在の時間を初期値に（分は00または30に丸める）
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes() < 30 ? 0 : 30).padStart(2, '0');
+            document.getElementById('modal-task-date').value = `${activeDateStr}T${h}:${m}`;
+
+            document.getElementById('modal-task-memo').value = '';
+            document.getElementById('modal-task-hours').value = 0;
+            document.getElementById('modal-task-minutes').value = 30; // デフォルト30分
+
+            document.getElementById('task-form-modal').classList.add('active');
+        }
+
+        // モーダルを閉じる
+        function closeTaskModal() {
+            document.getElementById('task-form-modal').classList.remove('active');
+            currentEditingId = null;
+        }
+
+        // モーダルから削除
+        function deleteFromModal() {
+            if (currentEditingId !== null) {
+                let tasks = getSavedTasks();
+                tasks = tasks.filter(t => t.id !== currentEditingId);
+                saveSavedTasks(tasks);
+                renderTimeline(currentActiveDay);
+            }
+            closeTaskModal();
+        }
+
+        // モーダルから保存
+        function saveFromModal() {
+            const title = document.getElementById('modal-task-name').value || '無題のタスク';
+            const dateVal = document.getElementById('modal-task-date').value;
+            const hours = parseInt(document.getElementById('modal-task-hours').value || 0);
+            const minutes = parseInt(document.getElementById('modal-task-minutes').value || 0);
+            const totalMinutes = (hours * 60) + minutes;
+            const memo = document.getElementById('modal-task-memo').value;
+
+            if (!dateVal) {
+                alert('日時を入力してください');
+                return;
+            }
+
+            // 開始日時と終了日時（開始日時＋所要時間）の算出
+            const startDateTime = new Date(dateVal);
+            if (isNaN(startDateTime.getTime())) {
+                alert('日時が正しくありません');
+                return;
+            }
+            const endDateTime = new Date(startDateTime.getTime() + totalMinutes * 60 * 1000);
+
+            const pad = (n) => String(n).padStart(2, '0');
+            const startDate = `${startDateTime.getFullYear()}-${pad(startDateTime.getMonth()+1)}-${pad(startDateTime.getDate())}`;
+            const startTime = `${pad(startDateTime.getHours())}:${pad(startDateTime.getMinutes())}`;
+            const endDate = `${endDateTime.getFullYear()}-${pad(endDateTime.getMonth()+1)}-${pad(endDateTime.getDate())}`;
+            const endTime = `${pad(endDateTime.getHours())}:${pad(endDateTime.getMinutes())}`;
+
+            let tasks = getSavedTasks();
+
+            if (currentEditingId !== null) {
+                // 既存の編集
+                const index = tasks.findIndex(t => t.id === currentEditingId);
+                if (index !== -1) {
+                    tasks[index].title = title;
+                    tasks[index].memo = memo;
+                    tasks[index].startDate = startDate;
+                    tasks[index].startTime = startTime;
+                    tasks[index].endDate = endDate;
+                    tasks[index].endTime = endTime;
+                    tasks[index].deadline = dateVal;
+                    tasks[index].durationMinutes = totalMinutes;
+                }
+            } else {
+                // 新規登録 (ランダムなタイプとアイコンをデフォルトで指定)
+                const types = ['routine', 'study', 'social', 'health', 'work', 'home'];
+                const icons = ['🌅', '📚', '☕️', '🏃', '💼', '🛒'];
+                const randIndex = Math.floor(Math.random() * types.length);
+
+                const newTask = {
+                    id: Date.now(),
+                    title: title,
+                    memo: memo,
+                    completed: false,
+                    starred: false,
+                    startDate: startDate,
+                    startTime: startTime,
+                    endDate: endDate,
+                    endTime: endTime,
+                    isAllDay: false,
+                    deadline: dateVal,
+                    durationMinutes: totalMinutes,
+                    icon: icons[randIndex],
+                    type: types[randIndex]
+                };
+                tasks.push(newTask);
+            }
+
+            saveSavedTasks(tasks);
+            renderTimeline(currentActiveDay);
+            closeTaskModal();
+        }
+
+        // サイドバーの「新規タスクの登録」からモーダルを開く
+        function openNewTaskModalFromNav() {
+            // サイドバーを閉じる
+            const drawer = document.getElementById('sidebar-drawer');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (drawer && overlay) {
+                drawer.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+            // モーダルを開く
+            openNewTaskModal();
+        }
+
+        // 定期的にインジケータを更新するタイマー
+        let indicatorInterval;
+
         // 初期化処理
         window.addEventListener('DOMContentLoaded', () => {
             initCalendar();
             initSidebar();
+            initTimeSelects();
             switchDay(1); // 初期表示は「火曜日」
 
             // インジケータを定期更新 (1秒ごと)
-            setInterval(updateNowIndicator, 1000);
+            indicatorInterval = setInterval(updateNowIndicator, 1000);
+
+            // モーダルの背景（オーバーレイ）をクリックした時に閉じる
+            const modalOverlay = document.getElementById('task-form-modal');
+            if (modalOverlay) {
+                modalOverlay.addEventListener('click', (e) => {
+                    if (e.target === modalOverlay) {
+                        closeTaskModal();
+                    }
+                });
+            }
         });
     </script>
 </body>
