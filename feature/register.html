@@ -3,36 +3,68 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>新規登録</title>
-    <link rel="stylesheet" href="styleDemo.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="0602_all.css">
 </head>
 
-<body>
+<body class="daily-main-page register-page">
 
-    <div class="app-container">
-        <div class="header">
-            <button class="cancel-btn">✕</button>
-            <h1>新規</h1>
-            <button class="save-btn" id="saveBtn">保存</button>
+    <div class="pc-info">
+        <h2>Timeline App</h2>
+        <p>「Structured」アプリにインスパイアされた、クリーンで視覚的なデイリープランナーのプロトタイプです。</p>
+        <ul>
+            <li>予定やタスクを新しく登録できます。</li>
+            <li>「終日」の切り替えや、開始・終了日時の入力に直感的に対応しています。</li>
+        </ul>
+        <p style="margin-top: 24px; font-size: 12px; color: #64748b;">※スマホ実機やデベロッパーツールで開くと、全画面表示 of スマホUIになります。</p>
+    </div>
+
+    <!-- スマホ本体フレーム -->
+    <div class="phone-frame">
+        <div class="phone-notch"></div>
+
+        <!-- 仮想ステータスバー -->
+        <div class="status-bar">
+            <span>9:41</span>
+            <div class="right-icons">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                    <path
+                        d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.07 19.58 10.48 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z" />
+                </svg>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                    <path
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                </svg>
+            </div>
         </div>
 
-        <div class="segmented-control" id="categorySegment">
-            <button class="segment-btn active" data-category="schedule">予定</button>
-            <button class="segment-btn" data-category="task">タスク</button>
-        </div>
+        <div class="app-container">
+            <div class="header">
+                <button class="cancel-btn" onclick="window.history.length > 1 ? window.history.back() : window.location.href = 'Kanae_dailymain.html'">✕</button>
+                <h1>新規</h1>
+                <button class="save-btn" id="saveBtn">保存</button>
+            </div>
+
+            <div class="segmented-control">
+                <button class="segment-btn active">予定</button>
+                <button class="segment-btn">リマインダー</button>
+            </div>
 
         <div class="card">
             <div class="form-row">
-                <input type="text" id="taskTitle" placeholder="タイトル" value="">
+                <input type="text" id="taskTitle" placeholder="タイトル" value="おきる">
             </div>
-            <div class="form-row" id="locationRow">
+            <div class="form-row">
                 <input type="text" id="taskLocation" placeholder="場所またはビデオ通話">
             </div>
         </div>
 
-        <!-- 予定用の入力項目 -->
-        <div class="card" id="scheduleFields">
+        <div class="card">
             <div class="form-row">
                 <label>終日</label>
                 <label class="switch">
@@ -43,54 +75,20 @@
             <div class="form-row">
                 <label>開始</label>
                 <div class="date-time-inputs">
-                    <input type="date" id="startDate" value="2026-06-09">
+                    <input type="date" id="startDate" value="2026-06-02">
                     <input type="time" id="startTime" value="10:00">
                 </div>
             </div>
             <div class="form-row">
                 <label>終了</label>
                 <div class="date-time-inputs">
-                    <input type="date" id="endDate" value="2026-06-09">
+                    <input type="date" id="endDate" value="2026-06-02">
                     <input type="time" id="endTime" value="11:00">
                 </div>
             </div>
         </div>
-
-        <!-- タスク用の入力項目 -->
-        <div class="card hidden" id="taskFields">
-            <div class="form-row">
-                <label>期限</label>
-                <div class="date-time-inputs">
-                    <input type="date" id="deadlineDate" value="2026-06-09">
-                    <input type="time" id="deadlineTime" value="18:00">
-                </div>
-            </div>
-            <div class="form-row">
-                <label>かかる時間</label>
-                <div class="time-duration-inputs">
-                    <input type="number" id="estimatedHours" min="0" max="23" value="0"> 時間
-                    <input type="number" id="estimatedMinutes" min="0" max="59" value="30"> 分
-                </div>
-            </div>
-            <div class="form-row">
-                <label>繰り返し</label>
-                <select id="recurrence">
-                    <option value="none">なし</option>
-                    <option value="daily">毎日</option>
-                    <option value="weekly">毎週</option>
-                    <option value="monthly">毎月</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- 登録データ一覧の表示領域 -->
-        <div class="task-list-title">登録済みの予定・タスク</div>
-        <div class="task-list-container">
-            <div class="card" id="taskListCard">
-                <div style="text-align: center; color: #8e8e93; padding: 16px; font-size: 14px;">
-                    登録されているデータはありません
-                </div>
-            </div>
+            <!-- iOS風ホームインジケータ -->
+            <div class="phone-home-indicator"></div>
         </div>
     </div>
 
