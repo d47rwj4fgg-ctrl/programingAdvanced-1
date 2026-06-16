@@ -552,6 +552,42 @@
             }
         }
 
+        window.addEventListener('DOMContentLoaded', () => {
+            initSidebar();
+            initTimeSelects();
+
+            // モーダルの背景（オーバーレイ）をクリックした時に閉じる
+            const modalOverlay = document.getElementById('task-form-modal');
+            if (modalOverlay) {
+                modalOverlay.addEventListener('click', (e) => {
+                    if (e.target === modalOverlay) {
+                        closeTaskModal();
+                    }
+                });
+            }
+
+            // 初期タスクの締切表記をスリムな形式にフォーマットする、およびアイコンを自動挿入
+            document.querySelectorAll('.task-item').forEach(item => {
+                const rawDate = item.getAttribute('data-date');
+                if (rawDate) {
+                    item.querySelector('.task-deadline-slim').textContent = formatDeadline(rawDate);
+                }
+
+                // アイコンの自動挿入
+                const title = item.querySelector('.task-text').textContent;
+                const icon = getTaskIcon(title);
+
+                const checkboxWrapper = item.querySelector('.todo-checkbox-wrapper');
+                let iconSpan = item.querySelector('.task-item-icon');
+                if (!iconSpan) {
+                    iconSpan = document.createElement('span');
+                    iconSpan.className = 'task-item-icon';
+                    checkboxWrapper.parentNode.insertBefore(iconSpan, checkboxWrapper.nextSibling);
+                }
+                iconSpan.textContent = icon;
+            });
+        });
+
         function scrollToCompleted() {
             const section = document.getElementById('completed-section');
             if (document.getElementById('completed-list').style.display === 'none') {
