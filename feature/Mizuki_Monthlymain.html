@@ -8,8 +8,10 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="0602_all.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="daily-main-page monthly-main-page">
@@ -115,29 +117,31 @@
                 </div>
 
                 <!-- カレンダーの月切り替えヘッダー -->
-                <div class="month-selector-bar" style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                <div class="month-selector-bar"
+                    style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
                     <button class="nav-btn" id="prev-month-btn" aria-label="前月">&lt;</button>
-                    <h2 class="month-title" id="month-title" style="margin: 0; font-size: 18px; font-weight: 800; color: var(--text-main);">2026年 6月</h2>
+                    <h2 class="month-title" id="month-title"
+                        style="margin: 0; font-size: 18px; font-weight: 800; color: var(--text-main);">2026年 6月</h2>
                     <button class="nav-btn" id="next-month-btn" aria-label="翌月">&gt;</button>
                 </div>
             </header>
 
-        <!-- カレンダーのメイン部分 -->
-        <main class="calendar-container">
-            <!-- 曜日ヘッダー (7列) -->
-            <div class="weekdays-grid">
-                <div class="weekday">月</div>
-                <div class="weekday">火</div>
-                <div class="weekday">水</div>
-                <div class="weekday">木</div>
-                <div class="weekday">金</div>
-                <div class="weekday sat">土</div>
-                <div class="weekday sun">日</div>
-            </div>
+            <!-- カレンダーのメイン部分 -->
+            <main class="calendar-container">
+                <!-- 曜日ヘッダー (7列) -->
+                <div class="weekdays-grid">
+                    <div class="weekday">月</div>
+                    <div class="weekday">火</div>
+                    <div class="weekday">水</div>
+                    <div class="weekday">木</div>
+                    <div class="weekday">金</div>
+                    <div class="weekday sat">土</div>
+                    <div class="weekday sun">日</div>
+                </div>
 
-            <!-- 日付グリッド (JavaScriptで動的に生成) -->
-            <div class="days-grid" id="days-grid"></div>
-        </main>
+                <!-- 日付グリッド (JavaScriptで動的に生成) -->
+                <div class="days-grid" id="days-grid"></div>
+            </main>
 
             <!-- 予定追加ボタン (FAB) -->
             <a href="register.html" class="fab-btn" aria-label="予定を追加">

@@ -11,7 +11,168 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="0602_all.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* クイック追加カード（インライン入力欄） */
+        .quick-add-card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 16px;
+            margin: 12px 4px 20px 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .quick-add-card .input-row {
+            width: 100%;
+        }
+
+        .quick-add-card .quick-input {
+            width: 100%;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #0f172a;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .quick-add-card .quick-input::placeholder {
+            color: #94a3b8;
+        }
+
+        .quick-add-card .quick-input:focus {
+            border-color: #FF7082;
+            box-shadow: 0 0 0 3px rgba(255, 112, 130, 0.15);
+        }
+
+
+        /* 設定行 (日付・所要時間) */
+        .quick-add-card .settings-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quick-add-card .setting-btn-wrapper {
+            position: relative;
+        }
+
+        .quick-add-card .setting-trigger-btn {
+            background-color: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            border-radius: 20px;
+            padding: 8px 14px;
+            font-size: 12px;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .quick-add-card .setting-trigger-btn:hover {
+            background-color: #e2e8f0;
+            border-color: #cbd5e1;
+        }
+
+        .quick-add-card .duration-select-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .quick-add-card .quick-select {
+            background-color: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: #0f172a;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* フッター行 */
+        .quick-add-card .quick-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 12px;
+            margin-top: 4px;
+        }
+
+        .quick-add-card .footer-icons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .quick-add-card .footer-icon-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s, transform 0.1s;
+        }
+
+        .quick-add-card .footer-icon-btn:hover {
+            color: #0f172a;
+            transform: scale(1.1);
+        }
+
+        .quick-add-card .quick-add-btn {
+            background: linear-gradient(135deg, #FFB1B6, #FFA2B2);
+            color: #ffffff;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 24px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255, 112, 130, 0.2);
+            transition: opacity 0.2s, transform 0.1s;
+        }
+
+        .quick-add-card .quick-add-btn:hover {
+            opacity: 0.9;
+        }
+
+        .quick-add-card .quick-add-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* タスクアイテムのカラーマーク用スタイル調整 */
+        .task-item-color-bar {
+            width: 4px;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            border-radius: 10px 0 0 10px;
+        }
+    </style>
 </head>
 
 <body class="daily-main-page task-list-page">
@@ -32,16 +193,8 @@
 
         <!-- 仮想ステータスバー -->
         <div class="status-bar">
-            <span>9:41</span>
+            <span id="status-bar-time">9:41</span>
             <div class="right-icons">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                    <path
-                        d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.07 19.58 10.48 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z" />
-                </svg>
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                    <path
-                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
-                </svg>
             </div>
         </div>
 
@@ -73,11 +226,6 @@
                 <a href="Yuuka_task.html" class="nav-item active">
                     <span class="nav-icon">📋</span>
                     <span class="nav-text">タスクリスト</span>
-                </a>
-                <div class="sidebar-divider"></div>
-                <a href="register.html" class="nav-item">
-                    <span class="nav-icon">➕</span>
-                    <span class="nav-text">新規予定の登録</span>
                 </a>
             </nav>
             <div class="sidebar-footer">
@@ -124,171 +272,262 @@
                     </select>
                 </div>
 
+                <!-- すぐにタスクを入力するインライン入力欄 (クイック追加カード) -->
+                <div class="quick-add-card">
+                    <div class="input-row">
+                        <input type="text" id="quick-task-title" placeholder="タスク名を入力..." class="quick-input">
+                    </div>
+
+                    <div class="settings-row">
+                        <div class="setting-btn-wrapper">
+                            <button class="setting-trigger-btn" id="quick-date-btn">
+                                <span class="icon">📅</span> <span id="quick-date-label">期限</span>
+                            </button>
+                            <input type="datetime-local" id="quick-task-date"
+                                style="position: absolute; opacity: 0; width: 0; height: 0; z-index: -1;">
+                        </div>
+
+                        <div class="duration-select-wrapper">
+                            <span>所要時間:</span>
+                            <select id="quick-task-hours" class="quick-select">
+                                <option value="0" selected>0時間</option>
+                                <option value="1">1時間</option>
+                                <option value="2">2時間</option>
+                                <option value="3">3時間</option>
+                                <option value="4">4時間</option>
+                            </select>
+                            <select id="quick-task-minutes" class="quick-select">
+                                <option value="0">0分</option>
+                                <option value="15">15分</option>
+                                <option value="30" selected>30分</option>
+                                <option value="45">45分</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="quick-color-row" style="display: flex; align-items: center; gap: 12px; margin-top: 4px; padding: 0 4px;">
+                        <span style="font-size: 12px; font-weight: 600; color: #64748b;">カラー:</span>
+                        <div class="color-palette" id="quick-color-palette" style="display: flex; gap: 8px; padding: 4px; background: none; margin: 0; justify-content: flex-start;">
+                            <button type="button" class="color-palette-btn pink active" onclick="selectQuickColor('pink')" style="width: 24px; height: 24px; border-width: 2px;"></button>
+                            <button type="button" class="color-palette-btn blue" onclick="selectQuickColor('blue')" style="width: 24px; height: 24px; border-width: 2px;"></button>
+                            <button type="button" class="color-palette-btn green" onclick="selectQuickColor('green')" style="width: 24px; height: 24px; border-width: 2px;"></button>
+                            <button type="button" class="color-palette-btn orange" onclick="selectQuickColor('orange')" style="width: 24px; height: 24px; border-width: 2px;"></button>
+                            <button type="button" class="color-palette-btn purple" onclick="selectQuickColor('purple')" style="width: 24px; height: 24px; border-width: 2px;"></button>
+                        </div>
+                    </div>
+
+                    <div class="quick-card-footer">
+                        <div class="footer-icons">
+                            <button class="footer-icon-btn" title="ノートを追加">📋</button>
+                        </div>
+                        <button class="quick-add-btn" id="quickAddBtn">追加</button>
+                    </div>
+                </div>
+
                 <ul id="task-list" class="task-list">
-                    <li class="task-item" data-date="2026-06-03T23:59" data-minutes="30"
-                        data-memo="教授のメールにPDF形式で添付して提出すること。" onclick="openTaskModal(this, event)">
-                        <div class="task-view-slim">
-                            <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
-                                <input type="checkbox" class="task-checkbox"
-                                    onclick="toggleComplete(this); event.stopPropagation();">
-                                <span class="todo-checkbox-circle"></span>
-                            </label>
-                            <div class="todo-content">
-                                <span class="task-text">経済学のレポートを出す</span>
-                                <span class="task-deadline-slim">📅 6/3 23:59</span>
-                            </div>
-                            <button class="todo-star-btn"
-                                onclick="toggleStar(this); event.stopPropagation();">☆</button>
-                        </div>
-                    </li>
-                    <li class="task-item" data-date="2026-06-05T12:00" data-minutes="45"
-                        data-memo="3C分析のページを重点的に読み込んでおく。" onclick="openTaskModal(this, event)">
-                        <div class="task-view-slim">
-                            <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
-                                <input type="checkbox" class="task-checkbox"
-                                    onclick="toggleComplete(this); event.stopPropagation();">
-                                <span class="todo-checkbox-circle"></span>
-                            </label>
-                            <div class="todo-content">
-                                <span class="task-text">マーケティングの教科書3章を読む</span>
-                                <span class="task-deadline-slim">📅 6/5 12:00</span>
-                            </div>
-                            <button class="todo-star-btn"
-                                onclick="toggleStar(this); event.stopPropagation();">☆</button>
-                        </div>
-                    </li>
-                    <li class="task-item" data-date="2026-06-04T10:00" data-minutes="5"
-                        data-memo="スプリント1の決定事項をLINEのノートに貼る。" onclick="openTaskModal(this, event)">
-                        <div class="task-view-slim">
-                            <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
-                                <input type="checkbox" class="task-checkbox"
-                                    onclick="toggleComplete(this); event.stopPropagation();">
-                                <span class="todo-checkbox-circle"></span>
-                            </label>
-                            <div class="todo-content">
-                                <span class="task-text">グループワークの議事録共有</span>
-                                <span class="task-deadline-slim">📅 6/4 10:00</span>
-                            </div>
-                            <button class="todo-star-btn"
-                                onclick="toggleStar(this); event.stopPropagation();">☆</button>
-                        </div>
-                    </li>
-                    <li class="task-item" data-date="2026-06-03T12:00" data-minutes="3" data-memo="来週の懇親会、遅れて参加する旨を伝える。"
-                        onclick="openTaskModal(this, event)">
-                        <div class="task-view-slim">
-                            <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
-                                <input type="checkbox" class="task-checkbox"
-                                    onclick="toggleComplete(this); event.stopPropagation();">
-                                <span class="todo-checkbox-circle"></span>
-                            </label>
-                            <div class="todo-content">
-                                <span class="task-text">サークルの出欠連絡を入れる</span>
-                                <span class="task-deadline-slim">📅 6/3 12:00</span>
-                            </div>
-                            <button class="todo-star-btn"
-                                onclick="toggleStar(this); event.stopPropagation();">☆</button>
-                        </div>
-                    </li>
-                    <li class="task-item" data-date="2026-06-10T16:45" data-minutes="10"
-                        data-memo="エラーが出ていないか、学務システムを確認。" onclick="openTaskModal(this, event)">
-                        <div class="task-view-slim">
-                            <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
-                                <input type="checkbox" class="task-checkbox"
-                                    onclick="toggleComplete(this); event.stopPropagation();">
-                                <span class="todo-checkbox-circle"></span>
-                            </label>
-                            <div class="todo-content">
-                                <span class="task-text">履修登録の最終確認</span>
-                                <span class="task-deadline-slim">📅 6/10 16:45</span>
-                            </div>
-                            <button class="todo-star-btn"
-                                onclick="toggleStar(this); event.stopPropagation();">☆</button>
-                        </div>
-                    </li>
-                    <li class="task-item" data-date="2026-06-05T21:00" data-minutes="5" data-memo="後半はテスト期間に入るから少なめで出す。"
-                        onclick="openTaskModal(this, event)">
-                        <div class="task-view-slim">
-                            <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
-                                <input type="checkbox" class="task-checkbox"
-                                    onclick="toggleComplete(this); event.stopPropagation();">
-                                <span class="todo-checkbox-circle"></span>
-                            </label>
-                            <div class="todo-content">
-                                <span class="task-text">バイトのシフト希望提出</span>
-                                <span class="task-deadline-slim">📅 6/5 21:00</span>
-                            </div>
-                            <button class="todo-star-btn"
-                                onclick="toggleStar(this); event.stopPropagation();">☆</button>
-                        </div>
-                    </li>
-                    <li class="task-item" data-date="2026-06-08T15:00" data-minutes="60"
-                        data-memo="ターゲットユーザーへのインタビュー項目を3つ考える。" onclick="openTaskModal(this, event)">
-                        <div class="task-view-slim">
-                            <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
-                                <input type="checkbox" class="task-checkbox"
-                                    onclick="toggleComplete(this); event.stopPropagation();">
-                                <span class="todo-checkbox-circle"></span>
-                            </label>
-                            <div class="todo-content">
-                                <span class="task-text">デザイン思考の課題リサーチ</span>
-                                <span class="task-deadline-slim">📅 6/8 15:00</span>
-                            </div>
-                            <button class="todo-star-btn"
-                                onclick="toggleStar(this); event.stopPropagation();">☆</button>
-                        </div>
-                    </li>
+                    <!-- JavaScriptで動的生成されます -->
                 </ul>
 
                 <div class="completed-header" onclick="toggleCompletedSection()">
                     <span class="completed-arrow" id="completed-arrow">∨</span>
                     <span class="completed-title">完了済み</span>
                 </div>
-                <ul id="completed-list" class="task-list"></ul>
+                <ul id="completed-list" class="task-list">
+                    <!-- JavaScriptで動的生成されます -->
+                </ul>
             </div>
 
-            <!-- 予定追加ボタン (FAB) -> モーダルを開くように変更 -->
-            <a href="javascript:void(0)" class="fab-btn" aria-label="予定を追加" onclick="openNewTaskModal()">
-                <svg viewBox="0 0 24 24">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-            </a>
-
-            <!-- 新規登録・編集用ポップアップモーダル -->
+            <!-- 新規登録・編集用ポップアップモーダル (Structured風マルチステップ) -->
             <div id="task-form-modal" class="modal-overlay">
-                <div class="modal-box task-modal-box">
-                    <div class="modal-header">
-                        <h3 id="modal-title-text">タスクの編集</h3>
-                        <button class="modal-close-btn" onclick="closeTaskModal()">&times;</button>
+                <div class="modal-box">
+                    <!-- モーダルヘッダー（コーラルピンク背景） -->
+                    <div class="structured-modal-header">
+                        <button class="modal-close-circle-btn" onclick="closeTaskModal()" aria-label="閉じる">✕</button>
+                        <button class="modal-delete-circle-btn" id="structured-delete-btn" onclick="deleteFromModal()" aria-label="削除" style="display: none;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                <line x1="10" y1="11" x2="10" y2="17"></line>
+                                <line x1="14" y1="11" x2="14" y2="17"></line>
+                            </svg>
+                        </button>
+                        <!-- 絵文字選択エリア -->
+                        <div class="emoji-select-area" id="emoji-display" onclick="toggleEmojiPalette()">📅</div>
+                        <!-- 白のアンダーライン付きタイトル入力 -->
+                        <input type="text" id="schedule-title" class="modal-title-underline-input" placeholder="タイトルを入力">
                     </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label class="modal-label">タスク名</label>
-                            <input type="text" id="modal-task-name" class="modal-input" placeholder="タスク名を入力">
-                        </div>
 
-                        <div class="form-group">
-                            <label class="modal-label">締め切り</label>
-                            <input type="datetime-local" id="modal-task-date" class="modal-input">
-                        </div>
+                    <!-- モーダルボディ (iOS風薄いグレー背景) -->
+                    <div class="structured-modal-body">
 
-                        <div class="form-group">
-                            <label class="modal-label">予定時間</label>
-                            <div class="modal-time-inputs">
-                                <select id="modal-task-hours" class="modal-select"></select>時間
-                                <select id="modal-task-minutes" class="modal-select"></select>分
+                        <!-- 【ステップ1】アイコン選択 -->
+                        <div id="modal-step-1" class="modal-step-section active">
+                            <div class="modal-card">
+                                <span class="modal-card-label">🎨 アイコン（絵文字）を選択</span>
+                                <div class="emoji-palette" id="emoji-palette" style="display: none; max-height: none;">
+                                    <button class="emoji-palette-btn" onclick="selectEmoji('🌅')">🌅</button>
+                                    <button class="emoji-palette-btn" onclick="selectEmoji('📚')">📚</button>
+                                    <button class="emoji-palette-btn" onclick="selectEmoji('💼')">💼</button>
+                                    <button class="emoji-palette-btn" onclick="selectEmoji('☕️')">☕️</button>
+                                    <button class="emoji-palette-btn" onclick="selectEmoji('🏃')">🏃</button>
+                                    <button class="emoji-palette-btn" onclick="selectEmoji('🚶')">🚶</button>
+                                    <button class="emoji-palette-btn" onclick="selectEmoji('🎸')">🎸</button>
+                                    <button class="emoji-palette-btn" onclick="selectEmoji('🎤')">🎤</button>
+                                    <button class="emoji-palette-btn" onclick="selectEmoji('🧘')">🧘</button>
+                                    <button class="emoji-palette-btn" onclick="selectEmoji('🛒')">🛒</button>
+                                    <button class="emoji-palette-btn" onclick="selectEmoji('💻')">💻</button>
+                                    <button class="emoji-palette-btn" onclick="selectEmoji('🍳')">🍳</button>
+                                    <button class="emoji-palette-btn" onclick="selectEmoji('📖')">📖</button>
+                                    <button class="emoji-palette-btn" onclick="selectEmoji('🎬')">🎬</button>
+                                    <button class="emoji-palette-btn" onclick="selectEmoji('🍣')">🍣</button>
+                                    <button class="emoji-palette-btn" onclick="selectEmoji('🥞')">🥞</button>
+                                    <button class="emoji-palette-btn" onclick="selectEmoji('🎨')">🎨</button>
+                                    <button class="emoji-palette-btn" onclick="selectEmoji('🛁')">🛁</button>
+                                </div>
+                            </div>
+                            <div class="modal-card">
+                                <span class="modal-card-label">🎨 カラーを選択</span>
+                                <div class="color-palette">
+                                    <button type="button" class="color-palette-btn pink active" onclick="selectColor('pink')"></button>
+                                    <button type="button" class="color-palette-btn blue" onclick="selectColor('blue')"></button>
+                                    <button type="button" class="color-palette-btn green" onclick="selectColor('green')"></button>
+                                    <button type="button" class="color-palette-btn orange" onclick="selectColor('orange')"></button>
+                                    <button type="button" class="color-palette-btn purple" onclick="selectColor('purple')"></button>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="modal-label">一言メモ</label>
-                            <input type="text" id="modal-task-memo" class="modal-input" placeholder="メモを入力">
+                        <!-- 【ステップ2】時間と期間の設定 -->
+                        <div id="modal-step-2" class="modal-step-section">
+                            <!-- 日付選択 -->
+                            <div class="modal-card">
+                                <div class="modal-card-row">
+                                    <span class="modal-card-label">📅 日付</span>
+                                    <input type="date" id="schedule-startdate" style="border: 1px solid #e5e5ea; padding: 6px 12px; border-radius: 8px; font-family: inherit; font-size: 14px; outline: none;">
+                                </div>
+                            </div>
+                            <!-- 开始時間ドラムピッカー風UI (縦ドラムロール) -->
+                            <div class="modal-card" id="time-picker-card">
+                                <span class="modal-card-label">⏰ 開始時間</span>
+                                <div class="time-wheel-container">
+                                    <div class="drum-picker-container">
+                                        <!-- 時のドラム -->
+                                        <div class="drum-picker" id="drum-hour">
+                                            <div class="drum-picker-scroll" id="drum-hour-scroll">
+                                                <div class="drum-picker-padding-top"></div>
+                                                <div class="drum-picker-list" id="drum-hour-list">
+                                                    <!-- JSで動的生成 -->
+                                                </div>
+                                                <div class="drum-picker-padding-bottom"></div>
+                                            </div>
+                                        </div>
+                                        <span class="drum-picker-separator">:</span>
+                                        <!-- 分のドラム -->
+                                        <div class="drum-picker" id="drum-minute">
+                                            <div class="drum-picker-scroll" id="drum-minute-scroll">
+                                                <div class="drum-picker-padding-top"></div>
+                                                <div class="drum-picker-list" id="drum-minute-list">
+                                                    <!-- JSで動的生成 -->
+                                                </div>
+                                                <div class="drum-picker-padding-bottom"></div>
+                                            </div>
+                                        </div>
+                                        <!-- 中央の選択用ハイライトバー -->
+                                        <div class="drum-picker-overlay"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 所要時間クイック選択 -->
+                            <div class="modal-card" id="duration-picker-card">
+                                <span class="modal-card-label">⌛️ 所要時間</span>
+                                <div class="duration-chips" id="duration-chips-container">
+                                    <button class="duration-chip" data-minutes="15">15分</button>
+                                    <button class="duration-chip active" data-minutes="30">30分</button>
+                                    <button class="duration-chip" data-minutes="60">1時間</button>
+                                    <button class="duration-chip" data-minutes="90">1.5時間</button>
+                                    <button class="duration-chip" data-minutes="120">2時間</button>
+                                    <button class="duration-chip" data-minutes="180">3時間</button>
+                                    <button class="duration-chip" data-minutes="custom" id="custom-duration-btn">•••</button>
+                                </div>
+
+                                <!-- カスタム所要時間ドラムロール（デフォルト非表示、•••選択時のみ表示） -->
+                                <div id="custom-duration-picker-wrapper" style="display: none; margin-top: 16px; border-top: 1px solid #e5e5ea; padding-top: 16px;">
+                                    <div style="text-align: center; margin-bottom: 8px; font-size: 14px; font-weight: 600; color: #FFB1B6;" id="custom-duration-text">0時間30分</div>
+                                    <div class="drum-picker-container" style="justify-content: center; height: 120px; width: 240px;">
+                                        <!-- 時間のドラム -->
+                                        <div class="drum-picker" id="drum-duration-hour">
+                                            <div class="drum-picker-scroll" id="drum-duration-hour-scroll">
+                                                <div class="drum-picker-padding-top"></div>
+                                                <div class="drum-picker-list" id="drum-duration-hour-list">
+                                                    <!-- JSで動的生成 -->
+                                                </div>
+                                                <div class="drum-picker-padding-bottom"></div>
+                                            </div>
+                                        </div>
+                                        <span class="drum-picker-separator" style="line-height: 120px; font-size: 13px; font-weight: 600; white-space: nowrap;">時間</span>
+
+                                        <!-- 分のドラム -->
+                                        <div class="drum-picker" id="drum-duration-minute">
+                                            <div class="drum-picker-scroll" id="drum-duration-minute-scroll">
+                                                <div class="drum-picker-padding-top"></div>
+                                                <div class="drum-picker-list" id="drum-duration-minute-list">
+                                                    <!-- JSで動的生成 -->
+                                                </div>
+                                                <div class="drum-picker-padding-bottom"></div>
+                                            </div>
+                                        </div>
+                                        <span class="drum-picker-separator" style="line-height: 120px; font-size: 13px; font-weight: 600; white-space: nowrap;">分</span>
+                                        
+                                        <!-- 中央の選択用ハイライトバー -->
+                                        <div class="drum-picker-overlay"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
+                        <!-- 【ステップ3】詳細設定 (サブタスク、ノート、エネルギー) -->
+                        <div id="modal-step-3" class="modal-step-section">
+                            <!-- エネルギー設定カード -->
+                            <div class="modal-card">
+                                <span class="modal-card-label">⚡️ 必要なエネルギー</span>
+                                <div class="energy-radio-group">
+                                    <label class="energy-radio-label">
+                                        <input type="radio" name="energy" value="1" onclick="updateEnergyLabel(1)">
+                                        <span class="energy-radio-btn">1</span>
+                                    </label>
+                                    <label class="energy-radio-label">
+                                        <input type="radio" name="energy" value="2" onclick="updateEnergyLabel(2)">
+                                        <span class="energy-radio-btn">2</span>
+                                    </label>
+                                    <label class="energy-radio-label">
+                                        <input type="radio" name="energy" value="3" checked onclick="updateEnergyLabel(3)">
+                                        <span class="energy-radio-btn">3</span>
+                                    </label>
+                                    <label class="energy-radio-label">
+                                        <input type="radio" name="energy" value="4" onclick="updateEnergyLabel(4)">
+                                        <span class="energy-radio-btn">4</span>
+                                    </label>
+                                    <label class="energy-radio-label">
+                                        <input type="radio" name="energy" value="5" onclick="updateEnergyLabel(5)">
+                                        <span class="energy-radio-btn">5</span>
+                                    </label>
+                                </div>
+                                <div style="text-align: center; font-size: 13px; font-weight: 600; color: #8e8e93;" id="energy-value-label">ふつう</div>
+                            </div>
+
+                            <!-- ノートカード -->
+                            <div class="modal-card">
+                                <span class="modal-card-label">📝 メモ・ノート</span>
+                                <textarea id="schedule-notes" class="modal-textarea" placeholder="詳細を入力してください..."></textarea>
+                            </div>
+                        </div>
+
                     </div>
-                    <div class="modal-footer">
-                        <button class="modal-btn modal-delete-btn" id="modal-delete-btn"
-                            onclick="deleteFromModal()">削除</button>
-                        <button class="modal-btn modal-save-btn" onclick="saveFromModal()">保存</button>
+
+                    <!-- モーダルフッター（ナビゲーションボタン） -->
+                    <div class="structured-modal-footer">
+                        <button class="modal-footer-btn modal-footer-btn-secondary" id="modal-back-btn" onclick="prevStep()">戻る</button>
+                        <button class="modal-footer-btn modal-footer-btn-primary" id="modal-next-btn" onclick="nextStep()">次へ</button>
                     </div>
                 </div>
             </div>
@@ -324,99 +563,26 @@
             });
         }
 
-        // 時間・分のセレクトボックス生成
-        function initTimeSelects() {
-            const hourSelect = document.getElementById('modal-task-hours');
-            const minuteSelect = document.getElementById('modal-task-minutes');
-
-            hourSelect.innerHTML = '';
-            minuteSelect.innerHTML = '';
-
-            for (let i = 0; i <= 23; i++) {
-                let opt = document.createElement('option');
-                opt.value = i; opt.textContent = i;
-                hourSelect.appendChild(opt);
-            }
-
-            for (let i = 0; i <= 59; i++) {
-                let opt = document.createElement('option');
-                opt.value = i; opt.textContent = i;
-                minuteSelect.appendChild(opt);
-            }
-        }
-
-        let currentEditingItem = null;
-
-        // モーダルを開く（編集モード）
-        function openTaskModal(taskItem, event) {
-            currentEditingItem = taskItem;
-
-            document.getElementById('modal-title-text').textContent = 'タスクの編集';
-            document.getElementById('modal-delete-btn').style.display = 'block';
-
-            // データの読み込み
-            const title = taskItem.querySelector('.task-text').textContent;
-            const dateVal = taskItem.getAttribute('data-date') || '';
-            const minutesVal = parseInt(taskItem.getAttribute('data-minutes') || 0);
-            const memo = taskItem.getAttribute('data-memo') || '';
-
-            document.getElementById('modal-task-name').value = title;
-            document.getElementById('modal-task-date').value = dateVal;
-            document.getElementById('modal-task-memo').value = memo;
-
-            const h = Math.floor(minutesVal / 60);
-            const m = minutesVal % 60;
-            document.getElementById('modal-task-hours').value = h;
-            document.getElementById('modal-task-minutes').value = m;
-
-            document.getElementById('task-form-modal').classList.add('active');
-        }
-
-        // モーダルを開く（新規登録モード）
-        function openNewTaskModal() {
-            currentEditingItem = null;
-
-            document.getElementById('modal-title-text').textContent = 'タスクの登録';
-            document.getElementById('modal-delete-btn').style.display = 'none';
-
-            // フォームのクリア
-            document.getElementById('modal-task-name').value = '';
-
-            // デフォルトの日付を設定 (現在時刻)
-            const now = new Date();
-            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-            document.getElementById('modal-task-date').value = now.toISOString().slice(0, 16);
-
-            document.getElementById('modal-task-memo').value = '';
-            document.getElementById('modal-task-hours').value = 0;
-            document.getElementById('modal-task-minutes').value = 30; // デフォルト30分
-
-            document.getElementById('task-form-modal').classList.add('active');
-        }
-
-        // モーダルを閉じる
-        function closeTaskModal() {
-            document.getElementById('task-form-modal').classList.remove('active');
-            currentEditingItem = null;
-        }
-
-        // モーダルから削除
-        function deleteFromModal() {
-            if (currentEditingItem) {
-                currentEditingItem.remove();
-            }
-            closeTaskModal();
-        }
+        const colorMap = {
+            pink: { main: '#FF7082', bg: '#FFF0F1' },
+            blue: { main: '#38bdf8', bg: '#f0f9ff' },
+            green: { main: '#4ade80', bg: '#f0fdf4' },
+            orange: { main: '#fbbf24', bg: '#fffbeb' },
+            purple: { main: '#c084fc', bg: '#faf5ff' }
+        };
 
         // 日付のフォーマットユーティリティ (例: "2026-06-03T23:59" -> "6/3 23:59")
         function formatDeadline(rawDateTime) {
             if (!rawDateTime) return '';
             const dateObj = new Date(rawDateTime);
+            if (isNaN(dateObj.getTime())) return '';
             const month = dateObj.getMonth() + 1;
             const date = dateObj.getDate();
             const hours = String(dateObj.getHours()).padStart(2, '0');
             const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-            return `📅 ${month}/${date} ${hours}:${minutes}`;
+            const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+            const dayName = dayNames[dateObj.getDay()];
+            return `📅 ${month}/${date}(${dayName}) ${hours}:${minutes}`;
         }
 
         // タスクの名前に沿ったピクトグラムの自動選択
@@ -456,70 +622,119 @@
             return '📌';
         }
 
-        // モーダルから保存
-        function saveFromModal() {
-            const title = document.getElementById('modal-task-name').value || '無題のタスク';
-            const dateVal = document.getElementById('modal-task-date').value;
-            const hours = parseInt(document.getElementById('modal-task-hours').value || 0);
-            const minutes = parseInt(document.getElementById('modal-task-minutes').value || 0);
-            const totalMinutes = (hours * 60) + minutes;
-            const memo = document.getElementById('modal-task-memo').value;
+        // デフォルトのタスクデータ（初回アクセス用）
+        const defaultTasks = [
+            { id: 1, title: "経済学のレポートを出す", deadline: "2026-06-03T23:59", durationMinutes: 30, memo: "教授のメールにPDF形式で添付して提出すること。", completed: false, starred: false, isAllDay: false, startDate: "2026-06-03", startTime: "23:29", endDate: "2026-06-03", endTime: "23:59", icon: "📝", type: "study" },
+            { id: 2, title: "マーケティングの教科書3章を読む", deadline: "2026-06-05T12:00", durationMinutes: 45, memo: "3C分析のページを重点的に読み込んでおく。", completed: false, starred: false, isAllDay: false, startDate: "2026-06-05", startTime: "11:15", endDate: "2026-06-05", endTime: "12:00", icon: "📖", type: "study" },
+            { id: 3, title: "グループワークの議事録共有", deadline: "2026-06-04T10:00", durationMinutes: 5, memo: "スプリント1の決定事項をLINEのノートに貼る。", completed: false, starred: false, isAllDay: false, startDate: "2026-06-04", startTime: "09:55", endDate: "2026-06-04", endTime: "10:00", icon: "👥", type: "social" },
+            { id: 4, title: "サークルの出欠連絡を入れる", deadline: "2026-06-03T12:00", durationMinutes: 3, memo: "来週の懇親会、遅れて参加する旨を伝える。", completed: false, starred: false, isAllDay: false, startDate: "2026-06-03", startTime: "11:57", endDate: "2026-06-03", endTime: "12:00", icon: "✉️", type: "social" },
+            { id: 5, title: "履修登録の最終確認", deadline: "2026-06-10T16:45", durationMinutes: 10, memo: "エラーが出ていないか、学務システムを確認。", completed: false, starred: false, isAllDay: false, startDate: "2026-06-10", startTime: "16:35", endDate: "2026-06-10", endTime: "16:45", icon: "📝", type: "study" },
+            { id: 6, title: "バイトのシフト希望提出", deadline: "2026-06-05T21:00", durationMinutes: 5, memo: "後半はテスト期間に入るから少なめで出す。", completed: false, starred: false, isAllDay: false, startDate: "2026-06-05", startTime: "20:55", endDate: "2026-06-05", endTime: "21:00", icon: "💼", type: "work" },
+            { id: 7, title: "デザイン思考の課題リサーチ", deadline: "2026-06-08T15:00", durationMinutes: 60, memo: "ターゲットユーザーへのインタビュー項目を3つ考える。", completed: false, starred: false, isAllDay: false, startDate: "2026-06-08", startTime: "14:00", endDate: "2026-06-08", endTime: "15:00", icon: "📝", type: "study" }
+        ];
 
-            if (currentEditingItem) {
-                // 既存の編集
-                currentEditingItem.setAttribute('data-date', dateVal);
-                currentEditingItem.setAttribute('data-minutes', totalMinutes);
-                currentEditingItem.setAttribute('data-memo', memo);
+        let currentEditingId = null;
 
-                currentEditingItem.querySelector('.task-text').textContent = title;
-                currentEditingItem.querySelector('.task-deadline-slim').textContent = formatDeadline(dateVal);
+        // LocalStorageからタスクを取得
+        function getSavedTasks() {
+            let tasks = JSON.parse(localStorage.getItem('savedTasks'));
+            if (!tasks || tasks.length === 0) {
+                tasks = defaultTasks;
+                localStorage.setItem('savedTasks', JSON.stringify(tasks));
+            }
+            return tasks;
+        }
 
-                // アイコンの自動更新
-                let iconSpan = currentEditingItem.querySelector('.task-item-icon');
-                if (iconSpan) {
-                    iconSpan.textContent = getTaskIcon(title);
+        // LocalStorageにタスクを保存
+        function saveSavedTasks(tasks) {
+            localStorage.setItem('savedTasks', JSON.stringify(tasks));
+        }
+
+        // タスクの描画処理
+        function renderTasks() {
+            const list = document.getElementById('task-list');
+            const completedList = document.getElementById('completed-list');
+            if (!list || !completedList) return;
+
+            list.innerHTML = '';
+            completedList.innerHTML = '';
+
+            let tasks = getSavedTasks();
+            const sortSelect = document.querySelector('.sort-select');
+            const sortType = sortSelect ? sortSelect.value : 'deadline';
+
+            // ソート処理
+            tasks.sort((a, b) => {
+                if (sortType === 'deadline') {
+                    let dateA = a.deadline || '9999-12-31T23:59';
+                    let dateB = b.deadline || '9999-12-31T23:59';
+                    return dateA.localeCompare(dateB);
+                } else if (sortType === 'time-asc') {
+                    return (a.durationMinutes || 0) - (b.durationMinutes || 0);
+                } else if (sortType === 'time-desc') {
+                    return (b.durationMinutes || 0) - (a.durationMinutes || 0);
                 }
-            } else {
-                // 新規登録
-                const list = document.getElementById('task-list');
-                const newItem = document.createElement('li');
-                newItem.className = 'task-item';
-                newItem.setAttribute('data-date', dateVal);
-                newItem.setAttribute('data-minutes', totalMinutes);
-                newItem.setAttribute('data-memo', memo);
-                newItem.onclick = function (e) { openTaskModal(newItem, e); };
+                return 0;
+            });
 
-                const icon = getTaskIcon(title);
+            tasks.forEach(task => {
+                const li = document.createElement('li');
+                li.className = `task-item ${task.completed ? 'completed' : ''}`;
+                li.dataset.id = task.id;
+                li.onclick = (e) => openTaskModal(task.id, e);
 
-                newItem.innerHTML = `
-                    <div class="task-view-slim">
+                const icon = task.icon || getTaskIcon(task.title);
+                const deadlineText = formatDeadline(task.deadline) || '📅 期限なし';
+                const taskColorName = task.color || 'pink';
+                const taskColor = colorMap[taskColorName] || colorMap.pink;
+                const colorHex = taskColor.main;
+
+                li.innerHTML = `
+                    <div class="task-view-slim" style="position: relative; padding-left: 20px;">
+                        <div class="task-item-color-bar" style="background-color: ${colorHex}; position: absolute; left: 0; top: 0; width: 6px; height: 100%;"></div>
                         <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
-                            <input type="checkbox" class="task-checkbox" onclick="toggleComplete(this); event.stopPropagation();">
+                            <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}
+                                onclick="toggleComplete(${task.id}, this); event.stopPropagation();">
                             <span class="todo-checkbox-circle"></span>
                         </label>
-                        <span class="task-item-icon">${icon}</span>
+                        <span class="task-item-icon" style="background-color: ${taskColor.bg}; color: ${taskColor.main};">${icon}</span>
                         <div class="todo-content">
-                            <span class="task-text">${title}</span>
-                            <span class="task-deadline-slim">${formatDeadline(dateVal)}</span>
+                            <span class="task-text">${task.title}</span>
+                            <span class="task-deadline-slim">${deadlineText}</span>
                         </div>
-                        <button class="todo-star-btn" onclick="toggleStar(this); event.stopPropagation();">☆</button>
+                        <button class="todo-star-btn ${task.starred ? 'active' : ''}"
+                            onclick="toggleStar(${task.id}, this); event.stopPropagation();">${task.starred ? '★' : '☆'}</button>
                     </div>
                 `;
-                list.appendChild(newItem);
-            }
 
-            closeTaskModal();
-            const sortSelect = document.querySelector('.sort-select');
-            sortTasks(sortSelect.value);
+                if (task.completed) {
+                    completedList.appendChild(li);
+                } else {
+                    list.appendChild(li);
+                }
+            });
         }
 
         // 星マーク（重要度）のトグル処理
-        function toggleStar(button) {
-            button.classList.toggle('active');
-            if (button.classList.contains('active')) {
-                button.textContent = '★';
-            } else {
-                button.textContent = '☆';
+        function toggleStar(taskId, button) {
+            let tasks = getSavedTasks();
+            const index = tasks.findIndex(t => t.id === taskId);
+            if (index !== -1) {
+                tasks[index].starred = !tasks[index].starred;
+                saveSavedTasks(tasks);
+                renderTasks();
+            }
+        }
+
+        // 完了・未完了のトグル処理
+        function toggleComplete(taskId, checkbox) {
+            let tasks = getSavedTasks();
+            const index = tasks.findIndex(t => t.id === taskId);
+            if (index !== -1) {
+                tasks[index].completed = checkbox.checked;
+                tasks[index].completedAt = checkbox.checked ? new Date().toISOString() : null;
+                saveSavedTasks(tasks);
+                renderTasks();
             }
         }
 
@@ -527,6 +742,7 @@
         function toggleCompletedSection() {
             const list = document.getElementById('completed-list');
             const arrow = document.getElementById('completed-arrow');
+            if (!list || !arrow) return;
             if (list.style.display === 'none') {
                 list.style.display = 'block';
                 arrow.textContent = '∨';
@@ -536,86 +752,808 @@
             }
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            initSidebar();
-            initTimeSelects();
-
-            // モーダルの背景（オーバーレイ）をクリックした時に閉じる
-            const modalOverlay = document.getElementById('task-form-modal');
-            if (modalOverlay) {
-                modalOverlay.addEventListener('click', (e) => {
-                    if (e.target === modalOverlay) {
-                        closeTaskModal();
-                    }
-                });
-            }
-
-            // 初期タスクの締切表記をスリムな形式にフォーマットする、およびアイコンを自動挿入
-            document.querySelectorAll('.task-item').forEach(item => {
-                const rawDate = item.getAttribute('data-date');
-                if (rawDate) {
-                    item.querySelector('.task-deadline-slim').textContent = formatDeadline(rawDate);
-                }
-
-                // アイコンの自動挿入
-                const title = item.querySelector('.task-text').textContent;
-                const icon = getTaskIcon(title);
-                
-                const checkboxWrapper = item.querySelector('.todo-checkbox-wrapper');
-                let iconSpan = item.querySelector('.task-item-icon');
-                if (!iconSpan) {
-                    iconSpan = document.createElement('span');
-                    iconSpan.className = 'task-item-icon';
-                    checkboxWrapper.parentNode.insertBefore(iconSpan, checkboxWrapper.nextSibling);
-                }
-                iconSpan.textContent = icon;
-            });
-        });
-
         function scrollToCompleted() {
-            const section = document.getElementById('completed-section');
-            if (document.getElementById('completed-list').style.display === 'none') {
+            const section = document.getElementById('completed-list');
+            if (!section) return;
+            if (section.style.display === 'none') {
                 toggleCompletedSection();
             }
             section.scrollIntoView({ behavior: 'smooth' });
         }
 
         function sortTasks(sortType) {
-            const list = document.getElementById('task-list');
-            const items = Array.from(list.getElementsByClassName('task-item'));
+            renderTasks();
+        }
 
-            items.sort((a, b) => {
-                if (sortType === 'deadline') {
-                    let dateA = a.getAttribute('data-date') || '9999-12-31T23:59';
-                    let dateB = b.getAttribute('data-date') || '9999-12-31T23:59';
-                    return dateA.localeCompare(dateB);
-                } else if (sortType === 'time-asc') {
-                    let minA = parseInt(a.getAttribute('data-minutes') || 0);
-                    let minB = parseInt(b.getAttribute('data-minutes') || 0);
-                    return minA - minB;
-                } else if (sortType === 'time-desc') {
-                    let minA = parseInt(a.getAttribute('data-minutes') || 0);
-                    let minB = parseInt(b.getAttribute('data-minutes') || 0);
-                    return minB - minA;
+        let currentStep = 1;
+        let selectedEmoji = "📅";
+        let selectedDuration = 30;
+        let selectedColor = "pink";
+
+        let quickSelectedColor = "pink";
+
+        function selectQuickColor(colorName) {
+            quickSelectedColor = colorName;
+            const container = document.getElementById('quick-color-palette');
+            if (!container) return;
+            const buttons = container.querySelectorAll('.color-palette-btn');
+            buttons.forEach(btn => {
+                if (btn.classList.contains(colorName)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        // ドラムロール選択中の現在値と制御タイマー
+        let selectedHour = "12";
+        let selectedMinute = "00";
+        let drumScrollTimers = { hour: null, minute: null };
+
+        let selectedDurationHour = 0;
+        let selectedDurationMinute = 30;
+        let drumDurationScrollTimers = { hour: null, minute: null };
+
+        // ドラムロール式ピッカーの初期化
+        function initTimeWheelSelects() {
+            const hourList = document.getElementById('drum-hour-list');
+            const minList = document.getElementById('drum-minute-list');
+            if (!hourList || !minList) return;
+
+            hourList.innerHTML = '';
+            minList.innerHTML = '';
+
+            for (let h = 0; h < 24; h++) {
+                const val = String(h).padStart(2, '0');
+                const div = document.createElement('div');
+                div.className = 'drum-picker-item';
+                div.dataset.value = val;
+                div.textContent = val;
+                div.addEventListener('click', () => {
+                    scrollDrumToValue('hour', val);
+                });
+                hourList.appendChild(div);
+            }
+
+            for (let m = 0; m < 60; m += 5) {
+                const val = String(m).padStart(2, '0');
+                const div = document.createElement('div');
+                div.className = 'drum-picker-item';
+                div.dataset.value = val;
+                div.textContent = val;
+                div.addEventListener('click', () => {
+                    scrollDrumToValue('minute', val);
+                });
+                minList.appendChild(div);
+            }
+
+            setupDrumScrollListeners('hour', 'drum-hour-scroll');
+            setupDrumScrollListeners('minute', 'drum-minute-scroll');
+        }
+
+        function setupDrumScrollListeners(type, scrollId) {
+            const el = document.getElementById(scrollId);
+            if (!el) return;
+            el.onscroll = null;
+            el.addEventListener('scroll', () => {
+                window.clearTimeout(drumScrollTimers[type]);
+                drumScrollTimers[type] = setTimeout(() => {
+                    onDrumScrollEnd(type, el);
+                }, 100);
+            });
+        }
+
+        function onDrumScrollEnd(type, el) {
+            const scrollTop = el.scrollTop;
+            const itemHeight = 40;
+            const index = Math.round(scrollTop / itemHeight);
+            const list = type === 'hour' ? document.getElementById('drum-hour-list') : document.getElementById('drum-minute-list');
+            const items = list.querySelectorAll('.drum-picker-item');
+
+            if (items[index]) {
+                el.scrollTo({
+                    top: index * itemHeight,
+                    behavior: 'smooth'
+                });
+                items.forEach(item => item.classList.remove('selected'));
+                items[index].classList.add('selected');
+                const val = items[index].dataset.value;
+                if (type === 'hour') {
+                    selectedHour = val;
+                } else {
+                    selectedMinute = val;
+                }
+            }
+        }
+
+        function scrollDrumToValue(type, val, behavior = 'smooth') {
+            const scrollId = type === 'hour' ? 'drum-hour-scroll' : 'drum-minute-scroll';
+            const listId = type === 'hour' ? 'drum-hour-list' : 'drum-minute-list';
+            const el = document.getElementById(scrollId);
+            const list = document.getElementById(listId);
+            if (!el || !list) return;
+
+            const items = list.querySelectorAll('.drum-picker-item');
+            let targetIndex = -1;
+            items.forEach((item, idx) => {
+                if (item.dataset.value === val) {
+                    targetIndex = idx;
                 }
             });
 
-            items.forEach(item => list.appendChild(item));
-        }
-
-        function toggleComplete(checkbox) {
-            let taskItem = checkbox.closest('.task-item');
-
-            if (checkbox.checked) {
-                document.getElementById('completed-list').appendChild(taskItem);
-                taskItem.classList.add('completed');
-            } else {
-                document.getElementById('task-list').appendChild(taskItem);
-                taskItem.classList.remove('completed');
-                const sortSelect = document.querySelector('.sort-select');
-                sortTasks(sortSelect.value);
+            if (targetIndex !== -1) {
+                const itemHeight = 40;
+                el.scrollTo({
+                    top: targetIndex * itemHeight,
+                    behavior: behavior
+                });
+                items.forEach(item => item.classList.remove('selected'));
+                items[targetIndex].classList.add('selected');
+                if (type === 'hour') {
+                    selectedHour = val;
+                } else {
+                    selectedMinute = val;
+                }
             }
         }
+
+        // カスタム所要時間ドラムピッカー制御ロジック
+        function initDurationWheelSelects() {
+            const hourList = document.getElementById('drum-duration-hour-list');
+            const minList = document.getElementById('drum-duration-minute-list');
+            if (!hourList || !minList) return;
+
+            hourList.innerHTML = '';
+            minList.innerHTML = '';
+
+            for (let h = 0; h <= 12; h++) {
+                const val = String(h);
+                const div = document.createElement('div');
+                div.className = 'drum-picker-item';
+                div.dataset.value = val;
+                div.textContent = val;
+                div.addEventListener('click', () => {
+                    scrollDurationDrumToValue('hour', val);
+                });
+                hourList.appendChild(div);
+            }
+
+            for (let m = 0; m < 60; m += 5) {
+                const val = String(m).padStart(2, '0');
+                const div = document.createElement('div');
+                div.className = 'drum-picker-item';
+                div.dataset.value = val;
+                div.textContent = val;
+                div.addEventListener('click', () => {
+                    scrollDurationDrumToValue('minute', val);
+                });
+                minList.appendChild(div);
+            }
+
+            setupDurationDrumScrollListeners('hour', 'drum-duration-hour-scroll');
+            setupDurationDrumScrollListeners('minute', 'drum-duration-minute-scroll');
+        }
+
+        function setupDurationDrumScrollListeners(type, scrollId) {
+            const el = document.getElementById(scrollId);
+            if (!el) return;
+            el.onscroll = null;
+            el.addEventListener('scroll', () => {
+                if (drumDurationScrollTimers[type]) {
+                    clearTimeout(drumDurationScrollTimers[type]);
+                }
+                drumDurationScrollTimers[type] = setTimeout(() => {
+                    onDurationDrumScrollEnd(type, el);
+                }, 100);
+            });
+        }
+
+        function onDurationDrumScrollEnd(type, el) {
+            const scrollTop = el.scrollTop;
+            const itemHeight = 40;
+            const targetIndex = Math.round(scrollTop / itemHeight);
+            const listId = type === 'hour' ? 'drum-duration-hour-list' : 'drum-duration-minute-list';
+            const list = document.getElementById(listId);
+            if (!list) return;
+
+            const items = list.querySelectorAll('.drum-picker-item');
+            if (targetIndex >= 0 && targetIndex < items.length) {
+                el.scrollTo({
+                    top: targetIndex * itemHeight,
+                    behavior: 'smooth'
+                });
+                items.forEach(item => item.classList.remove('selected'));
+                items[targetIndex].classList.add('selected');
+                const val = items[targetIndex].dataset.value;
+                if (type === 'hour') {
+                    selectedDurationHour = parseInt(val);
+                } else {
+                    selectedDurationMinute = parseInt(val);
+                }
+                updateCustomDurationText();
+            }
+        }
+
+        function scrollDurationDrumToValue(type, val, behavior = 'smooth') {
+            const scrollId = type === 'hour' ? 'drum-duration-hour-scroll' : 'drum-duration-minute-scroll';
+            const listId = type === 'hour' ? 'drum-duration-hour-list' : 'drum-duration-minute-list';
+            const el = document.getElementById(scrollId);
+            const list = document.getElementById(listId);
+            if (!el || !list) return;
+
+            const items = list.querySelectorAll('.drum-picker-item');
+            let targetIndex = -1;
+            items.forEach((item, idx) => {
+                if (parseInt(item.dataset.value) === parseInt(val)) {
+                    targetIndex = idx;
+                }
+            });
+
+            if (targetIndex !== -1) {
+                const itemHeight = 40;
+                el.scrollTo({
+                    top: targetIndex * itemHeight,
+                    behavior: behavior
+                });
+                items.forEach(item => item.classList.remove('selected'));
+                items[targetIndex].classList.add('selected');
+                if (type === 'hour') {
+                    selectedDurationHour = parseInt(val);
+                } else {
+                    selectedDurationMinute = parseInt(val);
+                }
+                updateCustomDurationText();
+            }
+        }
+
+        function updateCustomDurationText() {
+            const textEl = document.getElementById('custom-duration-text');
+            if (textEl) {
+                textEl.textContent = `${selectedDurationHour}時間${selectedDurationMinute}分`;
+            }
+            selectedDuration = selectedDurationHour * 60 + selectedDurationMinute;
+        }
+
+        // 期間チップのイベントリスナー初期化
+        function initDurationChips() {
+            const container = document.getElementById('duration-chips-container');
+            if (!container) return;
+            const chips = container.querySelectorAll('.duration-chip');
+            chips.forEach(chip => {
+                const newChip = chip.cloneNode(true);
+                chip.parentNode.replaceChild(newChip, chip);
+
+                newChip.addEventListener('click', () => {
+                    const allChips = container.querySelectorAll('.duration-chip');
+                    allChips.forEach(c => c.classList.remove('active'));
+                    newChip.classList.add('active');
+
+                    const wrapper = document.getElementById('custom-duration-picker-wrapper');
+                    if (newChip.dataset.minutes === 'custom') {
+                        if (wrapper) wrapper.style.display = 'block';
+                        initDurationWheelSelects();
+                        const defaultPresets = [15, 30, 60, 90, 120, 180];
+                        if (defaultPresets.includes(selectedDuration)) {
+                            selectedDurationHour = Math.floor(selectedDuration / 60);
+                            selectedDurationMinute = selectedDuration % 60;
+                        }
+                        setTimeout(() => {
+                            scrollDurationDrumToValue('hour', String(selectedDurationHour), 'auto');
+                            scrollDurationDrumToValue('minute', String(selectedDurationMinute).padStart(2, '0'), 'auto');
+                        }, 50);
+                    } else {
+                        if (wrapper) wrapper.style.display = 'none';
+                        selectedDuration = parseInt(newChip.dataset.minutes);
+                    }
+                });
+            });
+        }
+
+        // 絵文字パレットの表示切り替え
+        function toggleEmojiPalette() {
+            const palette = document.getElementById('emoji-palette');
+            if (!palette) return;
+            palette.style.display = palette.style.display === 'none' ? 'grid' : 'none';
+        }
+
+        // 絵文字の選択
+        function selectEmoji(emoji) {
+            selectedEmoji = emoji;
+            const display = document.getElementById('emoji-display');
+            if (display) {
+                display.textContent = emoji;
+            }
+            toggleEmojiPalette(); // パレットを閉じる
+        }
+
+        // カラーの選択
+        function selectColor(colorName) {
+            selectedColor = colorName;
+            const buttons = document.querySelectorAll('.color-palette-btn');
+            buttons.forEach(btn => {
+                if (btn.classList.contains(colorName)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        // エネルギーラベルの更新
+        const energyLabels = { 1: "とても低い", 2: "低い", 3: "ふつう", 4: "高い", 5: "とても高い" };
+        function updateEnergyLabel(val) {
+            const label = document.getElementById('energy-value-label');
+            if (label) {
+                label.textContent = energyLabels[val] || "ふつう";
+            }
+        }
+
+        // ステップ遷移制御
+        function goToStep(step) {
+            currentStep = step;
+            document.querySelectorAll('.modal-step-section').forEach(el => el.classList.remove('active'));
+            const targetSec = document.getElementById(`modal-step-${step}`);
+            if (targetSec) targetSec.classList.add('active');
+
+            const backBtn = document.getElementById('modal-back-btn');
+            const nextBtn = document.getElementById('modal-next-btn');
+
+            if (step === 1) {
+                backBtn.style.visibility = 'hidden';
+                nextBtn.textContent = '次へ';
+            } else if (step === 2) {
+                backBtn.style.visibility = 'visible';
+                nextBtn.textContent = '次へ';
+                setTimeout(() => {
+                    scrollDrumToValue('hour', selectedHour, 'auto');
+                    scrollDrumToValue('minute', selectedMinute, 'auto');
+                    const wrapper = document.getElementById('custom-duration-picker-wrapper');
+                    if (wrapper && wrapper.style.display !== 'none') {
+                        scrollDurationDrumToValue('hour', String(selectedDurationHour), 'auto');
+                        scrollDurationDrumToValue('minute', String(selectedDurationMinute).padStart(2, '0'), 'auto');
+                    }
+                }, 50);
+            } else if (step === 3) {
+                backBtn.style.visibility = 'visible';
+                nextBtn.textContent = currentEditingId ? '保存' : '作成';
+            }
+        }
+
+        function nextStep() {
+            if (currentStep === 1) {
+                const titleInput = document.getElementById('schedule-title');
+                if (!titleInput || !titleInput.value.trim()) {
+                    alert('予定のタイトルを入力してください。');
+                    return;
+                }
+                goToStep(2);
+            } else if (currentStep === 2) {
+                goToStep(3);
+            } else if (currentStep === 3) {
+                saveFromModal();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                goToStep(currentStep - 1);
+            }
+        }
+
+        // モーダルを開く（編集モード）
+        function openTaskModal(taskId, event) {
+            currentEditingId = taskId;
+
+            document.getElementById('structured-delete-btn').style.display = 'flex';
+
+            const tasks = getSavedTasks();
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+
+            selectedEmoji = task.icon || "📅";
+            selectedDuration = task.durationMinutes || 30;
+            selectedColor = task.color || "pink";
+
+            document.getElementById('schedule-title').value = task.title;
+            document.getElementById('schedule-notes').value = task.memo || '';
+            document.getElementById('emoji-display').textContent = selectedEmoji;
+            selectColor(selectedColor);
+
+            const energyVal = task.energy || 3;
+            const energyInput = document.querySelector(`input[name="energy"][value="${energyVal}"]`);
+            if (energyInput) energyInput.checked = true;
+            updateEnergyLabel(energyVal);
+
+            // 締め切り日付の設定
+            let dVal = "";
+            let startTimeStr = '12:00';
+            if (task.deadline) {
+                const parts = task.deadline.split('T');
+                dVal = parts[0];
+                if (parts.length >= 2) startTimeStr = parts[1];
+            } else {
+                const today = new Date();
+                const pad = (n) => String(n).padStart(2, '0');
+                dVal = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+            }
+            document.getElementById('schedule-startdate').value = dVal;
+
+            // 時間ドラムピッカー値の設定
+            initTimeWheelSelects();
+            let sh = '12';
+            let sm = '00';
+            if (startTimeStr) {
+                const parts = startTimeStr.split(':');
+                if (parts.length >= 2) {
+                    sh = parts[0];
+                    sm = parts[1];
+                }
+            }
+            const mVal = String(Math.round(parseInt(sm) / 5) * 5 % 60).padStart(2, '0');
+            selectedHour = sh;
+            selectedMinute = mVal;
+            setTimeout(() => {
+                scrollDrumToValue('hour', sh, 'auto');
+                scrollDrumToValue('minute', mVal, 'auto');
+            }, 150);
+
+            // 期間の計算
+            initDurationChips();
+            const presetDurations = [15, 30, 60, 90, 120, 180];
+            const isCustom = !presetDurations.includes(selectedDuration);
+            
+            const container = document.getElementById('duration-chips-container');
+            if (container) {
+                container.querySelectorAll('.duration-chip').forEach(c => {
+                    if (isCustom && c.dataset.minutes === 'custom') {
+                        c.classList.add('active');
+                    } else if (!isCustom && parseInt(c.dataset.minutes) === selectedDuration) {
+                        c.classList.add('active');
+                    } else {
+                        c.classList.remove('active');
+                    }
+                });
+            }
+
+            const wrapper = document.getElementById('custom-duration-picker-wrapper');
+            if (isCustom) {
+                if (wrapper) wrapper.style.display = 'block';
+                selectedDurationHour = Math.floor(selectedDuration / 60);
+                selectedDurationMinute = selectedDuration % 60;
+                initDurationWheelSelects();
+                setTimeout(() => {
+                    scrollDurationDrumToValue('hour', String(selectedDurationHour), 'auto');
+                    scrollDurationDrumToValue('minute', String(selectedDurationMinute).padStart(2, '0'), 'auto');
+                }, 150);
+            } else {
+                if (wrapper) wrapper.style.display = 'none';
+            }
+
+            goToStep(1);
+            document.getElementById('task-form-modal').classList.add('active');
+        }
+
+        // モーダルを開く（新規登録モード）
+        function openNewTaskModal() {
+            currentEditingId = null;
+            selectedEmoji = "📅";
+            selectedDuration = 30;
+            selectedColor = "pink";
+
+            document.getElementById('schedule-title').value = '';
+            document.getElementById('schedule-notes').value = '';
+            document.getElementById('emoji-display').textContent = selectedEmoji;
+            selectColor(selectedColor);
+
+            const energyInput = document.querySelector('input[name="energy"][value="3"]');
+            if (energyInput) energyInput.checked = true;
+            updateEnergyLabel(3);
+
+            // 今日をデフォルト日付にする
+            const today = new Date();
+            const pad = (n) => String(n).padStart(2, '0');
+            const dVal = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+            document.getElementById('schedule-startdate').value = dVal;
+
+            initTimeWheelSelects();
+            selectedHour = '12';
+            selectedMinute = '00';
+            setTimeout(() => {
+                scrollDrumToValue('hour', '12', 'auto');
+                scrollDrumToValue('minute', '00', 'auto');
+            }, 150);
+
+            initDurationChips();
+            const container = document.getElementById('duration-chips-container');
+            if (container) {
+                container.querySelectorAll('.duration-chip').forEach(c => {
+                    if (parseInt(c.dataset.minutes) === 30) {
+                        c.classList.add('active');
+                    } else {
+                        c.classList.remove('active');
+                    }
+                });
+            }
+
+            const wrapper = document.getElementById('custom-duration-picker-wrapper');
+            if (wrapper) wrapper.style.display = 'none';
+
+            document.getElementById('structured-delete-btn').style.display = 'none';
+            goToStep(1);
+
+            document.getElementById('task-form-modal').classList.add('active');
+        }
+
+        // モーダルを閉じる
+        function closeTaskModal() {
+            document.getElementById('task-form-modal').classList.remove('active');
+            currentEditingId = null;
+        }
+
+        // モーダルから削除
+        function deleteFromModal() {
+            if (currentEditingId !== null) {
+                if (!confirm('本当にこのタスクを削除しますか？')) return;
+                let tasks = getSavedTasks();
+                tasks = tasks.filter(t => t.id !== currentEditingId);
+                saveSavedTasks(tasks);
+                renderTasks();
+            }
+            closeTaskModal();
+        }
+
+        // モーダルから保存
+        function saveFromModal() {
+            const title = document.getElementById('schedule-title').value || '無題のタスク';
+            const dateVal = document.getElementById('schedule-startdate').value;
+            const totalMinutes = selectedDuration;
+            const memo = document.getElementById('schedule-notes').value || '';
+            const energy = parseInt(document.querySelector('input[name="energy"]:checked').value);
+
+            // 時間合成
+            const startTimeStr = `${selectedHour}:${selectedMinute}`;
+            const deadlineVal = dateVal ? `${dateVal}T${startTimeStr}` : "";
+
+            let tasks = getSavedTasks();
+
+            // カレンダー連携用
+            let startDate = dateVal || "";
+            let startTime = startTimeStr;
+            let endDate = dateVal || "";
+            let endTime = "";
+
+            if (dateVal) {
+                const startDateTime = new Date(`${dateVal}T${startTimeStr}`);
+                if (!isNaN(startDateTime.getTime())) {
+                    const endDateTime = new Date(startDateTime.getTime() + totalMinutes * 60 * 1000);
+                    const pad = (n) => String(n).padStart(2, '0');
+                    endDate = `${endDateTime.getFullYear()}-${pad(endDateTime.getMonth()+1)}-${pad(endDateTime.getDate())}`;
+                    endTime = `${pad(endDateTime.getHours())}:${pad(endDateTime.getMinutes())}`;
+                }
+            }
+
+            let icon = selectedEmoji;
+            if (icon === "📅" || !icon) {
+                icon = getTaskIcon(title);
+            }
+
+            // 予定タイプの判定
+            let type = "routine";
+            if (title.includes("バイト") || title.includes("仕事")) type = "work";
+            else if (title.includes("カフェ") || title.includes("友達") || title.includes("飲み") || title.includes("おしゃべり") || title.includes("ライブ") || title.includes("演奏")) type = "social";
+            else if (title.includes("大学") || title.includes("講義") || title.includes("授業") || title.includes("勉強") || title.includes("自習") || title.includes("図書館") || title.includes("レポート")) type = "study";
+            else if (title.includes("ジム") || title.includes("ヨガ") || title.includes("トレ") || title.includes("ランニング")) type = "health";
+            else if (title.includes("掃除") || title.includes("洗濯") || title.includes("自炊") || title.includes("買い物")) type = "home";
+
+            if (currentEditingId !== null) {
+                const index = tasks.findIndex(t => t.id === currentEditingId);
+                if (index !== -1) {
+                    tasks[index].title = title;
+                    tasks[index].deadline = deadlineVal;
+                    tasks[index].durationMinutes = totalMinutes;
+                    tasks[index].memo = memo;
+                    tasks[index].notes = memo;
+                    tasks[index].startDate = startDate;
+                    tasks[index].startTime = startTime;
+                    tasks[index].endDate = endDate;
+                    tasks[index].endTime = endTime;
+                    tasks[index].icon = icon;
+                    tasks[index].type = type;
+                    tasks[index].color = selectedColor;
+                    tasks[index].energy = energy;
+                }
+            } else {
+                const newTask = {
+                    id: Date.now(),
+                    title: title,
+                    deadline: deadlineVal,
+                    durationMinutes: totalMinutes,
+                    memo: memo,
+                    notes: memo,
+                    completed: false,
+                    starred: false,
+                    isAllDay: false,
+                    startDate: startDate,
+                    startTime: startTime,
+                    endDate: endDate,
+                    endTime: endTime,
+                    icon: icon,
+                    type: type,
+                    color: selectedColor,
+                    energy: energy,
+                    subtasks: []
+                };
+                tasks.push(newTask);
+            }
+
+            saveSavedTasks(tasks);
+            renderTasks();
+            closeTaskModal();
+        }
+
+        function autoDeleteOldTasks() {
+            let tasks = JSON.parse(localStorage.getItem('savedTasks'));
+            if (!tasks || tasks.length === 0) return;
+
+            const now = new Date().getTime();
+            const oneWeekMs = 7 * 24 * 60 * 60 * 1000;
+
+            const filteredTasks = tasks.filter(task => {
+                if (task.completed) {
+                    if (task.completedAt) {
+                        const completedTime = new Date(task.completedAt).getTime();
+                        if (now - completedTime >= oneWeekMs) {
+                            return false; // 削除
+                        }
+                    } else if (task.deadline) {
+                        const deadlineTime = new Date(task.deadline).getTime();
+                        if (now - deadlineTime >= oneWeekMs) {
+                            return false; // 削除
+                        }
+                    }
+                } else {
+                    if (task.deadline) {
+                        const deadlineTime = new Date(task.deadline).getTime();
+                        if (now - deadlineTime >= oneWeekMs) {
+                            return false; // 削除
+                        }
+                    }
+                }
+                return true;
+            });
+
+            if (filteredTasks.length !== tasks.length) {
+                localStorage.setItem('savedTasks', JSON.stringify(filteredTasks));
+            }
+        }
+
+        function updateStatusBarTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const timeEl = document.getElementById('status-bar-time');
+            if (timeEl) {
+                timeEl.textContent = `${hours}:${minutes}`;
+            }
+        }
+
+        // 初期描画
+        window.addEventListener('DOMContentLoaded', () => {
+            updateStatusBarTime(); // 時刻の即時反映
+            setInterval(updateStatusBarTime, 1000); // 1秒ごとに更新
+
+            autoDeleteOldTasks(); // 自動削除処理の実行
+            initSidebar();
+            // modal-form-modal の背景をクリックした時に閉じるイベント
+            const modalOverlay = document.getElementById('task-form-modal');
+            if (modalOverlay) {
+                modalOverlay.addEventListener('click', (e) => {
+                    if (e.target === modalOverlay) closeTaskModal();
+                });
+            }
+
+            // --- クイック追加カード制御ロジック ---
+            const quickDateBtn = document.getElementById('quick-date-btn');
+            const quickTaskDate = document.getElementById('quick-task-date');
+            const quickDateLabel = document.getElementById('quick-date-label');
+
+            if (quickDateBtn && quickTaskDate) {
+                quickDateBtn.addEventListener('click', () => {
+                    if (typeof quickTaskDate.showPicker === 'function') {
+                        quickTaskDate.showPicker();
+                    } else {
+                        quickTaskDate.click();
+                    }
+                });
+
+                quickTaskDate.addEventListener('change', () => {
+                    const val = quickTaskDate.value;
+                    if (val) {
+                        const dateObj = new Date(val);
+                        const month = dateObj.getMonth() + 1;
+                        const date = dateObj.getDate();
+                        const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+                        const dayName = dayNames[dateObj.getDay()];
+                        const hours = String(dateObj.getHours()).padStart(2, '0');
+                        const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+                        quickDateLabel.textContent = `${month}月${date}日(${dayName}) ${hours}:${minutes}`;
+                    } else {
+                        quickDateLabel.textContent = '期限を設定';
+                    }
+                });
+            }
+
+            // タスク追加処理（LocalStorage 保存）
+            const quickAddBtn = document.getElementById('quickAddBtn');
+            if (quickAddBtn) {
+                quickAddBtn.addEventListener('click', () => {
+                    const titleInput = document.getElementById('quick-task-title');
+                    const title = titleInput.value.trim();
+                    if (!title) {
+                        alert('タスク名を入力してください！');
+                        return;
+                    }
+
+                    const dateVal = quickTaskDate.value;
+                    const hours = parseInt(document.getElementById('quick-task-hours').value || 0);
+                    const minutes = parseInt(document.getElementById('quick-task-minutes').value || 0);
+                    const totalMinutes = (hours * 60) + minutes;
+
+                    // カレンダーとの連携のために、開始日付・開始時間・終了日付・終了時間を算出
+                    let startDate = "";
+                    let startTime = "";
+                    let endDate = "";
+                    let endTime = "";
+
+                    if (dateVal) {
+                        const startDateTime = new Date(dateVal);
+                        if (!isNaN(startDateTime.getTime())) {
+                            const endDateTime = new Date(startDateTime.getTime() + totalMinutes * 60 * 1000);
+                            const pad = (n) => String(n).padStart(2, '0');
+                            startDate = `${startDateTime.getFullYear()}-${pad(startDateTime.getMonth()+1)}-${pad(startDateTime.getDate())}`;
+                            startTime = `${pad(startDateTime.getHours())}:${pad(startDateTime.getMinutes())}`;
+                            endDate = `${endDateTime.getFullYear()}-${pad(endDateTime.getMonth()+1)}-${pad(endDateTime.getDate())}`;
+                            endTime = `${pad(endDateTime.getHours())}:${pad(endDateTime.getMinutes())}`;
+                        }
+                    }
+
+                    const tasks = getSavedTasks();
+                    const newTask = {
+                        id: Date.now(),
+                        title: title,
+                        deadline: dateVal,
+                        durationMinutes: totalMinutes,
+                        memo: "",
+                        completed: false,
+                        starred: false,
+                        isAllDay: false,
+                        startDate: startDate,
+                        startTime: startTime,
+                        endDate: endDate,
+                        endTime: endTime,
+                        icon: getTaskIcon(title),
+                        type: "study",
+                        color: quickSelectedColor
+                    };
+
+                    tasks.push(newTask);
+                    saveSavedTasks(tasks);
+                    renderTasks();
+
+                    // フォームクリア
+                    titleInput.value = '';
+                    quickTaskDate.value = '';
+                    quickDateLabel.textContent = '期限を設定';
+                    document.getElementById('quick-task-hours').value = '0';
+                    document.getElementById('quick-task-minutes').value = '30';
+                    selectQuickColor('pink');
+                });
+            }
+
+            // 初期描画
+            renderTasks();
+        });
     </script>
 </body>
 
