@@ -142,62 +142,191 @@
             <div class="phone-home-indicator"></div>
         </div>
 
-        <!-- 予定登録・編集用ポップアップモーダル -->
+        <!-- 予定登録・編集用ポップアップモーダル (Structured風マルチステップ) -->
         <div id="schedule-modal" class="modal-overlay">
             <div class="modal-box">
-                <div class="modal-header">
-                    <h3 id="schedule-modal-title">予定の登録</h3>
-                    <button class="modal-close-btn" onclick="closeScheduleModal()">&times;</button>
+                <!-- モーダルヘッダー（コーラルピンク背景） -->
+                <div class="structured-modal-header">
+                    <button class="modal-close-circle-btn" onclick="closeScheduleModal()" aria-label="閉じる">✕</button>
+                    <button class="modal-delete-circle-btn" id="structured-delete-btn" onclick="deleteSchedule()" aria-label="削除" style="display: none;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
+                    </button>
+                    <!-- 絵文字選択エリア -->
+                    <div class="emoji-select-area" id="emoji-display">📅</div>
+                    <!-- 白のアンダーライン付きタイトル入力 -->
+                    <input type="text" id="schedule-title" class="modal-title-underline-input" placeholder="タイトルを入力">
                 </div>
-                <div class="modal-body">
-                    <div class="segmented-control" style="margin-bottom: 8px;">
-                        <button class="segment-btn active" id="segment-btn-event"
-                            onclick="setScheduleType('event')">予定</button>
-                        <button class="segment-btn" id="segment-btn-reminder"
-                            onclick="setScheduleType('reminder')">リマインダー</button>
-                    </div>
 
-                    <div class="form-group">
-                        <label class="modal-label">タイトル</label>
-                        <input type="text" id="schedule-title" class="modal-input" placeholder="タイトルを入力">
-                    </div>
+                <!-- モーダルボディ (iOS風薄いグレー背景) -->
+                <div class="structured-modal-body">
 
-                    <div class="form-group" id="schedule-location-group">
-                        <label class="modal-label">場所またはビデオ通話</label>
-                        <input type="text" id="schedule-location" class="modal-input" placeholder="場所を入力">
-                    </div>
-
-                    <div class="form-group">
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: center; min-height: 31px;">
-                            <label class="modal-label" style="margin: 0;">終日</label>
-                            <label class="switch">
-                                <input type="checkbox" id="schedule-allday" onchange="toggleAllDay()">
-                                <span class="slider"></span>
-                            </label>
+                    <!-- 【ステップ1】アイコン選択 -->
+                    <div id="modal-step-1" class="modal-step-section active">
+                        <div class="modal-card">
+                            <span class="modal-card-label">🎨 アイコン（絵文字）を選択</span>
+                            <div class="emoji-palette" style="display: grid; max-height: none;">
+                                <button class="emoji-palette-btn" onclick="selectEmoji('🌅')">🌅</button>
+                                <button class="emoji-palette-btn" onclick="selectEmoji('📚')">📚</button>
+                                <button class="emoji-palette-btn" onclick="selectEmoji('💼')">💼</button>
+                                <button class="emoji-palette-btn" onclick="selectEmoji('☕️')">☕️</button>
+                                <button class="emoji-palette-btn" onclick="selectEmoji('🏃')">🏃</button>
+                                <button class="emoji-palette-btn" onclick="selectEmoji('🚶')">🚶</button>
+                                <button class="emoji-palette-btn" onclick="selectEmoji('🎸')">🎸</button>
+                                <button class="emoji-palette-btn" onclick="selectEmoji('🎤')">🎤</button>
+                                <button class="emoji-palette-btn" onclick="selectEmoji('🧘')">🧘</button>
+                                <button class="emoji-palette-btn" onclick="selectEmoji('🛒')">🛒</button>
+                                <button class="emoji-palette-btn" onclick="selectEmoji('💻')">💻</button>
+                                <button class="emoji-palette-btn" onclick="selectEmoji('🍳')">🍳</button>
+                                <button class="emoji-palette-btn" onclick="selectEmoji('📖')">📖</button>
+                                <button class="emoji-palette-btn" onclick="selectEmoji('🎬')">🎬</button>
+                                <button class="emoji-palette-btn" onclick="selectEmoji('🍣')">🍣</button>
+                                <button class="emoji-palette-btn" onclick="selectEmoji('🥞')">🥞</button>
+                                <button class="emoji-palette-btn" onclick="selectEmoji('🎨')">🎨</button>
+                                <button class="emoji-palette-btn" onclick="selectEmoji('🛁')">🛁</button>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="modal-label">開始</label>
-                        <div class="modal-time-inputs">
-                            <input type="date" id="schedule-startdate" class="modal-input" style="flex: 2;">
-                            <input type="time" id="schedule-starttime" class="modal-input" style="flex: 1;">
+                    <!-- 【ステップ2】時間と期間の設定 -->
+                    <div id="modal-step-2" class="modal-step-section">
+                        <!-- 開始時間ドラムピッカー風UI (縦ドラムロール) -->
+                        <div class="modal-card" id="time-picker-card">
+                            <span class="modal-card-label">⏰ 開始時間</span>
+                            <div class="time-wheel-container">
+                                <div class="drum-picker-container">
+                                    <!-- 時のドラム -->
+                                    <div class="drum-picker" id="drum-hour">
+                                        <div class="drum-picker-scroll" id="drum-hour-scroll">
+                                            <div class="drum-picker-padding-top"></div>
+                                            <div class="drum-picker-list" id="drum-hour-list">
+                                                <!-- JSで動的生成 -->
+                                            </div>
+                                            <div class="drum-picker-padding-bottom"></div>
+                                        </div>
+                                    </div>
+                                    <span class="drum-picker-separator">:</span>
+                                    <!-- 分のドラム -->
+                                    <div class="drum-picker" id="drum-minute">
+                                        <div class="drum-picker-scroll" id="drum-minute-scroll">
+                                            <div class="drum-picker-padding-top"></div>
+                                            <div class="drum-picker-list" id="drum-minute-list">
+                                                <!-- JSで動的生成 -->
+                                            </div>
+                                            <div class="drum-picker-padding-bottom"></div>
+                                        </div>
+                                    </div>
+                                    <!-- 中央の選択用ハイライトバー -->
+                                    <div class="drum-picker-overlay"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 所要時間クイック選択 -->
+                        <div class="modal-card" id="duration-picker-card">
+                            <span class="modal-card-label">⌛️ 所要時間</span>
+                            <div class="duration-chips" id="duration-chips-container">
+                                <button class="duration-chip" data-minutes="15">15分</button>
+                                <button class="duration-chip active" data-minutes="30">30分</button>
+                                <button class="duration-chip" data-minutes="60">1時間</button>
+                                <button class="duration-chip" data-minutes="90">1.5時間</button>
+                                <button class="duration-chip" data-minutes="120">2時間</button>
+                                <button class="duration-chip" data-minutes="180">3時間</button>
+                                <button class="duration-chip" data-minutes="custom" id="custom-duration-btn">•••</button>
+                            </div>
+
+                            <!-- カスタム所要時間ドラムロール（デフォルト非表示、•••選択時のみ表示） -->
+                            <div id="custom-duration-picker-wrapper" style="display: none; margin-top: 16px; border-top: 1px solid #e5e5ea; padding-top: 16px;">
+                                <div style="text-align: center; margin-bottom: 8px; font-size: 14px; font-weight: 600; color: #FFB1B6;" id="custom-duration-text">0時間30分</div>
+                                <div class="drum-picker-container" style="justify-content: center; height: 120px; width: 240px;">
+                                    <!-- 時間のドラム -->
+                                    <div class="drum-picker" id="drum-duration-hour">
+                                        <div class="drum-picker-scroll" id="drum-duration-hour-scroll">
+                                            <div class="drum-picker-padding-top"></div>
+                                            <div class="drum-picker-list" id="drum-duration-hour-list">
+                                                <!-- JSで動的生成 -->
+                                            </div>
+                                            <div class="drum-picker-padding-bottom"></div>
+                                        </div>
+                                    </div>
+                                    <span class="drum-picker-separator" style="line-height: 120px; font-size: 13px; font-weight: 600; white-space: nowrap;">時間</span>
+
+                                    <!-- 分のドラム -->
+                                    <div class="drum-picker" id="drum-duration-minute">
+                                        <div class="drum-picker-scroll" id="drum-duration-minute-scroll">
+                                            <div class="drum-picker-padding-top"></div>
+                                            <div class="drum-picker-list" id="drum-duration-minute-list">
+                                                <!-- JSで動的生成 -->
+                                            </div>
+                                            <div class="drum-picker-padding-bottom"></div>
+                                        </div>
+                                    </div>
+                                    <span class="drum-picker-separator" style="line-height: 120px; font-size: 13px; font-weight: 600; white-space: nowrap;">分</span>
+                                    
+                                    <!-- 中央の選択用ハイライトバー -->
+                                    <div class="drum-picker-overlay"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 予備の日付選択（非表示にしておく） -->
+                        <div class="modal-card" style="display: none;">
+                            <div class="modal-card-row">
+                                <span class="modal-card-label">📅 日付</span>
+                                <input type="date" id="schedule-startdate">
+                            </div>
                         </div>
                     </div>
 
-                    <div class="form-group" id="schedule-end-group">
-                        <label class="modal-label">終了</label>
-                        <div class="modal-time-inputs">
-                            <input type="date" id="schedule-enddate" class="modal-input" style="flex: 2;">
-                            <input type="time" id="schedule-endtime" class="modal-input" style="flex: 1;">
+                    <!-- 【ステップ3】詳細設定 (サブタスク、ノート、エネルギー) -->
+                    <div id="modal-step-3" class="modal-step-section">
+
+                        <!-- エネルギー設定カード -->
+                        <div class="modal-card">
+                            <span class="modal-card-label">⚡️ 必要なエネルギー</span>
+                            <div class="energy-radio-group">
+                                <label class="energy-radio-label">
+                                    <input type="radio" name="energy" value="1" onclick="updateEnergyLabel(1)">
+                                    <span class="energy-radio-btn">1</span>
+                                </label>
+                                <label class="energy-radio-label">
+                                    <input type="radio" name="energy" value="2" onclick="updateEnergyLabel(2)">
+                                    <span class="energy-radio-btn">2</span>
+                                </label>
+                                <label class="energy-radio-label">
+                                    <input type="radio" name="energy" value="3" checked onclick="updateEnergyLabel(3)">
+                                    <span class="energy-radio-btn">3</span>
+                                </label>
+                                <label class="energy-radio-label">
+                                    <input type="radio" name="energy" value="4" onclick="updateEnergyLabel(4)">
+                                    <span class="energy-radio-btn">4</span>
+                                </label>
+                                <label class="energy-radio-label">
+                                    <input type="radio" name="energy" value="5" onclick="updateEnergyLabel(5)">
+                                    <span class="energy-radio-btn">5</span>
+                                </label>
+                            </div>
+                            <div style="text-align: center; font-size: 13px; font-weight: 600; color: #8e8e93;" id="energy-value-label">ふつう</div>
+                        </div>
+
+                        <!-- ノートカード -->
+                        <div class="modal-card">
+                            <span class="modal-card-label">📝 メモ・ノート</span>
+                            <textarea id="schedule-notes" class="modal-textarea"
+                                placeholder="詳細を入力してください..."></textarea>
                         </div>
                     </div>
+
                 </div>
-                <div class="modal-footer">
-                    <button class="modal-btn modal-delete-btn" id="schedule-delete-btn" onclick="deleteSchedule()"
-                        style="display: none;">削除</button>
-                    <button class="modal-btn modal-save-btn" onclick="saveSchedule()">保存</button>
+
+                <!-- モーダルフッター（ナビゲーションボタン） -->
+                <div class="structured-modal-footer">
+                    <button class="modal-footer-btn modal-footer-btn-secondary" id="modal-back-btn"
+                        onclick="prevStep()">戻る</button>
+                    <button class="modal-footer-btn modal-footer-btn-primary" id="modal-next-btn"
+                        onclick="nextStep()">次へ</button>
                 </div>
             </div>
         </div>
@@ -242,13 +371,17 @@
                     label = '明日';
                 }
 
+                // YYYY-MM-DD 形式のISO日付を作成
+                const isoDate = `${d.getFullYear()}-${String(month).padStart(2, '0')}-${String(dateNum).padStart(2, '0')}`;
+
                 weekDays.push({
                     id: i,
                     date: `${month}/${dateNum}`,
                     name: dayNames[i],
                     num: dateNum,
                     fullName: `${month}月${dateNum}日（${dayNames[i]}）`,
-                    label: label
+                    label: label,
+                    isoDate: isoDate
                 });
             }
         }
@@ -641,54 +774,518 @@
             }
         }
 
-        // --- 予定登録・編集モーダル制御ロジック ---
+        // --- 予定登録・編集モーダル制御ロジック (Structured風マルチステップ) ---
         let currentEditingId = null;
-        let currentScheduleType = 'event'; // 'event' or 'reminder'
+        let currentStep = 1;
+        let selectedEmoji = "📅";
+        let selectedDuration = 30;
+
+        // ドラムロール選択中の現在値と制御タイマー
+        let selectedHour = "12";
+        let selectedMinute = "00";
+        let drumScrollTimers = { hour: null, minute: null };
+
+        // ドラムロール式ピッカーの初期化
+        function initTimeWheelSelects() {
+            const hourList = document.getElementById('drum-hour-list');
+            const minList = document.getElementById('drum-minute-list');
+            if (!hourList || !minList) return;
+
+            hourList.innerHTML = '';
+            minList.innerHTML = '';
+
+            // 00〜23時のアイテム生成
+            for (let h = 0; h < 24; h++) {
+                const val = String(h).padStart(2, '0');
+                const div = document.createElement('div');
+                div.className = 'drum-picker-item';
+                div.dataset.value = val;
+                div.textContent = val;
+                div.addEventListener('click', () => {
+                    scrollDrumToValue('hour', val);
+                });
+                hourList.appendChild(div);
+            }
+
+            // 00〜55分 (5分刻み) のアイテム生成
+            for (let m = 0; m < 60; m += 5) {
+                const val = String(m).padStart(2, '0');
+                const div = document.createElement('div');
+                div.className = 'drum-picker-item';
+                div.dataset.value = val;
+                div.textContent = val;
+                div.addEventListener('click', () => {
+                    scrollDrumToValue('minute', val);
+                });
+                minList.appendChild(div);
+            }
+
+            // スクロールイベント登録
+            setupDrumScrollListeners('hour', 'drum-hour-scroll');
+            setupDrumScrollListeners('minute', 'drum-minute-scroll');
+        }
+
+        // ドラムのスクロール検知
+        function setupDrumScrollListeners(type, scrollId) {
+            const el = document.getElementById(scrollId);
+            if (!el) return;
+
+            el.onscroll = null;
+
+            el.addEventListener('scroll', () => {
+                window.clearTimeout(drumScrollTimers[type]);
+                drumScrollTimers[type] = setTimeout(() => {
+                    onDrumScrollEnd(type, el);
+                }, 100);
+            });
+        }
+
+        // スクロール停止時の吸着と選択状態更新
+        function onDrumScrollEnd(type, el) {
+            const scrollTop = el.scrollTop;
+            const itemHeight = 40; // ドラムアイテムの高さ
+            const index = Math.round(scrollTop / itemHeight);
+
+            const list = type === 'hour' ? document.getElementById('drum-hour-list') : document.getElementById('drum-minute-list');
+            const items = list.querySelectorAll('.drum-picker-item');
+
+            if (items[index]) {
+                // スナップ位置へ吸着スクロール
+                el.scrollTo({
+                    top: index * itemHeight,
+                    behavior: 'smooth'
+                });
+
+                // クラスの付け替え
+                items.forEach(item => item.classList.remove('selected'));
+                items[index].classList.add('selected');
+
+                const val = items[index].dataset.value;
+                if (type === 'hour') {
+                    selectedHour = val;
+                } else {
+                    selectedMinute = val;
+                }
+            }
+        }
+
+        // 特定の値へスクロール移動させる
+        function scrollDrumToValue(type, val, behavior = 'smooth') {
+            const scrollId = type === 'hour' ? 'drum-hour-scroll' : 'drum-minute-scroll';
+            const listId = type === 'hour' ? 'drum-hour-list' : 'drum-minute-list';
+            const el = document.getElementById(scrollId);
+            const list = document.getElementById(listId);
+            if (!el || !list) return;
+
+            const items = list.querySelectorAll('.drum-picker-item');
+            let targetIndex = -1;
+            items.forEach((item, idx) => {
+                if (item.dataset.value === val) {
+                    targetIndex = idx;
+                }
+            });
+
+            if (targetIndex !== -1) {
+                const itemHeight = 40;
+                el.scrollTo({
+                    top: targetIndex * itemHeight,
+                    behavior: behavior
+                });
+
+                items.forEach(item => item.classList.remove('selected'));
+                items[targetIndex].classList.add('selected');
+
+                if (type === 'hour') {
+                    selectedHour = val;
+                } else {
+                    selectedMinute = val;
+                }
+            }
+        }
+
+        // --- カスタム所要時間ドラムピッカー制御ロジック ---
+        let selectedDurationHour = 0;
+        let selectedDurationMinute = 30;
+        let drumDurationScrollTimers = { hour: null, minute: null };
+
+        function initDurationWheelSelects() {
+            const hourList = document.getElementById('drum-duration-hour-list');
+            const minList = document.getElementById('drum-duration-minute-list');
+            if (!hourList || !minList) return;
+
+            hourList.innerHTML = '';
+            minList.innerHTML = '';
+
+            // 0〜12時間のアイテム生成
+            for (let h = 0; h <= 12; h++) {
+                const val = String(h);
+                const div = document.createElement('div');
+                div.className = 'drum-picker-item';
+                div.dataset.value = val;
+                div.textContent = val;
+                div.addEventListener('click', () => {
+                    scrollDurationDrumToValue('hour', val);
+                });
+                hourList.appendChild(div);
+            }
+
+            // 00〜55分 (5分刻み) のアイテム生成
+            for (let m = 0; m < 60; m += 5) {
+                const val = String(m).padStart(2, '0');
+                const div = document.createElement('div');
+                div.className = 'drum-picker-item';
+                div.dataset.value = val;
+                div.textContent = val;
+                div.addEventListener('click', () => {
+                    scrollDurationDrumToValue('minute', val);
+                });
+                minList.appendChild(div);
+            }
+
+            // スクロールイベント登録
+            setupDurationDrumScrollListeners('hour', 'drum-duration-hour-scroll');
+            setupDurationDrumScrollListeners('minute', 'drum-duration-minute-scroll');
+        }
+
+        function setupDurationDrumScrollListeners(type, scrollId) {
+            const el = document.getElementById(scrollId);
+            if (!el) return;
+
+            el.onscroll = null;
+
+            el.addEventListener('scroll', () => {
+                if (drumDurationScrollTimers[type]) {
+                    clearTimeout(drumDurationScrollTimers[type]);
+                }
+
+                drumDurationScrollTimers[type] = setTimeout(() => {
+                    onDurationDrumScrollEnd(type, el);
+                }, 100);
+            });
+        }
+
+        function onDurationDrumScrollEnd(type, el) {
+            const scrollTop = el.scrollTop;
+            const itemHeight = 40;
+            const targetIndex = Math.round(scrollTop / itemHeight);
+            
+            const listId = type === 'hour' ? 'drum-duration-hour-list' : 'drum-duration-minute-list';
+            const list = document.getElementById(listId);
+            if (!list) return;
+
+            const items = list.querySelectorAll('.drum-picker-item');
+            if (targetIndex >= 0 && targetIndex < items.length) {
+                el.scrollTo({
+                    top: targetIndex * itemHeight,
+                    behavior: 'smooth'
+                });
+
+                items.forEach(item => item.classList.remove('selected'));
+                items[targetIndex].classList.add('selected');
+
+                const val = items[targetIndex].dataset.value;
+                if (type === 'hour') {
+                    selectedDurationHour = parseInt(val);
+                } else {
+                    selectedDurationMinute = parseInt(val);
+                }
+                updateCustomDurationText();
+            }
+        }
+
+        function scrollDurationDrumToValue(type, val, behavior = 'smooth') {
+            const scrollId = type === 'hour' ? 'drum-duration-hour-scroll' : 'drum-duration-minute-scroll';
+            const listId = type === 'hour' ? 'drum-duration-hour-list' : 'drum-duration-minute-list';
+            const el = document.getElementById(scrollId);
+            const list = document.getElementById(listId);
+            if (!el || !list) return;
+
+            const items = list.querySelectorAll('.drum-picker-item');
+            let targetIndex = -1;
+            items.forEach((item, idx) => {
+                if (parseInt(item.dataset.value) === parseInt(val)) {
+                    targetIndex = idx;
+                }
+            });
+
+            if (targetIndex !== -1) {
+                const itemHeight = 40;
+                el.scrollTo({
+                    top: targetIndex * itemHeight,
+                    behavior: behavior
+                });
+
+                items.forEach(item => item.classList.remove('selected'));
+                items[targetIndex].classList.add('selected');
+
+                if (type === 'hour') {
+                    selectedDurationHour = parseInt(val);
+                } else {
+                    selectedDurationMinute = parseInt(val);
+                }
+                updateCustomDurationText();
+            }
+        }
+
+        function updateCustomDurationText() {
+            const textEl = document.getElementById('custom-duration-text');
+            if (textEl) {
+                textEl.textContent = `${selectedDurationHour}時間${selectedDurationMinute}分`;
+            }
+            selectedDuration = selectedDurationHour * 60 + selectedDurationMinute;
+        }
+
+        // 期間チップのイベントリスナー初期化
+        function initDurationChips() {
+            const container = document.getElementById('duration-chips-container');
+            if (!container) return;
+            const chips = container.querySelectorAll('.duration-chip');
+            chips.forEach(chip => {
+                const newChip = chip.cloneNode(true);
+                chip.parentNode.replaceChild(newChip, chip);
+
+                newChip.addEventListener('click', () => {
+                    const allChips = container.querySelectorAll('.duration-chip');
+                    allChips.forEach(c => c.classList.remove('active'));
+                    newChip.classList.add('active');
+
+                    const wrapper = document.getElementById('custom-duration-picker-wrapper');
+                    if (newChip.dataset.minutes === 'custom') {
+                        if (wrapper) wrapper.style.display = 'block';
+                        
+                        initDurationWheelSelects();
+                        const defaultPresets = [15, 30, 60, 90, 120, 180];
+                        if (defaultPresets.includes(selectedDuration)) {
+                            selectedDurationHour = Math.floor(selectedDuration / 60);
+                            selectedDurationMinute = selectedDuration % 60;
+                        }
+                        
+                        setTimeout(() => {
+                            scrollDurationDrumToValue('hour', String(selectedDurationHour), 'auto');
+                            scrollDurationDrumToValue('minute', String(selectedDurationMinute).padStart(2, '0'), 'auto');
+                        }, 50);
+                    } else {
+                        if (wrapper) wrapper.style.display = 'none';
+                        selectedDuration = parseInt(newChip.dataset.minutes);
+                    }
+                });
+            });
+        }
+
+        // 絵文字パレットの表示切り替え
+        function toggleEmojiPalette() {
+            const palette = document.getElementById('emoji-palette');
+            if (!palette) return;
+            palette.style.display = palette.style.display === 'none' ? 'grid' : 'none';
+        }
+
+        // 絵文字の選択
+        function selectEmoji(emoji) {
+            selectedEmoji = emoji;
+            const display = document.getElementById('emoji-display');
+            if (display) {
+                display.textContent = emoji;
+            }
+            toggleEmojiPalette(); // パレットを閉じる
+        }
+
+
+
+        // エネルギーラベルの更新
+        const energyLabels = { 1: "とても低い", 2: "低い", 3: "ふつう", 4: "高い", 5: "とても高い" };
+        function updateEnergyLabel(val) {
+            const label = document.getElementById('energy-value-label');
+            if (label) {
+                label.textContent = energyLabels[val] || "ふつう";
+            }
+        }
+
+        // ステップ遷移制御
+        function goToStep(step) {
+            currentStep = step;
+
+            // 全ステップの active クラスを除去
+            document.querySelectorAll('.modal-step-section').forEach(el => el.classList.remove('active'));
+            // ターゲットステップを active に
+            const targetSec = document.getElementById(`modal-step-${step}`);
+            if (targetSec) targetSec.classList.add('active');
+
+            // ナビゲーションボタンの調整
+            const backBtn = document.getElementById('modal-back-btn');
+            const nextBtn = document.getElementById('modal-next-btn');
+
+            if (step === 1) {
+                backBtn.style.visibility = 'hidden';
+                nextBtn.textContent = '次へ';
+            } else if (step === 2) {
+                backBtn.style.visibility = 'visible';
+                nextBtn.textContent = '次へ';
+                // ステップ2（時間選択ドラムロール）が表示されたタイミングでスクロール位置を同期
+                setTimeout(() => {
+                    scrollDrumToValue('hour', selectedHour, 'auto');
+                    scrollDrumToValue('minute', selectedMinute, 'auto');
+                    
+                    // カスタム所要時間ドラムロールが開いている場合はそちらも同期
+                    const wrapper = document.getElementById('custom-duration-picker-wrapper');
+                    if (wrapper && wrapper.style.display !== 'none') {
+                        scrollDurationDrumToValue('hour', String(selectedDurationHour), 'auto');
+                        scrollDurationDrumToValue('minute', String(selectedDurationMinute).padStart(2, '0'), 'auto');
+                    }
+                }, 50);
+            } else if (step === 3) {
+                backBtn.style.visibility = 'visible';
+                nextBtn.textContent = currentEditingId ? '保存' : '作成';
+            }
+        }
+
+        function nextStep() {
+            // タイトルのバリデーション (ステップ1から2へ遷移するとき)
+            if (currentStep === 1) {
+                const titleInput = document.getElementById('schedule-title');
+                if (!titleInput || !titleInput.value.trim()) {
+                    alert('予定のタイトルを入力してください。');
+                    return;
+                }
+                goToStep(2);
+            } else if (currentStep === 2) {
+                goToStep(3);
+            } else if (currentStep === 3) {
+                saveSchedule();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                goToStep(currentStep - 1);
+            }
+        }
 
         function openNewScheduleModal() {
             currentEditingId = null;
-            document.getElementById('schedule-modal-title').textContent = '予定の登録';
-            document.getElementById('schedule-delete-btn').style.display = 'none';
+            selectedEmoji = "📅";
+            selectedDuration = 30;
 
             // フォーム初期化
             document.getElementById('schedule-title').value = '';
-            document.getElementById('schedule-location').value = '';
-            document.getElementById('schedule-allday').checked = false;
+            document.getElementById('schedule-notes').value = '';
+            document.querySelector('input[name="energy"][value="3"]').checked = true;
+            updateEnergyLabel(3);
+            document.getElementById('emoji-display').textContent = selectedEmoji;
 
             // 選択中の日付を取得
             const activeDayInfo = weekDays.find(d => d.id === currentActiveDay);
             const defaultDate = activeDayInfo ? activeDayInfo.isoDate : '2026-06-02';
-
             document.getElementById('schedule-startdate').value = defaultDate;
-            document.getElementById('schedule-starttime').value = '10:00';
-            document.getElementById('schedule-enddate').value = defaultDate;
-            document.getElementById('schedule-endtime').value = '11:00';
 
-            setScheduleType('event');
-            toggleAllDay();
+            // ドラムピッカー初期化
+            initTimeWheelSelects();
+            selectedHour = '12';
+            selectedMinute = '00';
+            setTimeout(() => {
+                scrollDrumToValue('hour', '12', 'auto');
+                scrollDrumToValue('minute', '00', 'auto');
+            }, 150);
+
+            // 期間チップ初期化
+            initDurationChips();
+            // デフォルトの30分を選択状態にする
+            const container = document.getElementById('duration-chips-container');
+            if (container) {
+                container.querySelectorAll('.duration-chip').forEach(c => {
+                    if (parseInt(c.dataset.minutes) === 30) {
+                        c.classList.add('active');
+                    } else {
+                        c.classList.remove('active');
+                    }
+                });
+            }
+            // カスタムピッカーは非表示
+            const wrapper = document.getElementById('custom-duration-picker-wrapper');
+            if (wrapper) wrapper.style.display = 'none';
+
+            document.getElementById('structured-delete-btn').style.display = 'none';
+            goToStep(1);
 
             document.getElementById('schedule-modal').classList.add('active');
         }
 
         function openEditScheduleModal(id) {
             currentEditingId = id;
-            document.getElementById('schedule-modal-title').textContent = '予定の編集';
-            document.getElementById('schedule-delete-btn').style.display = 'block';
-
             const allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
             const task = allTasks.find(t => t.id === id);
             if (!task) return;
 
-            document.getElementById('schedule-title').value = task.title;
-            document.getElementById('schedule-location').value = task.location || '';
-            document.getElementById('schedule-allday').checked = task.isAllDay || false;
-            document.getElementById('schedule-startdate').value = task.startDate;
-            document.getElementById('schedule-starttime').value = task.startTime || '10:00';
-            document.getElementById('schedule-enddate').value = task.endDate || task.startDate;
-            document.getElementById('schedule-endtime').value = task.endTime || '11:00';
+            selectedEmoji = task.icon || "📅";
+            selectedDuration = 30; // 後で計算
 
-            setScheduleType(task.type || 'event');
-            toggleAllDay();
+            document.getElementById('schedule-title').value = task.title;
+            document.getElementById('schedule-startdate').value = task.startDate;
+            document.getElementById('schedule-notes').value = task.notes || '';
+            const energyVal = task.energy || 3;
+            document.querySelector(`input[name="energy"][value="${energyVal}"]`).checked = true;
+            updateEnergyLabel(energyVal);
+            document.getElementById('emoji-display').textContent = selectedEmoji;
+
+            // 時間ドラムピッカー値の設定
+            initTimeWheelSelects();
+            const startTimeStr = task.startTime || '12:00';
+            let sh = '12';
+            let sm = '00';
+            if (startTimeStr) {
+                const parts = startTimeStr.split(':');
+                if (parts.length >= 2) {
+                    sh = parts[0];
+                    sm = parts[1];
+                }
+            }
+            const mVal = String(Math.round(parseInt(sm) / 5) * 5 % 60).padStart(2, '0');
+            selectedHour = sh;
+            selectedMinute = mVal;
+            setTimeout(() => {
+                scrollDrumToValue('hour', sh, 'auto');
+                scrollDrumToValue('minute', mVal, 'auto');
+            }, 150);
+
+            // 期間の計算
+            const startMin = timeToMinutes(startTimeStr);
+            const endMin = timeToMinutes(task.endTime || '12:30');
+            const diffMin = endMin - startMin;
+            selectedDuration = diffMin > 0 ? diffMin : 30;
+
+            // 期間チップの設定
+            initDurationChips();
+            const presetDurations = [15, 30, 60, 90, 120, 180];
+            const isCustom = !presetDurations.includes(selectedDuration);
+            
+            const container = document.getElementById('duration-chips-container');
+            if (container) {
+                container.querySelectorAll('.duration-chip').forEach(c => {
+                    if (isCustom && c.dataset.minutes === 'custom') {
+                        c.classList.add('active');
+                    } else if (!isCustom && parseInt(c.dataset.minutes) === selectedDuration) {
+                        c.classList.add('active');
+                    } else {
+                        c.classList.remove('active');
+                    }
+                });
+            }
+
+            const wrapper = document.getElementById('custom-duration-picker-wrapper');
+            if (isCustom) {
+                if (wrapper) wrapper.style.display = 'block';
+                selectedDurationHour = Math.floor(selectedDuration / 60);
+                selectedDurationMinute = selectedDuration % 60;
+                initDurationWheelSelects();
+                setTimeout(() => {
+                    scrollDurationDrumToValue('hour', String(selectedDurationHour), 'auto');
+                    scrollDurationDrumToValue('minute', String(selectedDurationMinute).padStart(2, '0'), 'auto');
+                }, 150);
+            } else {
+                if (wrapper) wrapper.style.display = 'none';
+            }
+
+            document.getElementById('structured-delete-btn').style.display = 'flex';
+            goToStep(1);
 
             document.getElementById('schedule-modal').classList.add('active');
         }
@@ -698,172 +1295,154 @@
             currentEditingId = null;
         }
 
-        function setScheduleType(type) {
-            currentScheduleType = type;
-            const eventBtn = document.getElementById('segment-btn-event');
-            const reminderBtn = document.getElementById('segment-btn-reminder');
-            const locationGroup = document.getElementById('schedule-location-group');
-            const endGroup = document.getElementById('schedule-end-group');
-
-            if (type === 'event') {
-                eventBtn.classList.add('active');
-                reminderBtn.classList.remove('active');
-                locationGroup.style.display = 'flex';
-                endGroup.style.display = 'flex';
-            } else {
-                eventBtn.classList.remove('active');
-                reminderBtn.classList.add('active');
-                locationGroup.style.display = 'none';
-                endGroup.style.display = 'none';
-            }
+    function saveSchedule() {
+        const title = document.getElementById('schedule-title').value;
+        if (!title.trim()) {
+            alert('タイトルを入力してください！');
+            return;
         }
 
-        function toggleAllDay() {
-            const isAllDay = document.getElementById('schedule-allday').checked;
-            const startTimeInput = document.getElementById('schedule-starttime');
-            const endTimeInput = document.getElementById('schedule-endtime');
+        const location = '';
+        const isAllDay = false;
+        const startDate = document.getElementById('schedule-startdate').value;
+        const notes = document.getElementById('schedule-notes').value;
+        const energy = parseInt(document.querySelector('input[name="energy"]:checked').value);
 
-            if (isAllDay) {
-                startTimeInput.style.display = 'none';
-                endTimeInput.style.display = 'none';
-            } else {
-                startTimeInput.style.display = 'inline-block';
-                endTimeInput.style.display = 'inline-block';
-            }
+        let startTime = '09:00';
+        let endTime = '10:00';
+
+        if (!isAllDay) {
+            startTime = `${selectedHour}:${selectedMinute}`;
+
+            // 開始時間に期間を足して終了時間を計算
+            const startMins = timeToMinutes(startTime);
+            const endMins = startMins + selectedDuration;
+            endTime = minutesToTime(endMins);
+        } else {
+            startTime = '';
+            endTime = '';
         }
 
-        function saveSchedule() {
-            const title = document.getElementById('schedule-title').value;
-            if (!title.trim()) {
-                alert('タイトルを入力してください！');
-                return;
-            }
-
-            const location = document.getElementById('schedule-location').value;
-            const isAllDay = document.getElementById('schedule-allday').checked;
-            const startDate = document.getElementById('schedule-startdate').value;
-            const startTime = isAllDay ? '' : document.getElementById('schedule-starttime').value;
-            const endDate = currentScheduleType === 'event' ? document.getElementById('schedule-enddate').value : startDate;
-            const endTime = (currentScheduleType === 'event' && !isAllDay) ? document.getElementById('schedule-endtime').value : '';
-
-            // アイコンの設定
-            let icon = "📅";
-            if (currentScheduleType === 'reminder') {
-                icon = "🔔";
-            } else {
-                if (title.includes("起床") || title.includes("朝") || title.includes("起き")) icon = "🌅";
-                else if (title.includes("バイト") || title.includes("仕事") || title.includes("勤務")) icon = "💼";
-                else if (title.includes("大学") || title.includes("講義") || title.includes("授業") || title.includes("勉強") || title.includes("自習")) icon = "📚";
-                else if (title.includes("カフェ") || title.includes("友達") || title.includes("しゃべ") || title.includes("コーヒー")) icon = "☕️";
-                else if (title.includes("映画") || title.includes("シネマ")) icon = "🎬";
-                else if (title.includes("電車") || title.includes("移動") || title.includes("通学")) icon = "🚃";
-                else if (title.includes("ジム") || title.includes("トレ") || title.includes("走")) icon = "🏃";
-                else if (title.includes("ヨガ") || title.includes("ストレッチ")) icon = "🧘";
-                else if (title.includes("飯") || title.includes("食") || title.includes("ランチ") || title.includes("ディナー")) icon = "🍔";
-            }
-
-            // タイプの設定
-            let type = "routine";
-            if (currentScheduleType === 'reminder') {
-                type = "health"; // リマインダー用のカラーに仮割り当て
-            } else {
-                if (title.includes("バイト") || title.includes("仕事")) type = "work";
-                else if (title.includes("カフェ") || title.includes("友達") || title.includes("飲み") || title.includes("おしゃべり")) type = "social";
-                else if (title.includes("大学") || title.includes("講義") || title.includes("授業") || title.includes("勉強") || title.includes("自習") || title.includes("図書館") || title.includes("レポート")) type = "study";
-                else if (title.includes("ジム") || title.includes("ヨガ") || title.includes("トレ")) type = "health";
-                else if (title.includes("掃除") || title.includes("洗濯") || title.includes("自炊") || title.includes("買い物")) type = "home";
-            }
-
-            let allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
-
-            if (currentEditingId) {
-                // 編集
-                allTasks = allTasks.map(t => {
-                    if (t.id === currentEditingId) {
-                        return {
-                            ...t,
-                            title,
-                            location,
-                            isAllDay,
-                            startDate,
-                            startTime,
-                            endDate,
-                            endTime,
-                            icon,
-                            type
-                        };
-                    }
-                    return t;
-                });
-            } else {
-                // 新規
-                const newTask = {
-                    id: `task-${Date.now()}`,
-                    title,
-                    location,
-                    isAllDay,
-                    startDate,
-                    startTime,
-                    endDate,
-                    endTime,
-                    icon,
-                    type
-                };
-                allTasks.push(newTask);
-            }
-
-            localStorage.setItem('savedTasks', JSON.stringify(allTasks));
-            closeScheduleModal();
-
-            // 登録した日付の曜日に合わせて画面を切り替える
-            const targetDayInfo = weekDays.find(d => d.isoDate === startDate);
-            if (targetDayInfo && targetDayInfo.id !== currentActiveDay) {
-                switchDay(targetDayInfo.id);
-                // 週間カレンダーの active クラスを更新する
-                document.querySelectorAll('.calendar-day').forEach(el => {
-                    if (parseInt(el.dataset.id) === targetDayInfo.id) {
-                        el.classList.add('active');
-                    } else {
-                        el.classList.remove('active');
-                    }
-                });
-            } else {
-                switchDay(currentActiveDay);
-            }
+        // アイコンの設定 (デフォルトは選択された絵文字、手動選択が優先される)
+        let icon = selectedEmoji;
+        if (icon === "📅" || !icon) {
+            // 自動割り当てのフォールバック
+            if (title.includes("起床") || title.includes("朝") || title.includes("起き")) icon = "🌅";
+            else if (title.includes("バイト") || title.includes("仕事") || title.includes("勤務")) icon = "💼";
+            else if (title.includes("大学") || title.includes("講義") || title.includes("授業") || title.includes("勉強") || title.includes("自習")) icon = "📚";
+            else if (title.includes("カフェ") || title.includes("友達") || title.includes("おしゃべり") || title.includes("コーヒー")) icon = "☕️";
+            else if (title.includes("映画") || title.includes("シネマ")) icon = "🎬";
+            else if (title.includes("電車") || title.includes("移動") || title.includes("通学")) icon = "🚃";
+            else if (title.includes("ジム") || title.includes("トレ") || title.includes("筋トレ")) icon = "🏃";
+            else if (title.includes("ヨガ") || title.includes("ストレッチ")) icon = "🧘";
+            else if (title.includes("ランチ") || title.includes("ディナー") || title.includes("ご飯")) icon = "🍔";
         }
 
-        function deleteSchedule() {
-            if (!currentEditingId) return;
-            if (!confirm('本当にこの予定を削除しますか？')) return;
+        // 予定タイプの判定
+        let type = "routine";
+        if (title.includes("バイト") || title.includes("仕事")) type = "work";
+        else if (title.includes("カフェ") || title.includes("友達") || title.includes("飲み") || title.includes("おしゃべり") || title.includes("ライブ") || title.includes("演奏")) type = "social";
+        else if (title.includes("大学") || title.includes("講義") || title.includes("授業") || title.includes("勉強") || title.includes("自習") || title.includes("図書館") || title.includes("レポート")) type = "study";
+        else if (title.includes("ジム") || title.includes("ヨガ") || title.includes("トレ") || title.includes("ランニング")) type = "health";
+        else if (title.includes("掃除") || title.includes("洗濯") || title.includes("自炊") || title.includes("買い物")) type = "home";
 
-            let allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
-            allTasks = allTasks.filter(t => t.id !== currentEditingId);
-            localStorage.setItem('savedTasks', JSON.stringify(allTasks));
+        let allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
 
-            closeScheduleModal();
+        if (currentEditingId) {
+            // 編集
+            allTasks = allTasks.map(t => {
+                if (t.id === currentEditingId) {
+                    return {
+                        ...t,
+                        title,
+                        location,
+                        isAllDay,
+                        startDate,
+                        startTime,
+                        endDate: startDate,
+                        endTime,
+                        icon,
+                        type,
+                        notes,
+                        energy,
+                        subtasks: []
+                    };
+                }
+                return t;
+            });
+        } else {
+            // 新規
+            const newTask = {
+                id: `task-${Date.now()}`,
+                title,
+                location,
+                isAllDay,
+                startDate,
+                startTime,
+                endDate: startDate,
+                endTime,
+                icon,
+                type,
+                notes,
+                energy,
+                subtasks: []
+            };
+            allTasks.push(newTask);
+        }
+
+        localStorage.setItem('savedTasks', JSON.stringify(allTasks));
+        closeScheduleModal();
+
+        // 登録した日付の曜日に合わせて画面を切り替える
+        const targetDayInfo = weekDays.find(d => d.isoDate === startDate);
+        if (targetDayInfo && targetDayInfo.id !== currentActiveDay) {
+            switchDay(targetDayInfo.id);
+            // 週間カレンダーの active クラスを更新する
+            document.querySelectorAll('.calendar-day').forEach(el => {
+                if (parseInt(el.dataset.id) === targetDayInfo.id) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+        } else {
             switchDay(currentActiveDay);
         }
+    }
 
-        // 初期化処理
-        window.addEventListener('DOMContentLoaded', () => {
-            setupWeeklyCalendarData(); // 週間データを今日基準で生成
-            initCalendar();
-            initSidebar();
-            switchDay(currentActiveDay); // 初期表示は今日にする
+    function deleteSchedule() {
+        if (!currentEditingId) return;
+        if (!confirm('本当にこの予定を削除しますか？')) return;
 
-            // インジケータを定期更新 (1秒ごと)
-            setInterval(updateNowIndicator, 1000);
+        let allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+        allTasks = allTasks.filter(t => t.id !== currentEditingId);
+        localStorage.setItem('savedTasks', JSON.stringify(allTasks));
 
-            // モーダルの背景（オーバーレイ）をクリックした時に閉じる
-            const modalOverlay = document.getElementById('schedule-modal');
-            if (modalOverlay) {
-                modalOverlay.addEventListener('click', (e) => {
-                    if (e.target === modalOverlay) {
-                        closeScheduleModal();
-                    }
-                });
-            }
-        });
+        closeScheduleModal();
+        switchDay(currentActiveDay);
+    }
+
+    // 初期化処理
+    window.addEventListener('DOMContentLoaded', () => {
+        setupWeeklyCalendarData(); // 週間データを今日基準で生成
+        initLocalStorageData();    // ローカルストレージデータの初期化 (バグ修正: ここで呼ぶ)
+        initCalendar();
+        initSidebar();
+        switchDay(currentActiveDay); // 初期表示は今日にする
+
+        // インジケータを定期更新 (1秒ごと)
+        setInterval(updateNowIndicator, 1000);
+
+        // モーダルの背景（オーバーレイ）をクリックした時に閉じる
+        const modalOverlay = document.getElementById('schedule-modal');
+        if (modalOverlay) {
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) {
+                    closeScheduleModal();
+                }
+            });
+        }
+    });
     </script>
 </body>
 
