@@ -12,6 +12,167 @@
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* クイック追加カード（インライン入力欄） */
+        .quick-add-card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 16px;
+            margin: 12px 4px 20px 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .quick-add-card .input-row {
+            width: 100%;
+        }
+
+        .quick-add-card .quick-input {
+            width: 100%;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #0f172a;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .quick-add-card .quick-input::placeholder {
+            color: #94a3b8;
+        }
+
+        .quick-add-card .quick-input:focus {
+            border-color: #FF7082;
+            box-shadow: 0 0 0 3px rgba(255, 112, 130, 0.15);
+        }
+
+
+        /* 設定行 (日付・所要時間) */
+        .quick-add-card .settings-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quick-add-card .setting-btn-wrapper {
+            position: relative;
+        }
+
+        .quick-add-card .setting-trigger-btn {
+            background-color: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            border-radius: 20px;
+            padding: 8px 14px;
+            font-size: 12px;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .quick-add-card .setting-trigger-btn:hover {
+            background-color: #e2e8f0;
+            border-color: #cbd5e1;
+        }
+
+        .quick-add-card .duration-select-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .quick-add-card .quick-select {
+            background-color: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: #0f172a;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* フッター行 */
+        .quick-add-card .quick-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 12px;
+            margin-top: 4px;
+        }
+
+        .quick-add-card .footer-icons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .quick-add-card .footer-icon-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s, transform 0.1s;
+        }
+
+        .quick-add-card .footer-icon-btn:hover {
+            color: #0f172a;
+            transform: scale(1.1);
+        }
+
+        .quick-add-card .quick-add-btn {
+            background: linear-gradient(135deg, #FFB1B6, #FFA2B2);
+            color: #ffffff;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 24px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255, 112, 130, 0.2);
+            transition: opacity 0.2s, transform 0.1s;
+        }
+
+        .quick-add-card .quick-add-btn:hover {
+            opacity: 0.9;
+        }
+
+        .quick-add-card .quick-add-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* タスクアイテムのカラーマーク用スタイル調整 */
+        .task-item-color-bar {
+            width: 4px;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            border-radius: 10px 0 0 10px;
+        }
+    </style>
 </head>
 
 <body class="daily-main-page task-list-page">
@@ -124,9 +285,50 @@
                     </select>
                 </div>
 
+                <!-- すぐにタスクを入力するインライン入力欄 (クイック追加カード) -->
+                <div class="quick-add-card">
+                    <div class="input-row">
+                        <input type="text" id="quick-task-title" placeholder="タスク名を入力..." class="quick-input">
+                    </div>
+
+                    <div class="settings-row">
+                        <div class="setting-btn-wrapper">
+                            <button class="setting-trigger-btn" id="quick-date-btn">
+                                <span class="icon">📅</span> <span id="quick-date-label">期限</span>
+                            </button>
+                            <input type="datetime-local" id="quick-task-date"
+                                style="position: absolute; opacity: 0; width: 0; height: 0; z-index: -1;">
+                        </div>
+
+                        <div class="duration-select-wrapper">
+                            <span>所要時間:</span>
+                            <select id="quick-task-hours" class="quick-select">
+                                <option value="0" selected>0時間</option>
+                                <option value="1">1時間</option>
+                                <option value="2">2時間</option>
+                                <option value="3">3時間</option>
+                                <option value="4">4時間</option>
+                            </select>
+                            <select id="quick-task-minutes" class="quick-select">
+                                <option value="0">0分</option>
+                                <option value="15">15分</option>
+                                <option value="30" selected>30分</option>
+                                <option value="45">45分</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="quick-card-footer">
+                        <div class="footer-icons">
+                            <button class="footer-icon-btn" title="ノートを追加">📋</button>
+                        </div>
+                        <button class="quick-add-btn" id="quickAddBtn">追加</button>
+                    </div>
+                </div>
+
                 <ul id="task-list" class="task-list">
                     <li class="task-item" data-date="2026-06-03T23:59" data-minutes="30"
-                        data-memo="教授のメールにPDF形式で添付して提出すること。" onclick="openTaskModal(this, event)">
+                        data-memo="教授のメールにPDF形式で添付して提出すること。">
                         <div class="task-view-slim">
                             <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
                                 <input type="checkbox" class="task-checkbox"
@@ -142,7 +344,7 @@
                         </div>
                     </li>
                     <li class="task-item" data-date="2026-06-05T12:00" data-minutes="45"
-                        data-memo="3C分析のページを重点的に読み込んでおく。" onclick="openTaskModal(this, event)">
+                        data-memo="3C分析のページを重点的に読み込んでおく。">
                         <div class="task-view-slim">
                             <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
                                 <input type="checkbox" class="task-checkbox"
@@ -158,7 +360,7 @@
                         </div>
                     </li>
                     <li class="task-item" data-date="2026-06-04T10:00" data-minutes="5"
-                        data-memo="スプリント1の決定事項をLINEのノートに貼る。" onclick="openTaskModal(this, event)">
+                        data-memo="スプリント1の決定事項をLINEのノートに貼る。">
                         <div class="task-view-slim">
                             <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
                                 <input type="checkbox" class="task-checkbox"
@@ -173,8 +375,8 @@
                                 onclick="toggleStar(this); event.stopPropagation();">☆</button>
                         </div>
                     </li>
-                    <li class="task-item" data-date="2026-06-03T12:00" data-minutes="3" data-memo="来週の懇親会、遅れて参加する旨を伝える。"
-                        onclick="openTaskModal(this, event)">
+                    <li class="task-item" data-date="2026-06-03T12:00" data-minutes="3"
+                        data-memo="来週の懇親会、遅れて参加する旨を伝える。">
                         <div class="task-view-slim">
                             <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
                                 <input type="checkbox" class="task-checkbox"
@@ -190,7 +392,7 @@
                         </div>
                     </li>
                     <li class="task-item" data-date="2026-06-10T16:45" data-minutes="10"
-                        data-memo="エラーが出ていないか、学務システムを確認。" onclick="openTaskModal(this, event)">
+                        data-memo="エラーが出ていないか、学務システムを確認。">
                         <div class="task-view-slim">
                             <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
                                 <input type="checkbox" class="task-checkbox"
@@ -205,8 +407,8 @@
                                 onclick="toggleStar(this); event.stopPropagation();">☆</button>
                         </div>
                     </li>
-                    <li class="task-item" data-date="2026-06-05T21:00" data-minutes="5" data-memo="後半はテスト期間に入るから少なめで出す。"
-                        onclick="openTaskModal(this, event)">
+                    <li class="task-item" data-date="2026-06-05T21:00" data-minutes="5"
+                        data-memo="後半はテスト期間に入るから少なめで出す。">
                         <div class="task-view-slim">
                             <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
                                 <input type="checkbox" class="task-checkbox"
@@ -222,7 +424,7 @@
                         </div>
                     </li>
                     <li class="task-item" data-date="2026-06-08T15:00" data-minutes="60"
-                        data-memo="ターゲットユーザーへのインタビュー項目を3つ考える。" onclick="openTaskModal(this, event)">
+                        data-memo="ターゲットユーザーへのインタビュー項目を3つ考える。">
                         <div class="task-view-slim">
                             <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
                                 <input type="checkbox" class="task-checkbox"
@@ -244,53 +446,6 @@
                     <span class="completed-title">完了済み</span>
                 </div>
                 <ul id="completed-list" class="task-list"></ul>
-            </div>
-
-            <!-- 予定追加ボタン (FAB) -> モーダルを開くように変更 -->
-            <a href="javascript:void(0)" class="fab-btn" aria-label="予定を追加" onclick="openNewTaskModal()">
-                <svg viewBox="0 0 24 24">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-            </a>
-
-            <!-- 新規登録・編集用ポップアップモーダル -->
-            <div id="task-form-modal" class="modal-overlay">
-                <div class="modal-box task-modal-box">
-                    <div class="modal-header">
-                        <h3 id="modal-title-text">タスクの編集</h3>
-                        <button class="modal-close-btn" onclick="closeTaskModal()">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label class="modal-label">タスク名</label>
-                            <input type="text" id="modal-task-name" class="modal-input" placeholder="タスク名を入力">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="modal-label">締め切り</label>
-                            <input type="datetime-local" id="modal-task-date" class="modal-input">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="modal-label">予定時間</label>
-                            <div class="modal-time-inputs">
-                                <select id="modal-task-hours" class="modal-select"></select>時間
-                                <select id="modal-task-minutes" class="modal-select"></select>分
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="modal-label">一言メモ</label>
-                            <input type="text" id="modal-task-memo" class="modal-input" placeholder="メモを入力">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="modal-btn modal-delete-btn" id="modal-delete-btn"
-                            onclick="deleteFromModal()">削除</button>
-                        <button class="modal-btn modal-save-btn" onclick="saveFromModal()">保存</button>
-                    </div>
-                </div>
             </div>
 
             <!-- iOS風ホームインジケータ -->
@@ -324,90 +479,6 @@
             });
         }
 
-        // 時間・分のセレクトボックス生成
-        function initTimeSelects() {
-            const hourSelect = document.getElementById('modal-task-hours');
-            const minuteSelect = document.getElementById('modal-task-minutes');
-
-            hourSelect.innerHTML = '';
-            minuteSelect.innerHTML = '';
-
-            for (let i = 0; i <= 23; i++) {
-                let opt = document.createElement('option');
-                opt.value = i; opt.textContent = i;
-                hourSelect.appendChild(opt);
-            }
-
-            for (let i = 0; i <= 59; i++) {
-                let opt = document.createElement('option');
-                opt.value = i; opt.textContent = i;
-                minuteSelect.appendChild(opt);
-            }
-        }
-
-        let currentEditingItem = null;
-
-        // モーダルを開く（編集モード）
-        function openTaskModal(taskItem, event) {
-            currentEditingItem = taskItem;
-
-            document.getElementById('modal-title-text').textContent = 'タスクの編集';
-            document.getElementById('modal-delete-btn').style.display = 'block';
-
-            // データの読み込み
-            const title = taskItem.querySelector('.task-text').textContent;
-            const dateVal = taskItem.getAttribute('data-date') || '';
-            const minutesVal = parseInt(taskItem.getAttribute('data-minutes') || 0);
-            const memo = taskItem.getAttribute('data-memo') || '';
-
-            document.getElementById('modal-task-name').value = title;
-            document.getElementById('modal-task-date').value = dateVal;
-            document.getElementById('modal-task-memo').value = memo;
-
-            const h = Math.floor(minutesVal / 60);
-            const m = minutesVal % 60;
-            document.getElementById('modal-task-hours').value = h;
-            document.getElementById('modal-task-minutes').value = m;
-
-            document.getElementById('task-form-modal').classList.add('active');
-        }
-
-        // モーダルを開く（新規登録モード）
-        function openNewTaskModal() {
-            currentEditingItem = null;
-
-            document.getElementById('modal-title-text').textContent = 'タスクの登録';
-            document.getElementById('modal-delete-btn').style.display = 'none';
-
-            // フォームのクリア
-            document.getElementById('modal-task-name').value = '';
-
-            // デフォルトの日付を設定 (現在時刻)
-            const now = new Date();
-            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-            document.getElementById('modal-task-date').value = now.toISOString().slice(0, 16);
-
-            document.getElementById('modal-task-memo').value = '';
-            document.getElementById('modal-task-hours').value = 0;
-            document.getElementById('modal-task-minutes').value = 30; // デフォルト30分
-
-            document.getElementById('task-form-modal').classList.add('active');
-        }
-
-        // モーダルを閉じる
-        function closeTaskModal() {
-            document.getElementById('task-form-modal').classList.remove('active');
-            currentEditingItem = null;
-        }
-
-        // モーダルから削除
-        function deleteFromModal() {
-            if (currentEditingItem) {
-                currentEditingItem.remove();
-            }
-            closeTaskModal();
-        }
-
         // 日付のフォーマットユーティリティ (例: "2026-06-03T23:59" -> "6/3 23:59")
         function formatDeadline(rawDateTime) {
             if (!rawDateTime) return '';
@@ -416,7 +487,9 @@
             const date = dateObj.getDate();
             const hours = String(dateObj.getHours()).padStart(2, '0');
             const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-            return `📅 ${month}/${date} ${hours}:${minutes}`;
+            const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+            const dayName = dayNames[dateObj.getDay()];
+            return `📅 ${month}/${date}(${dayName}) ${hours}:${minutes}`;
         }
 
         // タスクの名前に沿ったピクトグラムの自動選択
@@ -454,63 +527,6 @@
                 return '🍔';
             }
             return '📌';
-        }
-
-        // モーダルから保存
-        function saveFromModal() {
-            const title = document.getElementById('modal-task-name').value || '無題のタスク';
-            const dateVal = document.getElementById('modal-task-date').value;
-            const hours = parseInt(document.getElementById('modal-task-hours').value || 0);
-            const minutes = parseInt(document.getElementById('modal-task-minutes').value || 0);
-            const totalMinutes = (hours * 60) + minutes;
-            const memo = document.getElementById('modal-task-memo').value;
-
-            if (currentEditingItem) {
-                // 既存の編集
-                currentEditingItem.setAttribute('data-date', dateVal);
-                currentEditingItem.setAttribute('data-minutes', totalMinutes);
-                currentEditingItem.setAttribute('data-memo', memo);
-
-                currentEditingItem.querySelector('.task-text').textContent = title;
-                currentEditingItem.querySelector('.task-deadline-slim').textContent = formatDeadline(dateVal);
-
-                // アイコンの自動更新
-                let iconSpan = currentEditingItem.querySelector('.task-item-icon');
-                if (iconSpan) {
-                    iconSpan.textContent = getTaskIcon(title);
-                }
-            } else {
-                // 新規登録
-                const list = document.getElementById('task-list');
-                const newItem = document.createElement('li');
-                newItem.className = 'task-item';
-                newItem.setAttribute('data-date', dateVal);
-                newItem.setAttribute('data-minutes', totalMinutes);
-                newItem.setAttribute('data-memo', memo);
-                newItem.onclick = function (e) { openTaskModal(newItem, e); };
-
-                const icon = getTaskIcon(title);
-
-                newItem.innerHTML = `
-                    <div class="task-view-slim">
-                        <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
-                            <input type="checkbox" class="task-checkbox" onclick="toggleComplete(this); event.stopPropagation();">
-                            <span class="todo-checkbox-circle"></span>
-                        </label>
-                        <span class="task-item-icon">${icon}</span>
-                        <div class="todo-content">
-                            <span class="task-text">${title}</span>
-                            <span class="task-deadline-slim">${formatDeadline(dateVal)}</span>
-                        </div>
-                        <button class="todo-star-btn" onclick="toggleStar(this); event.stopPropagation();">☆</button>
-                    </div>
-                `;
-                list.appendChild(newItem);
-            }
-
-            closeTaskModal();
-            const sortSelect = document.querySelector('.sort-select');
-            sortTasks(sortSelect.value);
         }
 
         // 星マーク（重要度）のトグル処理
@@ -616,6 +632,142 @@
                 sortTasks(sortSelect.value);
             }
         }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initSidebar();
+
+            // 初期タスクの調整（クリック無効化、アイコン・カラーバー追加）
+            document.querySelectorAll('.task-item').forEach(item => {
+                // ポップアップ削除に伴いクリックイベントを無効化
+                item.removeAttribute('onclick');
+                item.style.cursor = 'default';
+
+                // カラーバーの追加 (デフォルトはグレー/ホワイト)
+                const viewSlim = item.querySelector('.task-view-slim');
+                if (viewSlim) {
+                    viewSlim.style.position = 'relative';
+                    viewSlim.style.paddingLeft = '20px';
+                    const colorBar = document.createElement('div');
+                    colorBar.className = 'task-item-color-bar';
+                    colorBar.style.backgroundColor = '#e2e8f0';
+                    colorBar.style.position = 'absolute';
+                    colorBar.style.left = '0';
+                    colorBar.style.top = '0';
+                    colorBar.style.width = '6px';
+                    colorBar.style.height = '100%';
+                    viewSlim.insertBefore(colorBar, viewSlim.firstChild);
+                }
+
+                const rawDate = item.getAttribute('data-date');
+                if (rawDate) {
+                    item.querySelector('.task-deadline-slim').textContent = formatDeadline(rawDate);
+                }
+
+                // アイコンの自動挿入
+                const title = item.querySelector('.task-text').textContent;
+                const icon = getTaskIcon(title);
+
+                const checkboxWrapper = item.querySelector('.todo-checkbox-wrapper');
+                let iconSpan = item.querySelector('.task-item-icon');
+                if (!iconSpan) {
+                    iconSpan = document.createElement('span');
+                    iconSpan.className = 'task-item-icon';
+                    checkboxWrapper.parentNode.insertBefore(iconSpan, checkboxWrapper.nextSibling);
+                }
+                iconSpan.textContent = icon;
+            });
+
+            // --- クイック追加カード制御ロジック ---
+            const quickDateBtn = document.getElementById('quick-date-btn');
+            const quickTaskDate = document.getElementById('quick-task-date');
+            const quickDateLabel = document.getElementById('quick-date-label');
+
+            if (quickDateBtn && quickTaskDate) {
+                quickDateBtn.addEventListener('click', () => {
+                    if (typeof quickTaskDate.showPicker === 'function') {
+                        quickTaskDate.showPicker();
+                    } else {
+                        quickTaskDate.click();
+                    }
+                });
+
+                quickTaskDate.addEventListener('change', () => {
+                    const val = quickTaskDate.value;
+                    if (val) {
+                        const dateObj = new Date(val);
+                        const month = dateObj.getMonth() + 1;
+                        const date = dateObj.getDate();
+                        const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+                        const dayName = dayNames[dateObj.getDay()];
+                        const hours = String(dateObj.getHours()).padStart(2, '0');
+                        const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+                        quickDateLabel.textContent = `${month}月${date}日(${dayName}) ${hours}:${minutes}`;
+                    } else {
+                        quickDateLabel.textContent = '期限を設定';
+                    }
+                });
+            }
+
+            // タスク追加処理
+            const quickAddBtn = document.getElementById('quickAddBtn');
+            if (quickAddBtn) {
+                quickAddBtn.addEventListener('click', () => {
+                    const titleInput = document.getElementById('quick-task-title');
+                    const title = titleInput.value.trim();
+                    if (!title) {
+                        alert('タスク名を入力してください！');
+                        return;
+                    }
+
+                    const dateVal = quickTaskDate.value;
+                    const hours = parseInt(document.getElementById('quick-task-hours').value || 0);
+                    const minutes = parseInt(document.getElementById('quick-task-minutes').value || 0);
+                    const totalMinutes = (hours * 60) + minutes;
+
+                    const list = document.getElementById('task-list');
+                    const newItem = document.createElement('li');
+                    newItem.className = 'task-item';
+                    newItem.setAttribute('data-date', dateVal);
+                    newItem.setAttribute('data-minutes', totalMinutes);
+                    newItem.setAttribute('data-memo', '');
+                    newItem.setAttribute('data-color', 'white');
+
+                    // デフォルトのカラーマーク用（ライトグレー）
+                    let colorHex = '#e2e8f0';
+
+                    const icon = getTaskIcon(title);
+                    const deadlineText = formatDeadline(dateVal) || '📅 期限なし';
+
+                    newItem.innerHTML = `
+                        <div class="task-view-slim" style="position: relative; padding-left: 20px;">
+                            <div class="task-item-color-bar" style="background-color: ${colorHex}; position: absolute; left: 0; top: 0; width: 6px; height: 100%;"></div>
+                            <label class="todo-checkbox-wrapper" onclick="event.stopPropagation();">
+                                <input type="checkbox" class="task-checkbox" onclick="toggleComplete(this); event.stopPropagation();">
+                                <span class="todo-checkbox-circle"></span>
+                            </label>
+                            <span class="task-item-icon">${icon}</span>
+                            <div class="todo-content">
+                                <span class="task-text">${title}</span>
+                                <span class="task-deadline-slim">${deadlineText}</span>
+                            </div>
+                            <button class="todo-star-btn" onclick="toggleStar(this); event.stopPropagation();">☆</button>
+                        </div>
+                    `;
+                    list.appendChild(newItem);
+
+                    // フォームクリア
+                    titleInput.value = '';
+                    quickTaskDate.value = '';
+                    quickDateLabel.textContent = '期限を設定';
+                    document.getElementById('quick-task-hours').value = '0';
+                    document.getElementById('quick-task-minutes').value = '30';
+
+                    // ソート
+                    const sortSelect = document.querySelector('.sort-select');
+                    sortTasks(sortSelect.value);
+                });
+            }
+        });
     </script>
 </body>
 
