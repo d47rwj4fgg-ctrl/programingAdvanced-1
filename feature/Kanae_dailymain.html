@@ -34,16 +34,8 @@
 
         <!-- 仮想ステータスバー -->
         <div class="status-bar">
-            <span>9:41</span>
+            <span id="status-bar-time">9:41</span>
             <div class="right-icons">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                    <path
-                        d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.07 19.58 10.48 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z" />
-                </svg>
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                    <path
-                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
-                </svg>
             </div>
         </div>
 
@@ -75,11 +67,6 @@
                 <a href="Yuuka_task.html" class="nav-item">
                     <span class="nav-icon">📋</span>
                     <span class="nav-text">タスクリスト</span>
-                </a>
-                <div class="sidebar-divider"></div>
-                <a href="javascript:void(0)" class="nav-item" onclick="openNewScheduleModal(); closeSidebar();">
-                    <span class="nav-icon">➕</span>
-                    <span class="nav-text">新規予定の登録</span>
                 </a>
             </nav>
             <div class="sidebar-footer">
@@ -188,6 +175,16 @@
                                 <button class="emoji-palette-btn" onclick="selectEmoji('🥞')">🥞</button>
                                 <button class="emoji-palette-btn" onclick="selectEmoji('🎨')">🎨</button>
                                 <button class="emoji-palette-btn" onclick="selectEmoji('🛁')">🛁</button>
+                            </div>
+                        </div>
+                        <div class="modal-card">
+                            <span class="modal-card-label">🎨 カラーを選択</span>
+                            <div class="color-palette">
+                                <button type="button" class="color-palette-btn pink active" onclick="selectColor('pink')"></button>
+                                <button type="button" class="color-palette-btn blue" onclick="selectColor('blue')"></button>
+                                <button type="button" class="color-palette-btn green" onclick="selectColor('green')"></button>
+                                <button type="button" class="color-palette-btn orange" onclick="selectColor('orange')"></button>
+                                <button type="button" class="color-palette-btn purple" onclick="selectColor('purple')"></button>
                             </div>
                         </div>
                     </div>
@@ -536,6 +533,14 @@
             updateNowIndicator();
         }
 
+        const colorMap = {
+            pink: { main: '#FF7082', bg: '#FFF0F1' },
+            blue: { main: '#38bdf8', bg: '#f0f9ff' },
+            green: { main: '#4ade80', bg: '#f0fdf4' },
+            orange: { main: '#fbbf24', bg: '#fffbeb' },
+            purple: { main: '#c084fc', bg: '#faf5ff' }
+        };
+
         // タイムラインのレンダリング (空き時間の自動挿入)
         function renderTimeline(dayId) {
             const container = document.getElementById('structured-timeline');
@@ -561,6 +566,7 @@
                     desc: t.location || "",
                     icon: t.icon || (t.type === 'reminder' ? "🔔" : "📅"),
                     type: t.type || "routine",
+                    color: t.color || "pink",
                     isAllDay: t.isAllDay
                 };
             });
@@ -630,7 +636,8 @@
                         </div>
                     `;
                 } else {
-                    itemDiv.className = `timeline-item theme-${item.type}`;
+                    const taskColor = colorMap[item.color] || colorMap.pink;
+                    itemDiv.className = `timeline-item`;
                     itemDiv.innerHTML = `
                         <div class="item-time-col">
                             <span class="time-start">${item.start}</span>
@@ -638,16 +645,16 @@
                         </div>
                         <div class="item-line-col">
                             <div class="timeline-path"></div>
-                            <div class="icon-circle">${item.icon}</div>
+                            <div class="icon-circle" style="background-color: ${taskColor.bg}; border-color: ${taskColor.main}; color: ${taskColor.main};">${item.icon}</div>
                         </div>
                         <div class="item-card-col">
-                            <div class="task-card">
+                            <div class="task-card" style="border-left: 4px solid ${taskColor.main}; background-color: ${taskColor.bg};">
                                 <div class="task-info">
-                                    <h3 class="task-title">${item.title}</h3>
-                                    <span class="task-desc">${item.desc}</span>
+                                    <h3 class="task-title" style="color: #1e293b;">${item.title}</h3>
+                                    <span class="task-desc" style="color: #64748b;">${item.desc}</span>
                                 </div>
                                 <div class="task-meta">
-                                    <span class="task-duration">${item.isAllDay ? '終日' : getDurationText(item.start, item.end)}</span>
+                                    <span class="task-duration" style="background-color: ${taskColor.main}; color: #ffffff;">${item.isAllDay ? '終日' : getDurationText(item.start, item.end)}</span>
                                 </div>
                             </div>
                         </div>
@@ -779,6 +786,20 @@
         let currentStep = 1;
         let selectedEmoji = "📅";
         let selectedDuration = 30;
+        let selectedColor = "pink";
+
+        // カラーの選択
+        function selectColor(colorName) {
+            selectedColor = colorName;
+            const buttons = document.querySelectorAll('.color-palette-btn');
+            buttons.forEach(btn => {
+                if (btn.classList.contains(colorName)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
 
         // ドラムロール選択中の現在値と制御タイマー
         let selectedHour = "12";
@@ -1164,6 +1185,7 @@
             currentEditingId = null;
             selectedEmoji = "📅";
             selectedDuration = 30;
+            selectColor("pink");
 
             // フォーム初期化
             document.getElementById('schedule-title').value = '';
@@ -1217,6 +1239,7 @@
 
             selectedEmoji = task.icon || "📅";
             selectedDuration = 30; // 後で計算
+            selectColor(task.color || "pink");
 
             document.getElementById('schedule-title').value = task.title;
             document.getElementById('schedule-startdate').value = task.startDate;
@@ -1365,6 +1388,7 @@
                         type,
                         notes,
                         energy,
+                        color: selectedColor,
                         subtasks: []
                     };
                 }
@@ -1385,6 +1409,7 @@
                 type,
                 notes,
                 energy,
+                color: selectedColor,
                 subtasks: []
             };
             allTasks.push(newTask);
@@ -1422,9 +1447,59 @@
         switchDay(currentActiveDay);
     }
 
+    function autoDeleteOldTasks() {
+        let tasks = JSON.parse(localStorage.getItem('savedTasks'));
+        if (!tasks || tasks.length === 0) return;
+
+        const now = new Date().getTime();
+        const oneWeekMs = 7 * 24 * 60 * 60 * 1000;
+
+        const filteredTasks = tasks.filter(task => {
+            if (task.completed) {
+                if (task.completedAt) {
+                    const completedTime = new Date(task.completedAt).getTime();
+                    if (now - completedTime >= oneWeekMs) {
+                        return false; // 削除
+                    }
+                } else if (task.deadline) {
+                    const deadlineTime = new Date(task.deadline).getTime();
+                    if (now - deadlineTime >= oneWeekMs) {
+                        return false; // 削除
+                    }
+                }
+            } else {
+                if (task.deadline) {
+                    const deadlineTime = new Date(task.deadline).getTime();
+                    if (now - deadlineTime >= oneWeekMs) {
+                        return false; // 削除
+                    }
+                }
+            }
+            return true;
+        });
+
+        if (filteredTasks.length !== tasks.length) {
+            localStorage.setItem('savedTasks', JSON.stringify(filteredTasks));
+        }
+    }
+
+    function updateStatusBarTime() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const timeEl = document.getElementById('status-bar-time');
+        if (timeEl) {
+            timeEl.textContent = `${hours}:${minutes}`;
+        }
+    }
+
     // 初期化処理
     window.addEventListener('DOMContentLoaded', () => {
+        updateStatusBarTime();      // 時刻の即時反映
+        setInterval(updateStatusBarTime, 1000); // 1秒ごとに更新
+
         setupWeeklyCalendarData(); // 週間データを今日基準で生成
+        autoDeleteOldTasks();      // 自動削除処理の実行
         initLocalStorageData();    // ローカルストレージデータの初期化 (バグ修正: ここで呼ぶ)
         initCalendar();
         initSidebar();

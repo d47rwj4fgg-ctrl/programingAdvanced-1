@@ -2321,3 +2321,41 @@ body.register-page:not(.daily-main-page) {
         transform: translateY(0);
     }
 }
+
+/* ==========================================================================
+   7. カラー選択パレット (共通)
+   ========================================================================== */
+.color-palette {
+    display: flex;
+    gap: 12px;
+    padding: 8px;
+    background-color: #f2f2f6;
+    border-radius: 12px;
+    justify-content: space-around;
+    margin-top: 4px;
+}
+
+.color-palette-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 3px solid #ffffff;
+    box-shadow: 0 0 0 1px #cbd5e1;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.color-palette-btn:hover {
+    transform: scale(1.1);
+}
+
+.color-palette-btn.active {
+    box-shadow: 0 0 0 2.5px #FF7082;
+    transform: scale(1.1);
+}
+
+.color-palette-btn.pink { background-color: #FFB1B6; }
+.color-palette-btn.blue { background-color: #bae6fd; }
+.color-palette-btn.green { background-color: #bbf7d0; }
+.color-palette-btn.orange { background-color: #fde68a; }
+.color-palette-btn.purple { background-color: #e9d5ff; }
