@@ -36,7 +36,7 @@ body.daily-main-page {
     --text-main: #0f172a;
     --text-sub: #64748b;
     --border-color: #e2e8f0;
-    --grad-fab: linear-gradient(135deg, #6366f1, #a855f7);
+    --grad-fab: linear-gradient(135deg, #FFB1B6, #FFA2B2);
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
     --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 12px 30px rgba(99, 102, 241, 0.15);
@@ -65,7 +65,7 @@ body.daily-main-page {
             font-family: var(--font-display);
             font-size: 28px;
             margin-bottom: 12px;
-            background: linear-gradient(135deg, #6366f1, #a855f7);
+            background: linear-gradient(135deg, #FFB1B6, #FFA2B2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -156,7 +156,7 @@ body.daily-main-page {
         font-family: var(--font-display);
         font-size: 26px;
         font-weight: 800;
-        background: linear-gradient(135deg, #6366f1, #a855f7);
+        background: linear-gradient(135deg, #FFB1B6, #FFA2B2);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         letter-spacing: -0.8px;
@@ -207,8 +207,8 @@ body.daily-main-page {
         }
 
         .day-badge {
-            background-color: #e0e7ff;
-            color: #4f46e5;
+            background-color: #FFE4E6;
+            color: #FF7082;
             font-size: 11px;
             font-weight: 700;
             padding: 3px 8px;
@@ -270,13 +270,13 @@ body.daily-main-page {
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 
             .day-num {
-                background-color: #4f46e5;
+                background-color: #FF7082;
                 color: #ffffff;
                 box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
             }
 
             .day-name {
-                color: #4f46e5;
+                color: #FF7082;
             }
         }
     }
@@ -489,7 +489,7 @@ body.daily-main-page {
         }
 
         .task-card {
-            background-color: #e0e7ff;
+            background-color: #FFE4E6;
             border-left: 4px solid #a5b4fc;
         }
 
@@ -723,7 +723,7 @@ body.daily-main-page {
         font-family: var(--font-display);
         font-size: 22px;
         font-weight: 800;
-        background: linear-gradient(135deg, #6366f1, #a855f7);
+        background: linear-gradient(135deg, #FFB1B6, #FFA2B2);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         letter-spacing: -0.5px;
@@ -764,8 +764,8 @@ body.daily-main-page {
         width: 44px;
         height: 44px;
         border-radius: 50%;
-        background-color: #e0e7ff;
-        color: #4f46e5;
+        background-color: #FFE4E6;
+        color: #FF7082;
         font-size: 16px;
         font-weight: 800;
         display: flex;
@@ -818,8 +818,8 @@ body.daily-main-page {
         }
 
         &.active {
-            background-color: #e0e7ff;
-            color: #4f46e5;
+            background-color: #FFE4E6;
+            color: #FF7082;
         }
     }
 
@@ -974,7 +974,7 @@ body.monthly-main-page:not(.daily-main-page) {
     .menu-logo {
         font-size: 1.45rem;
         font-weight: 700;
-        color: #6366f1;
+        color: #FFB1B6;
         letter-spacing: -0.03em;
     }
 
@@ -1014,8 +1014,8 @@ body.monthly-main-page:not(.daily-main-page) {
         width: 48px;
         height: 48px;
         border-radius: 50%;
-        background: #e0e7ff;
-        color: #4f46e5;
+        background: #FFE4E6;
+        color: #FF7082;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1066,8 +1066,8 @@ body.monthly-main-page:not(.daily-main-page) {
         }
 
         &.active {
-            background: #e0e7ff;
-            color: #4f46e5;
+            background: #FFE4E6;
+            color: #FF7082;
         }
     }
 
@@ -1142,7 +1142,7 @@ body.monthly-main-page:not(.daily-main-page) {
     .site-title {
         font-size: 1.45rem;
         font-weight: 700;
-        color: #6366f1;
+        color: #FFB1B6;
         letter-spacing: -0.03em;
     }
 
@@ -1178,8 +1178,8 @@ body.monthly-main-page:not(.daily-main-page) {
         width: 32px;
         height: 32px;
         border-radius: 50%;
-        background: #e0e7ff;
-        color: #4f46e5;
+        background: #FFE4E6;
+        color: #FF7082;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1303,7 +1303,7 @@ body.monthly-main-page:not(.daily-main-page) {
             box-shadow: inset 0 0 10px rgba(168, 85, 247, 0.1);
 
             .day-num {
-                background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+                background: linear-gradient(135deg, #FFB1B6 0%, #FFA2B2 100%);
                 color: #ffffff;
                 width: 22px;
                 height: 22px;
@@ -1377,7 +1377,7 @@ body.monthly-main-page:not(.daily-main-page) {
         width: 56px;
         height: 56px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+        background: linear-gradient(135deg, #FFB1B6 0%, #FFA2B2 100%);
         color: #ffffff;
         display: flex;
         align-items: center;
@@ -1491,6 +1491,18 @@ body.monthly-main-page:not(.daily-main-page) {
         min-height: 60px;
     }
 
+    .task-item-icon {
+        font-size: 1.35rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background-color: #fff0f1; /* 非常に淡いピンク背景 */
+        border-radius: 8px;
+        flex-shrink: 0;
+    }
+
     /* Microsoft To Do 風カスタム丸型チェックボックス */
     .todo-checkbox-wrapper {
         position: relative;
@@ -1539,13 +1551,13 @@ body.monthly-main-page:not(.daily-main-page) {
                 top: 3px;
                 width: 5px;
                 height: 9px;
-                border: solid #6366f1;
+                border: solid #FFB1B6;
                 border-width: 0 2px 2px 0;
                 transform: rotate(45deg);
             }
 
             &:hover {
-                border-color: #6366f1;
+                border-color: #FFB1B6;
                 background-color: rgba(99, 102, 241, 0.05);
             }
         }
@@ -1661,7 +1673,7 @@ body.monthly-main-page:not(.daily-main-page) {
             font-weight: 800;
             color: #0f172a;
             margin: 0;
-            background: linear-gradient(135deg, #6366f1, #a855f7);
+            background: linear-gradient(135deg, #FFB1B6, #FFA2B2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -1720,7 +1732,7 @@ body.monthly-main-page:not(.daily-main-page) {
         transition: all 0.2s ease;
 
         &:focus {
-            border-color: #6366f1;
+            border-color: #FFB1B6;
             background-color: #ffffff;
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
@@ -1752,7 +1764,7 @@ body.monthly-main-page:not(.daily-main-page) {
         transition: all 0.2s ease;
 
         &:focus {
-            border-color: #6366f1;
+            border-color: #FFB1B6;
             background-color: #ffffff;
         }
     }
@@ -1790,7 +1802,7 @@ body.monthly-main-page:not(.daily-main-page) {
     }
 
     .modal-save-btn {
-        background: linear-gradient(135deg, #6366f1, #a855f7);
+        background: linear-gradient(135deg, #FFB1B6, #FFA2B2);
         color: #ffffff;
         box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
 
