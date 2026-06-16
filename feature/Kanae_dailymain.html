@@ -81,7 +81,7 @@
                     <span class="nav-text">タスクリスト</span>
                 </a>
                 <div class="sidebar-divider"></div>
-                <a href="register.html" class="nav-item">
+                <a href="javascript:void(0)" class="nav-item" onclick="openNewScheduleModal(); closeSidebar();">
                     <span class="nav-icon">➕</span>
                     <span class="nav-text">新規予定の登録</span>
                 </a>
@@ -140,7 +140,7 @@
             </div>
 
             <!-- 予定追加ボタン (FAB) -->
-            <a href="register.html" class="fab-btn" aria-label="予定を追加">
+            <a href="javascript:void(0)" class="fab-btn" aria-label="予定を追加" onclick="openNewScheduleModal()">
                 <svg viewBox="0 0 24 24">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -150,21 +150,81 @@
             <!-- iOS風ホームインジケータ -->
             <div class="phone-home-indicator"></div>
         </div>
+
+        <!-- 予定登録・編集用ポップアップモーダル -->
+        <div id="schedule-modal" class="modal-overlay">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3 id="schedule-modal-title">予定の登録</h3>
+                    <button class="modal-close-btn" onclick="closeScheduleModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="segmented-control" style="margin-bottom: 8px;">
+                        <button class="segment-btn active" id="segment-btn-event"
+                            onclick="setScheduleType('event')">予定</button>
+                        <button class="segment-btn" id="segment-btn-reminder"
+                            onclick="setScheduleType('reminder')">リマインダー</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="modal-label">タイトル</label>
+                        <input type="text" id="schedule-title" class="modal-input" placeholder="タイトルを入力">
+                    </div>
+
+                    <div class="form-group" id="schedule-location-group">
+                        <label class="modal-label">場所またはビデオ通話</label>
+                        <input type="text" id="schedule-location" class="modal-input" placeholder="場所を入力">
+                    </div>
+
+                    <div class="form-group">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; min-height: 31px;">
+                            <label class="modal-label" style="margin: 0;">終日</label>
+                            <label class="switch">
+                                <input type="checkbox" id="schedule-allday" onchange="toggleAllDay()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="modal-label">開始</label>
+                        <div class="modal-time-inputs">
+                            <input type="date" id="schedule-startdate" class="modal-input" style="flex: 2;">
+                            <input type="time" id="schedule-starttime" class="modal-input" style="flex: 1;">
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="schedule-end-group">
+                        <label class="modal-label">終了</label>
+                        <div class="modal-time-inputs">
+                            <input type="date" id="schedule-enddate" class="modal-input" style="flex: 2;">
+                            <input type="time" id="schedule-endtime" class="modal-input" style="flex: 1;">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-btn modal-delete-btn" id="schedule-delete-btn" onclick="deleteSchedule()"
+                        style="display: none;">削除</button>
+                    <button class="modal-btn modal-save-btn" onclick="saveSchedule()">保存</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         // 週間カレンダーデータ (6月1日〜6月7日、月曜スタート)
         const weekDays = [
-            { id: 0, date: '6/1', name: '月', num: 1, fullName: '6月1日（月）', label: '月曜日' },
-            { id: 1, date: '6/2', name: '火', num: 2, fullName: '6月2日（火）', label: '今日' },
-            { id: 2, date: '6/3', name: '水', num: 3, fullName: '6月3日（水）', label: '明日' },
-            { id: 3, date: '6/4', name: '木', num: 4, fullName: '6月4日（木）', label: '木曜日' },
-            { id: 4, date: '6/5', name: '金', num: 5, fullName: '6月5日（金）', label: '金曜日' },
-            { id: 5, date: '6/6', name: '土', num: 6, fullName: '6月6日（土）', label: '土曜日' },
-            { id: 6, date: '6/7', name: '日', num: 7, fullName: '6月7日（日）', label: '日曜日' }
+            { id: 0, date: '6/1', name: '月', num: 1, fullName: '6月1日（月）', label: '月曜日', isoDate: '2026-06-01' },
+            { id: 1, date: '6/2', name: '火', num: 2, fullName: '6月2日（火）', label: '今日', isoDate: '2026-06-02' },
+            { id: 2, date: '6/3', name: '水', num: 3, fullName: '6月3日（水）', label: '明日', isoDate: '2026-06-03' },
+            { id: 3, date: '6/4', name: '木', num: 4, fullName: '6月4日（木）', label: '木曜日', isoDate: '2026-06-04' },
+            { id: 4, date: '6/5', name: '金', num: 5, fullName: '6月5日（金）', label: '金曜日', isoDate: '2026-06-05' },
+            { id: 5, date: '6/6', name: '土', num: 6, fullName: '6月6日（土）', label: '土曜日', isoDate: '2026-06-06' },
+            { id: 6, date: '6/7', name: '日', num: 7, fullName: '6月7日（日）', label: '日曜日', isoDate: '2026-06-07' }
         ];
 
-        // 各曜日のスケジュールデータ
+        // 各曜日のスケジュール初期データ
         const schedules = {
             0: [ // 月曜日
                 { start: '08:00', end: '09:00', title: '起床・朝食', desc: '朝の身支度とニュースチェック', icon: '🌅', type: 'routine' },
@@ -201,7 +261,7 @@
             ],
             5: [ // 土曜日
                 { start: '10:00', end: '12:00', title: '部屋の掃除・洗濯', desc: '週末 of 家事ルーティン', icon: '🧹', type: 'home' },
-                { start: '13:00', end: '18:00', title: '映画館で映画鑑賞', desc: '話題の最新SFアクション映画', icon: '🎬', type: 'social' },
+                { start: '13:00', end: '18:00', title: '映画館で映画鑑賞', desc: '話題 of 最新SFアクション映画', icon: '🎬', type: 'social' },
                 { start: '19:00', end: '21:00', title: '家族とディナー', desc: '近所の和食レストランで外食', icon: '🍣', type: 'social' }
             ],
             6: [ // 日曜日
@@ -212,10 +272,38 @@
             ]
         };
 
+        // localStorageに初期データが無い場合は、schedules初期データをインポートする
+        function initLocalStorageData() {
+            if (!localStorage.getItem('savedTasks')) {
+                const initialTasks = [];
+                for (const dayId in schedules) {
+                    const dayInfo = weekDays.find(d => d.id === parseInt(dayId));
+                    if (!dayInfo) continue;
+                    const isoDate = dayInfo.isoDate;
+                    schedules[dayId].forEach((item, index) => {
+                        initialTasks.push({
+                            id: `init-${dayId}-${index}-${Date.now()}`,
+                            title: item.title,
+                            location: item.desc || "",
+                            isAllDay: false,
+                            startDate: isoDate,
+                            startTime: item.start,
+                            endDate: isoDate,
+                            endTime: item.end,
+                            icon: item.icon || "📅",
+                            type: item.type || "routine"
+                        });
+                    });
+                }
+                localStorage.setItem('savedTasks', JSON.stringify(initialTasks));
+            }
+        }
+
         let currentActiveDay = 1; // 初期値は火曜日 (今日)
 
         // 時間表記を分数に変換 (例: "09:30" -> 570)
         function timeToMinutes(timeStr) {
+            if (!timeStr) return 0;
             const [h, m] = timeStr.split(':').map(Number);
             return h * 60 + m;
         }
@@ -230,6 +318,7 @@
         // 差分時間をわかりやすく表示 (例: 60 -> "1時間", 90 -> "1時間30分", 30 -> "30分")
         function getDurationText(startStr, endStr) {
             const diff = timeToMinutes(endStr) - timeToMinutes(startStr);
+            if (diff <= 0) return "0分";
             const h = Math.floor(diff / 60);
             const m = diff % 60;
             if (h > 0 && m > 0) {
@@ -292,9 +381,32 @@
             const container = document.getElementById('structured-timeline');
             container.innerHTML = '';
 
-            const rawTasks = schedules[dayId] || [];
-            // 开始時間順にソート
-            const tasks = [...rawTasks].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
+            const dayInfo = weekDays.find(d => d.id === dayId);
+            if (!dayInfo) return;
+            const isoDate = dayInfo.isoDate;
+
+            // localStorage からデータを読み込む
+            const allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+            const tasksForDay = allTasks.filter(t => t.startDate === isoDate);
+
+            // 表示用にデータをマップ
+            const mappedTasks = tasksForDay.map(t => {
+                const start = t.isAllDay ? "07:00" : (t.startTime || "09:00");
+                const end = t.isAllDay ? "23:00" : (t.endTime || "10:00");
+                return {
+                    id: t.id,
+                    start: start,
+                    end: end,
+                    title: t.title,
+                    desc: t.location || "",
+                    icon: t.icon || (t.type === 'reminder' ? "🔔" : "📅"),
+                    type: t.type || "routine",
+                    isAllDay: t.isAllDay
+                };
+            });
+
+            // 開始時間順にソート
+            const tasks = [...mappedTasks].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
 
             const dayStart = 7 * 60; // 07:00
             const dayEnd = 23 * 60;  // 23:00
@@ -375,11 +487,16 @@
                                     <span class="task-desc">${item.desc}</span>
                                 </div>
                                 <div class="task-meta">
-                                    <span class="task-duration">${getDurationText(item.start, item.end)}</span>
+                                    <span class="task-duration">${item.isAllDay ? '終日' : getDurationText(item.start, item.end)}</span>
                                 </div>
                             </div>
                         </div>
                     `;
+
+                    // 予定カードをクリックした時に編集モーダルを開く
+                    itemDiv.querySelector('.task-card').addEventListener('click', () => {
+                        openEditScheduleModal(item.id);
+                    });
                 }
 
                 container.appendChild(itemDiv);
@@ -485,14 +602,237 @@
             });
         }
 
+        function closeSidebar() {
+            const drawer = document.getElementById('sidebar-drawer');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (drawer && overlay) {
+                drawer.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+        }
+
+        // --- 予定登録・編集モーダル制御ロジック ---
+        let currentEditingId = null;
+        let currentScheduleType = 'event'; // 'event' or 'reminder'
+
+        function openNewScheduleModal() {
+            currentEditingId = null;
+            document.getElementById('schedule-modal-title').textContent = '予定の登録';
+            document.getElementById('schedule-delete-btn').style.display = 'none';
+
+            // フォーム初期化
+            document.getElementById('schedule-title').value = '';
+            document.getElementById('schedule-location').value = '';
+            document.getElementById('schedule-allday').checked = false;
+
+            // 選択中の日付を取得
+            const activeDayInfo = weekDays.find(d => d.id === currentActiveDay);
+            const defaultDate = activeDayInfo ? activeDayInfo.isoDate : '2026-06-02';
+
+            document.getElementById('schedule-startdate').value = defaultDate;
+            document.getElementById('schedule-starttime').value = '10:00';
+            document.getElementById('schedule-enddate').value = defaultDate;
+            document.getElementById('schedule-endtime').value = '11:00';
+
+            setScheduleType('event');
+            toggleAllDay();
+
+            document.getElementById('schedule-modal').classList.add('active');
+        }
+
+        function openEditScheduleModal(id) {
+            currentEditingId = id;
+            document.getElementById('schedule-modal-title').textContent = '予定の編集';
+            document.getElementById('schedule-delete-btn').style.display = 'block';
+
+            const allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+            const task = allTasks.find(t => t.id === id);
+            if (!task) return;
+
+            document.getElementById('schedule-title').value = task.title;
+            document.getElementById('schedule-location').value = task.location || '';
+            document.getElementById('schedule-allday').checked = task.isAllDay || false;
+            document.getElementById('schedule-startdate').value = task.startDate;
+            document.getElementById('schedule-starttime').value = task.startTime || '10:00';
+            document.getElementById('schedule-enddate').value = task.endDate || task.startDate;
+            document.getElementById('schedule-endtime').value = task.endTime || '11:00';
+
+            setScheduleType(task.type || 'event');
+            toggleAllDay();
+
+            document.getElementById('schedule-modal').classList.add('active');
+        }
+
+        function closeScheduleModal() {
+            document.getElementById('schedule-modal').classList.remove('active');
+            currentEditingId = null;
+        }
+
+        function setScheduleType(type) {
+            currentScheduleType = type;
+            const eventBtn = document.getElementById('segment-btn-event');
+            const reminderBtn = document.getElementById('segment-btn-reminder');
+            const locationGroup = document.getElementById('schedule-location-group');
+            const endGroup = document.getElementById('schedule-end-group');
+
+            if (type === 'event') {
+                eventBtn.classList.add('active');
+                reminderBtn.classList.remove('active');
+                locationGroup.style.display = 'flex';
+                endGroup.style.display = 'flex';
+            } else {
+                eventBtn.classList.remove('active');
+                reminderBtn.classList.add('active');
+                locationGroup.style.display = 'none';
+                endGroup.style.display = 'none';
+            }
+        }
+
+        function toggleAllDay() {
+            const isAllDay = document.getElementById('schedule-allday').checked;
+            const startTimeInput = document.getElementById('schedule-starttime');
+            const endTimeInput = document.getElementById('schedule-endtime');
+
+            if (isAllDay) {
+                startTimeInput.style.display = 'none';
+                endTimeInput.style.display = 'none';
+            } else {
+                startTimeInput.style.display = 'inline-block';
+                endTimeInput.style.display = 'inline-block';
+            }
+        }
+
+        function saveSchedule() {
+            const title = document.getElementById('schedule-title').value;
+            if (!title.trim()) {
+                alert('タイトルを入力してください！');
+                return;
+            }
+
+            const location = document.getElementById('schedule-location').value;
+            const isAllDay = document.getElementById('schedule-allday').checked;
+            const startDate = document.getElementById('schedule-startdate').value;
+            const startTime = isAllDay ? '' : document.getElementById('schedule-starttime').value;
+            const endDate = currentScheduleType === 'event' ? document.getElementById('schedule-enddate').value : startDate;
+            const endTime = (currentScheduleType === 'event' && !isAllDay) ? document.getElementById('schedule-endtime').value : '';
+
+            // アイコンの設定
+            let icon = "📅";
+            if (currentScheduleType === 'reminder') {
+                icon = "🔔";
+            } else {
+                if (title.includes("起床") || title.includes("朝") || title.includes("起き")) icon = "🌅";
+                else if (title.includes("バイト") || title.includes("仕事") || title.includes("勤務")) icon = "💼";
+                else if (title.includes("大学") || title.includes("講義") || title.includes("授業") || title.includes("勉強") || title.includes("自習")) icon = "📚";
+                else if (title.includes("カフェ") || title.includes("友達") || title.includes("しゃべ") || title.includes("コーヒー")) icon = "☕️";
+                else if (title.includes("映画") || title.includes("シネマ")) icon = "🎬";
+                else if (title.includes("電車") || title.includes("移動") || title.includes("通学")) icon = "🚃";
+                else if (title.includes("ジム") || title.includes("トレ") || title.includes("走")) icon = "🏃";
+                else if (title.includes("ヨガ") || title.includes("ストレッチ")) icon = "🧘";
+                else if (title.includes("飯") || title.includes("食") || title.includes("ランチ") || title.includes("ディナー")) icon = "🍔";
+            }
+
+            // タイプの設定
+            let type = "routine";
+            if (currentScheduleType === 'reminder') {
+                type = "health"; // リマインダー用のカラーに仮割り当て
+            } else {
+                if (title.includes("バイト") || title.includes("仕事")) type = "work";
+                else if (title.includes("カフェ") || title.includes("友達") || title.includes("飲み") || title.includes("おしゃべり")) type = "social";
+                else if (title.includes("大学") || title.includes("講義") || title.includes("授業") || title.includes("勉強") || title.includes("自習") || title.includes("図書館") || title.includes("レポート")) type = "study";
+                else if (title.includes("ジム") || title.includes("ヨガ") || title.includes("トレ")) type = "health";
+                else if (title.includes("掃除") || title.includes("洗濯") || title.includes("自炊") || title.includes("買い物")) type = "home";
+            }
+
+            let allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+
+            if (currentEditingId) {
+                // 編集
+                allTasks = allTasks.map(t => {
+                    if (t.id === currentEditingId) {
+                        return {
+                            ...t,
+                            title,
+                            location,
+                            isAllDay,
+                            startDate,
+                            startTime,
+                            endDate,
+                            endTime,
+                            icon,
+                            type
+                        };
+                    }
+                    return t;
+                });
+            } else {
+                // 新規
+                const newTask = {
+                    id: `task-${Date.now()}`,
+                    title,
+                    location,
+                    isAllDay,
+                    startDate,
+                    startTime,
+                    endDate,
+                    endTime,
+                    icon,
+                    type
+                };
+                allTasks.push(newTask);
+            }
+
+            localStorage.setItem('savedTasks', JSON.stringify(allTasks));
+            closeScheduleModal();
+
+            // 登録した日付の曜日に合わせて画面を切り替える
+            const targetDayInfo = weekDays.find(d => d.isoDate === startDate);
+            if (targetDayInfo && targetDayInfo.id !== currentActiveDay) {
+                switchDay(targetDayInfo.id);
+                // 週間カレンダーの active クラスを更新する
+                document.querySelectorAll('.calendar-day').forEach(el => {
+                    if (parseInt(el.dataset.id) === targetDayInfo.id) {
+                        el.classList.add('active');
+                    } else {
+                        el.classList.remove('active');
+                    }
+                });
+            } else {
+                switchDay(currentActiveDay);
+            }
+        }
+
+        function deleteSchedule() {
+            if (!currentEditingId) return;
+            if (!confirm('本当にこの予定を削除しますか？')) return;
+
+            let allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+            allTasks = allTasks.filter(t => t.id !== currentEditingId);
+            localStorage.setItem('savedTasks', JSON.stringify(allTasks));
+
+            closeScheduleModal();
+            switchDay(currentActiveDay);
+        }
+
         // 初期化処理
         window.addEventListener('DOMContentLoaded', () => {
+            initLocalStorageData(); // localStorage初期化
             initCalendar();
             initSidebar();
             switchDay(1); // 初期表示は「火曜日」
 
             // インジケータを定期更新 (1秒ごと)
             setInterval(updateNowIndicator, 1000);
+
+            // モーダルの背景（オーバーレイ）をクリックした時に閉じる
+            const modalOverlay = document.getElementById('schedule-modal');
+            if (modalOverlay) {
+                modalOverlay.addEventListener('click', (e) => {
+                    if (e.target === modalOverlay) {
+                        closeScheduleModal();
+                    }
+                });
+            }
         });
     </script>
 </body>
