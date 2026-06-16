@@ -2006,3 +2006,36 @@ body.register-page:not(.daily-main-page) {
         transform: translateY(0);
     }
 }
+
+/* ==========================================================================
+   🛠️ テンプレート呼び出しボタン用の追加スタイル
+   ========================================================================== */
+#template-open-btn {
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+#template-open-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
+}
+#template-open-btn:active {
+    transform: scale(0.95);
+}
+
+
+/* ==========================================================================
+   🛠️ 重複予定の横並び（カラム分割）スタイル
+   ========================================================================== */
+
+.timeline-overlap-container {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    flex: 1;
+    padding-left: 12px;
+    align-items: flex-start; /* 👈 これが重要！カード同士が縦に引き伸ばし合うのを防ぎます */
+}
+
+/* 横並び内のタスクカードの隙間調整 */
+.timeline-overlap-container .task-card {
+    width: 100%;
+}

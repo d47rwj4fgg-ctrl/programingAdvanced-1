@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>テンプレートの登録</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="0602_all.css">
+</head>
+<body class="daily-main-page register-page">
+
+    <div class="pc-info">
+        <h2>Timeline App</h2>
+        <p>オリジナルの「一日の予定テンプレート」を辞書に登録する画面です。</p>
+        <ul>
+            <li>「朝の用意」などのテンプレート名を入力します。</li>
+            <li>その中に入れる細かい予定（タスク名、所要時間）を複数追加できます。</li>
+        </ul>
+    </div>
+
+    <div class="phone-frame">
+        <div class="phone-notch"></div>
+
+        <div class="status-bar">
+            <span>9:41</span>
+            <div class="right-icons">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.07 19.58 10.48 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z" /></svg>
+            </div>
+        </div>
+
+        <div class="app-container">
+            <div class="header">
+                <button class="cancel-btn" onclick="location.href='Kanae_dailymain.html'">✕</button>
+                <h1>テンプレート登録</h1>
+                <button class="save-btn" id="saveTemplateBtn">保存</button>
+            </div>
+
+            <div class="card">
+                <div class="form-row">
+                    <input type="text" id="templateMasterName" placeholder="テンプレート名 (例: 朝の用意)">
+                </div>
+            </div>
+
+            <div style="padding: 0 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 12px; font-weight: 700; color: #64748b;">中身の予定リスト</span>
+                <button id="addSubTaskBtn" style="background: linear-gradient(135deg, #FFB1B6, #FFA2B2); border: none; color: white; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer;">+ 予定を追加</button>
+            </div>
+
+            <div class="task-container" id="subtask-list-container" style="padding: 0; background: transparent;">
+                </div>
+
+            <div class="phone-home-indicator"></div>
+        </div>
+    </div>
+
+    <script src="templateRegister.js"></script>
+</body>
+</html>

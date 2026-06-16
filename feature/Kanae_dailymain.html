@@ -67,6 +67,7 @@
                     <span class="profile-role">大学開発メンバー</span>
                 </div>
             </div>
+
             <nav class="sidebar-nav">
                 <a href="Kanae_dailymain.html" class="nav-item active">
                     <span class="nav-icon">📅</span>
@@ -76,12 +77,20 @@
                     <span class="nav-icon">📋</span>
                     <span class="nav-text">タスクリスト</span>
                 </a>
+                <!-- ゆうかがテンプレートの登録を追加しました -->
+                <a href="templateRegister.html" class="nav-item">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-text">テンプレートの登録</span>
+                </a>
+                <!-- ゆうかが追加したのここまでです -->
+
                 <div class="sidebar-divider"></div>
                 <a href="register.html" class="nav-item">
                     <span class="nav-icon">➕</span>
                     <span class="nav-text">新規予定の登録</span>
                 </a>
             </nav>
+
             <div class="sidebar-footer">
                 <span>Timeline App v1.0.0</span>
             </div>
@@ -126,6 +135,14 @@
                     <!-- JSで動的生成 -->
                 </div>
             </div>
+
+            <!-- テンプレ追加のためにゆうかが少し書き加えました -->
+
+            <button id="template-open-btn" class="icon-btn" aria-label="テンプレートから追加" style="position: absolute; bottom: 96px; right: 24px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); color: white; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3); z-index: 999;">
+                <span style="font-size: 24px;">📋</span>
+            </button>
+
+            <!-- ここまで書き加えました -->
 
             <!-- 予定追加ボタン (FAB) -->
             <a href="register.html" class="fab-btn" aria-label="予定を追加">
@@ -311,115 +328,182 @@
             updateNowIndicator();
         }
 
-        // タイムラインのレンダリング (空き時間の自動挿入)
+// タイムラインのレンダリング (重複時の自動列分割・空き時間の自動挿入)
         function renderTimeline(dayId) {
             const container = document.getElementById('structured-timeline');
             container.innerHTML = '';
 
             const rawTasks = schedules[dayId] || [];
-            // 开始時間順にソート
+            // 開始時間順にソート
             const tasks = [...rawTasks].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
 
             const dayStart = 7 * 60; // 07:00
             const dayEnd = 23 * 60;  // 23:00
             let currentMinutes = dayStart;
 
-            const timelineItems = [];
-
-            // 空き時間を計算しながらアイテムをスタック
+            // 1. まずは「通常の予定」と「空き時間(Gap)」を時系列順に並べたタイムラインの土台を作る
+            const baseItems = [];
             tasks.forEach(task => {
                 const taskStart = timeToMinutes(task.start);
                 const taskEnd = timeToMinutes(task.end);
 
-                // タスク前に空き時間がある場合
                 if (taskStart > currentMinutes) {
-                    timelineItems.push({
-                        isGap: true,
-                        start: minutesToTime(currentMinutes),
-                        end: task.start
-                    });
+                    baseItems.push({ isGap: true, start: minutesToTime(currentMinutes), end: task.start });
                 }
-
-                // タスクを追加
-                timelineItems.push({
-                    isGap: false,
-                    ...task
-                });
-
+                baseItems.push({ isGap: false, ...task });
                 currentMinutes = taskEnd;
             });
-
-            // 最後のタスク後に空き時間がある場合
             if (currentMinutes < dayEnd) {
-                timelineItems.push({
-                    isGap: true,
-                    start: minutesToTime(currentMinutes),
-                    end: minutesToTime(dayEnd)
-                });
+                baseItems.push({ isGap: true, start: minutesToTime(currentMinutes), end: minutesToTime(dayEnd) });
             }
 
-            // HTMLの生成
-            timelineItems.forEach((item, index) => {
+            // 2. 時間が被っている予定をひとつのグループにまとめる
+            const finalItems = [];
+            let i = 0;
+
+            while (i < baseItems.length) {
+                const current = baseItems[i];
+
+                if (current.isGap) {
+                    finalItems.push(current);
+                    i++;
+                    continue;
+                }
+
+                const overlapGroup = [current];
+                let maxEndMinutes = timeToMinutes(current.end);
+                let j = i + 1;
+
+                while (j < baseItems.length && !baseItems[j].isGap) {
+                    const next = baseItems[j];
+                    if (timeToMinutes(next.start) < maxEndMinutes) {
+                        overlapGroup.push(next);
+                        maxEndMinutes = Math.max(maxEndMinutes, timeToMinutes(next.end));
+                        j++;
+                    } else {
+                        break;
+                    }
+                }
+
+                if (overlapGroup.length > 1) {
+                    finalItems.push({ isOverlapGroup: true, start: current.start, end: minutesToTime(maxEndMinutes), tasks: overlapGroup });
+                    i = j;
+                } else {
+                    finalItems.push(current);
+                    i++;
+                }
+            }
+
+            // 3. 組み立てたデータをもとにHTML（画面）を生成
+            finalItems.forEach((item, index) => {
                 const itemDiv = document.createElement('div');
-                itemDiv.dataset.start = item.start;
-                itemDiv.dataset.end = item.end;
                 itemDiv.style.animationDelay = `${index * 0.04}s`;
 
                 if (item.isGap) {
+                    // --- 空き時間の表示 ---
                     itemDiv.className = 'timeline-item gap-item';
+                    itemDiv.dataset.start = item.start;
+                    itemDiv.dataset.end = item.end;
                     itemDiv.innerHTML = `
-                        <div class="item-time-col">
-                            <span class="time-start">${item.start}</span>
-                        </div>
-                        <div class="item-line-col">
-                            <div class="timeline-path"></div>
-                            <div class="icon-circle"></div>
-                        </div>
-                        <div class="item-card-col">
-                            <div class="gap-card">
-                                <span>💤 ${getDurationText(item.start, item.end)} の空き時間</span>
-                            </div>
-                        </div>
+                        <div class="item-time-col"><span class="time-start">${item.start}</span></div>
+                        <div class="item-line-col"><div class="timeline-path"></div><div class="icon-circle"></div></div>
+                        <div class="item-card-col"><div class="gap-card"><span>💤 ${getDurationText(item.start, item.end)} の空き時間</span></div></div>
                     `;
-                } else {
-                    itemDiv.className = `timeline-item theme-${item.type}`;
+                    container.appendChild(itemDiv);
+
+                } else if (item.isOverlapGroup) {
+                    // --- 重複グループの表示（列詰め＋高さ自動計算） ---
+                    itemDiv.className = 'timeline-item theme-overlap';
+                    itemDiv.dataset.start = item.start;
+                    itemDiv.dataset.end = item.end;
+
                     itemDiv.innerHTML = `
-                        <div class="item-time-col">
-                            <span class="time-start">${item.start}</span>
-                            <span class="time-end">${item.end}</span>
-                        </div>
-                        <div class="item-line-col">
-                            <div class="timeline-path"></div>
-                            <div class="icon-circle">${item.icon}</div>
-                        </div>
+                        <div class="item-time-col"><span class="time-start">${item.start}</span></div>
+                        <div class="item-line-col"><div class="timeline-path"></div><div class="icon-circle">⚠️</div></div>
+                        <div class="timeline-overlap-container" id="overlap-container-${index}"></div>
+                    `;
+                    container.appendChild(itemDiv);
+
+                    const overlapContainer = document.getElementById(`overlap-container-${index}`);
+                    const columns = []; 
+
+                    item.tasks.forEach(task => {
+                        const taskStartMin = timeToMinutes(task.start);
+                        const taskEndMin = timeToMinutes(task.end);
+                        
+                        const durationMinutes = taskEndMin - taskStartMin;
+                        const calculatedHeight = durationMinutes * 2.2;
+
+                        let columnIndex = -1;
+
+                        for (let c = 0; c < columns.length; c++) {
+                            if (taskStartMin >= columns[c]) {
+                                columnIndex = c;
+                                break;
+                            }
+                        }
+
+                        if (columnIndex === -1) {
+                            columns.push(taskEndMin);
+                            columnIndex = columns.length - 1;
+                            
+                            const colDiv = document.createElement('div');
+                            colDiv.className = 'overlap-column';
+                            colDiv.id = `overlap-col-${index}-${columnIndex}`;
+                            colDiv.style.display = 'flex';
+                            colDiv.style.flexDirection = 'column';
+                            colDiv.style.gap = '8px';
+                            colDiv.style.flex = '1';
+                            colDiv.style.minWidth = '0';
+                            overlapContainer.appendChild(colDiv);
+                        } else {
+                            columns[columnIndex] = taskEndMin;
+                        }
+
+                        const targetCol = document.getElementById(`overlap-col-${index}-${columnIndex}`);
+                        const card = document.createElement('div');
+                        card.className = `item-card-col theme-${task.type}`;
+                        card.style.width = '100%';
+                        card.style.paddingLeft = '0';
+                        card.innerHTML = `
+                            <div class="task-card" style="min-height: ${calculatedHeight}px; display: flex; flex-direction: column; justify-content: center;">
+                                <div class="task-info">
+                                    <h3 class="task-title">${task.icon} ${task.title}</h3>
+                                    <span class="task-desc">${task.start}〜${task.end}<br>${task.desc}</span>
+                                </div>
+                            </div>
+                        `;
+                        targetCol.appendChild(card);
+                    });
+
+                } else {
+                    // --- 通常の予定（被りなし）の表示 ---
+                    itemDiv.className = `timeline-item theme-${item.type}`;
+                    itemDiv.dataset.start = item.start;
+                    itemDiv.dataset.end = item.end;
+                    itemDiv.innerHTML = `
+                        <div class="item-time-col"><span class="time-start">${item.start}</span><span class="time-end">${item.end}</span></div>
+                        <div class="item-line-col"><div class="timeline-path"></div><div class="icon-circle">${item.icon}</div></div>
                         <div class="item-card-col">
                             <div class="task-card">
-                                <div class="task-info">
-                                    <h3 class="task-title">${item.title}</h3>
-                                    <span class="task-desc">${item.desc}</span>
-                                </div>
-                                <div class="task-meta">
-                                    <span class="task-duration">${getDurationText(item.start, item.end)}</span>
-                                </div>
+                                <div class="task-info"><h3 class="task-title">${item.title}</h3><span class="task-desc">${item.desc}</span></div>
+                                <div class="task-meta"><span class="task-duration">${getDurationText(item.start, item.end)}</span></div>
                             </div>
                         </div>
                     `;
+                    container.appendChild(itemDiv);
                 }
-
-                container.appendChild(itemDiv);
             });
 
-            // 現在時刻インジケータ表示用の器を追加
+            // 現在時刻インジケータ用の器を追加
             const indicatorDiv = document.createElement('div');
             indicatorDiv.id = 'now-indicator';
             indicatorDiv.className = 'now-indicator';
             indicatorDiv.style.display = 'none';
-            indicatorDiv.innerHTML = `
-                <span class="now-badge" id="now-badge">09:50</span>
-                <div class="now-line"></div>
-            `;
+            indicatorDiv.innerHTML = `<span class="now-badge" id="now-badge">00:00</span><div class="now-line"></div>`;
             container.appendChild(indicatorDiv);
         }
+
 
         // 現在時刻インジケータの位置更新
         function updateNowIndicator() {
@@ -523,6 +607,31 @@
             setInterval(updateNowIndicator, 1000);
         });
     </script>
+
+    <!-- ゆうかがテンプレートのためにここから書き加えました -->
+
+    <div id="template-modal" class="sidebar-overlay">
+        <div class="modal-box" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 340px; background: white; border-radius: 24px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 16px;">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                <h3 style="margin:0; font-size: 1.1rem; font-weight: 800; background: linear-gradient(135deg, #FFB1B6, #FFA2B2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">テンプレートから配置</h3>
+                <button id="template-close-btn" style="background: #f1f5f9; border: none; color: #64748b; font-size: 20px; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">&times;</button>
+            </div>
+            <div class="modal-body" style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-size: 0.75rem; font-weight: 700; color: #64748b;">配置する開始時刻</label>
+                    <input type="time" id="template-start-time" value="07:00" style="width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; background-color: #f8fafc; outline: none;">
+                </div>
+                <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; margin-top: 8px;">テンプレートを選択</label>
+                <div id="template-list-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto;">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="templateManager.js"></script>
+
+    <!-- ここまで書き加えました -->
+
 </body>
 
 </html>
