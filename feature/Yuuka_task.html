@@ -124,22 +124,32 @@
             gap: 16px;
         }
 
-        .quick-add-card .footer-icon-btn {
-            background: none;
-            border: none;
-            color: #64748b;
-            font-size: 18px;
+        .quick-add-card .quick-memo-btn {
+            background-color: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            border-radius: 12px;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-family: inherit;
+            font-weight: 600;
             cursor: pointer;
-            padding: 4px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            transition: color 0.2s, transform 0.1s;
+            gap: 6px;
+            transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
         }
 
-        .quick-add-card .footer-icon-btn:hover {
+        .quick-add-card .quick-memo-btn:hover {
+            background-color: #e2e8f0;
+            border-color: #cbd5e1;
             color: #0f172a;
-            transform: scale(1.1);
+        }
+
+        .quick-add-card .quick-memo-btn.active {
+            background-color: #FFE4E6;
+            border-color: #FFB1B6;
+            color: #FF7082;
         }
 
         .quick-add-card .quick-add-btn {
@@ -336,9 +346,13 @@
                         </div>
                     </div>
 
+                    <div class="quick-memo-row" id="quick-memo-row" style="display: none; margin-top: 8px;">
+                        <textarea id="quick-task-memo" placeholder="メモ・ノートを入力..." class="quick-input" style="height: 64px; resize: none; font-size: 13px; padding: 8px 12px; width: 100%; box-sizing: border-box;"></textarea>
+                    </div>
+
                     <div class="quick-card-footer">
                         <div class="footer-icons">
-                            <button class="footer-icon-btn" title="ノートを追加">📋</button>
+                            <button type="button" class="quick-memo-btn" id="quick-memo-btn">📝 メモ</button>
                         </div>
                         <button class="quick-add-btn" id="quickAddBtn">追加</button>
                     </div>
@@ -1140,7 +1154,12 @@
                 backBtn.style.visibility = 'hidden';
                 nextBtn.textContent = '次へ';
             } else if (step === 2) {
-                backBtn.style.visibility = 'visible';
+                // 既存タスク編集時はステップ1に戻らせないため、戻るボタンを非表示にする
+                if (currentEditingId !== null) {
+                    backBtn.style.visibility = 'hidden';
+                } else {
+                    backBtn.style.visibility = 'visible';
+                }
                 nextBtn.textContent = '次へ';
                 setTimeout(() => {
                     scrollDrumToValue('hour', selectedHour, 'auto');
@@ -1174,6 +1193,8 @@
 
         function prevStep() {
             if (currentStep > 1) {
+                // 既存タスク編集時はステップ2から始まるため、ステップ1には戻らない
+                if (currentEditingId !== null && currentStep === 2) return;
                 goToStep(currentStep - 1);
             }
         }
@@ -1267,8 +1288,16 @@
                 if (wrapper) wrapper.style.display = 'none';
             }
 
-            goToStep(1);
+            // 既存タスク編集時は、ステップ1（アイコン・カラー選択）をスキップしてステップ2から開始
+            goToStep(2);
             document.getElementById('task-form-modal').classList.add('active');
+
+            // ヘッダーの絵文字表示のクリックを無効化
+            const emojiDisplay = document.getElementById('emoji-display');
+            if (emojiDisplay) {
+                emojiDisplay.style.cursor = 'default';
+                emojiDisplay.style.pointerEvents = 'none';
+            }
         }
 
         // モーダルを開く（新規登録モード）
@@ -1318,6 +1347,13 @@
 
             document.getElementById('structured-delete-btn').style.display = 'none';
             goToStep(1);
+
+            // 新規登録時はヘッダーの絵文字表示をクリック可能にする
+            const emojiDisplay = document.getElementById('emoji-display');
+            if (emojiDisplay) {
+                emojiDisplay.style.cursor = 'pointer';
+                emojiDisplay.style.pointerEvents = 'auto';
+            }
 
             document.getElementById('task-form-modal').classList.add('active');
         }
@@ -1555,13 +1591,15 @@
                         }
                     }
 
+                    const memoVal = quickTaskMemo ? quickTaskMemo.value.trim() : "";
                     const tasks = getSavedTasks();
                     const newTask = {
                         id: Date.now(),
                         title: title,
                         deadline: dateVal,
                         durationMinutes: totalMinutes,
-                        memo: "",
+                        memo: memoVal,
+                        notes: memoVal,
                         completed: false,
                         starred: false,
                         isAllDay: false,
@@ -1585,6 +1623,27 @@
                     document.getElementById('quick-task-hours').value = '0';
                     document.getElementById('quick-task-minutes').value = '30';
                     selectQuickColor('pink');
+                    if (quickTaskMemo) quickTaskMemo.value = '';
+                    if (quickMemoRow) quickMemoRow.style.display = 'none';
+                    if (quickMemoBtn) quickMemoBtn.classList.remove('active');
+                });
+            }
+
+            // --- クイック追加カード メモボタン制御ロジック ---
+            const quickMemoBtn = document.getElementById('quick-memo-btn');
+            const quickMemoRow = document.getElementById('quick-memo-row');
+            const quickTaskMemo = document.getElementById('quick-task-memo');
+
+            if (quickMemoBtn && quickMemoRow) {
+                quickMemoBtn.addEventListener('click', () => {
+                    if (quickMemoRow.style.display === 'none') {
+                        quickMemoRow.style.display = 'block';
+                        quickMemoBtn.classList.add('active');
+                        if (quickTaskMemo) quickTaskMemo.focus();
+                    } else {
+                        quickMemoRow.style.display = 'none';
+                        quickMemoBtn.classList.remove('active');
+                    }
                 });
             }
 
