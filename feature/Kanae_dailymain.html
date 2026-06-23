@@ -76,11 +76,7 @@
                 </a>
                 <!-- ゆうかが追加したのここまでです -->
 
-                <div class="sidebar-divider"></div>
-                <a href="javascript:void(0)" class="nav-item">
-                    <span class="nav-icon">➕</span>
-                    <span class="nav-text">新規予定の登録</span>
-                </a>
+
             </nav>
 
             <div class="sidebar-footer">
@@ -131,21 +127,29 @@
                 </div>
             </div>
 
-            <!-- テンプレ追加のためにゆうかが少し書き加えました -->
-
-            <button id="template-open-btn" class="icon-btn" aria-label="テンプレートから追加" style="position: absolute; bottom: 96px; right: 24px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); color: white; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3); z-index: 999;">
-                <span style="font-size: 24px;">📋</span>
-            </button>
-
-            <!-- ここまで書き加えました -->
-
-            <!-- 予定追加ボタン (FAB) -->
-            <a href="javascript:void(0)" class="fab-btn" aria-label="予定を追加" onclick="openNewScheduleModal()">
-                <svg viewBox="0 0 24 24">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-            </a>
+            <!-- 統合された予定追加ボタン (スピードダイアルメニュー) -->
+            <div class="fab-container" id="fab-container">
+                <!-- 展開するサブメニュー -->
+                <div class="fab-menu" id="fab-menu">
+                    <!-- テンプレートから追加（元のIDを継承してtemplateManager.jsをそのまま動作させる） -->
+                    <button class="fab-sub-btn" id="template-open-btn" aria-label="テンプレートから追加">
+                        <span class="sub-btn-icon">📋</span>
+                        <span class="sub-btn-label">テンプレートの反映</span>
+                    </button>
+                    <!-- 新規予定の追加 -->
+                    <button class="fab-sub-btn" onclick="triggerNewScheduleOpen()" aria-label="予定を追加">
+                        <span class="sub-btn-icon">📅</span>
+                        <span class="sub-btn-label">タスクの追加</span>
+                    </button>
+                </div>
+                <!-- メインの＋ボタン -->
+                <button class="fab-main-btn" id="fab-main-btn" aria-label="追加メニューを開く">
+                    <svg viewBox="0 0 24 24" class="fab-main-icon">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
 
             <!-- iOS風ホームインジケータ -->
             <div class="phone-home-indicator"></div>
@@ -875,6 +879,35 @@
                 drawer.classList.remove('active');
                 overlay.classList.remove('active');
             });
+        }
+
+        // 統合FAB（スピードダイアル）の制御ロジック
+        function initSpeedDial() {
+            const container = document.getElementById('fab-container');
+            const mainBtn = document.getElementById('fab-main-btn');
+            if (!container || !mainBtn) return;
+
+            mainBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                container.classList.toggle('active');
+            });
+
+            // サブボタンをクリックした際にも閉じるようにする
+            const subButtons = container.querySelectorAll('.fab-sub-btn');
+            subButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    container.classList.remove('active');
+                });
+            });
+
+            // 画面の他の場所をクリックした時にメニューを閉じる
+            document.addEventListener('click', () => {
+                container.classList.remove('active');
+            });
+        }
+
+        function triggerNewScheduleOpen() {
+            openNewScheduleModal();
         }
 
         function closeSidebar() {
@@ -1608,6 +1641,7 @@
         initLocalStorageData();    // ローカルストレージデータの初期化 (バグ修正: ここで呼ぶ)
         initCalendar();
         initSidebar();
+        initSpeedDial();
         switchDay(currentActiveDay); // 初期表示は今日にする
 
         // インジケータを定期更新 (1秒ごと)

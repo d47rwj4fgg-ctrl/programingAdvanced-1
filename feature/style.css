@@ -2392,3 +2392,117 @@ body.register-page:not(.daily-main-page) {
 .color-palette-btn.green { background-color: #bbf7d0; }
 .color-palette-btn.orange { background-color: #fde68a; }
 .color-palette-btn.purple { background-color: #e9d5ff; }
+
+/* ==========================================================================
+   🛠️ スピードダイアル（統合FAB）
+   ========================================================================== */
+.fab-container {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 16px;
+    z-index: 1000;
+}
+
+.fab-main-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFB1B6, #FFA2B2);
+    border: none;
+    color: #ffffff;
+    box-shadow: 0 10px 25px rgba(255, 162, 178, 0.4);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+    outline: none;
+}
+
+.fab-main-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 28px rgba(255, 162, 178, 0.5);
+}
+
+.fab-main-btn:active {
+    transform: scale(0.95);
+}
+
+.fab-main-icon {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* メニュー展開時のメインボタン回転効果 */
+.fab-container.active .fab-main-btn {
+    background: linear-gradient(135deg, #a855f7, #6366f1);
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+}
+
+.fab-container.active .fab-main-icon {
+    transform: rotate(135deg);
+}
+
+/* サブメニュー */
+.fab-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), pointer-events 0.3s;
+}
+
+.fab-container.active .fab-menu {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+/* サブボタン */
+.fab-sub-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #ffffff;
+    border: none;
+    border-radius: 30px;
+    padding: 10px 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    outline: none;
+}
+
+.fab-sub-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.fab-sub-btn:active {
+    transform: scale(0.95);
+}
+
+.sub-btn-icon {
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sub-btn-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
+    white-space: nowrap;
+}
