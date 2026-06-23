@@ -103,7 +103,15 @@
                         <span id="header-date-badge" class="day-badge"
                             style="font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 8px; background-color: #FFE4E6; color: #FF7082; display: none;">今日</span>
                     </div>
-                    <div class="header-icons">
+<div class="header-icons" style="display: flex; align-items: center; gap: 8px;">
+                        <!-- ⚡️ バッテリー風エネルギー残量インジケータ -->
+                        <div class="energy-battery-wrapper" id="energy-battery-trigger" onclick="openMaxEnergyPrompt()">
+                            <div class="battery-icon">
+                                <div class="battery-level" id="battery-level-bar" style="width: 100%;"></div>
+                            </div>
+                            <span class="battery-text" id="battery-remain-text">10/10</span>
+                        </div>
+
                         <button class="icon-btn" aria-label="通知">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -321,14 +329,6 @@
                                 <label class="energy-radio-label">
                                     <input type="radio" name="energy" value="3" checked onclick="updateEnergyLabel(3)">
                                     <span class="energy-radio-btn">3</span>
-                                </label>
-                                <label class="energy-radio-label">
-                                    <input type="radio" name="energy" value="4" onclick="updateEnergyLabel(4)">
-                                    <span class="energy-radio-btn">4</span>
-                                </label>
-                                <label class="energy-radio-label">
-                                    <input type="radio" name="energy" value="5" onclick="updateEnergyLabel(5)">
-                                    <span class="energy-radio-btn">5</span>
                                 </label>
                             </div>
                             <div style="text-align: center; font-size: 13px; font-weight: 600; color: #8e8e93;" id="energy-value-label">ふつう</div>
@@ -557,6 +557,69 @@
 
             renderTimeline(dayId);
             updateNowIndicator();
+            calculateAndRenderEnergy(); // 👈 ここに追記
+        }
+
+        // ⚡️ エネルギー残量バッテリーの更新ロジック
+        function calculateAndRenderEnergy() {
+            const activeDayInfo = weekDays.find(d => d.id === currentActiveDay);
+            if (!activeDayInfo) return;
+            const isoDate = activeDayInfo.isoDate;
+
+            // 1日の総エネルギー設定値を取得（未設定なら初期値10）
+            const maxEnergy = parseInt(localStorage.getItem('maxEnergyConfig')) || 10;
+            
+            // 現在の曜日に登録されている全タスクの合計消費エネルギーを計算
+            const allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+            const tasksForDay = allTasks.filter(t => t.startDate === isoDate);
+            
+            // 各タスクのエネルギー値を合計（デフォルトはふつうの「2」として計算）
+            const usedEnergy = tasksForDay.reduce((sum, task) => {
+                const energyVal = task.energy !== undefined ? parseInt(task.energy) : 2;
+                return sum + energyVal;
+            }, 0);
+
+            // 残量を算出（0以下にはならないように制限）
+            const remainEnergy = Math.max(0, maxEnergy - usedEnergy);
+
+            // 画面のバッテリーUIへ反映
+            const textEl = document.getElementById('battery-remain-text');
+            const barEl = document.getElementById('battery-level-bar');
+            
+            if (textEl && barEl) {
+                textEl.textContent = `${remainEnergy}/${maxEnergy}`;
+                const pct = (remainEnergy / maxEnergy) * 100;
+                barEl.style.width = `${pct}%`;
+
+                // 残量が20%以下になったらバッテリーを赤くする警告
+                if (pct <= 20) {
+                    barEl.classList.add('low');
+                } else {
+                    barEl.classList.remove('low');
+                }
+            }
+        }
+
+        // ⚡️ 総エネルギー変更ポップアップの制御ロジック
+        function openMaxEnergyPrompt() {
+            const currentMax = localStorage.getItem('maxEnergyConfig') || 10;
+            document.getElementById('max-energy-input').value = currentMax;
+            document.getElementById('energy-prompt-modal').style.display = 'flex';
+        }
+
+        function closeMaxEnergyPrompt() {
+            document.getElementById('energy-prompt-modal').style.display = 'none';
+        }
+
+        function saveMaxEnergyConfig() {
+            const inputVal = parseInt(document.getElementById('max-energy-input').value);
+            if (isNaN(inputVal) || inputVal <= 0) {
+                alert('1以上の正しい数値を入力してください。');
+                return;
+            }
+            localStorage.setItem('maxEnergyConfig', inputVal);
+            closeMaxEnergyPrompt();
+            calculateAndRenderEnergy(); // バッテリー表示を即座に更新
         }
 
         const colorMap = {
@@ -1251,7 +1314,7 @@
 
 
         // エネルギーラベルの更新
-        const energyLabels = { 1: "とても低い", 2: "低い", 3: "ふつう", 4: "高い", 5: "とても高い" };
+        const energyLabels = { 1: "すくない", 2: "ふつう", 3: "おおい" };
         function updateEnergyLabel(val) {
             const label = document.getElementById('energy-value-label');
             if (label) {
@@ -1328,8 +1391,8 @@
             // フォーム初期化
             document.getElementById('schedule-title').value = '';
             document.getElementById('schedule-notes').value = '';
-            document.querySelector('input[name="energy"][value="3"]').checked = true;
-            updateEnergyLabel(3);
+            document.querySelector('input[name="energy"][value="2"]').checked = true;
+            updateEnergyLabel(2);
             document.getElementById('emoji-display').textContent = selectedEmoji;
 
             // 選択中の日付を取得
@@ -1382,7 +1445,7 @@
             document.getElementById('schedule-title').value = task.title;
             document.getElementById('schedule-startdate').value = task.startDate;
             document.getElementById('schedule-notes').value = task.notes || '';
-            const energyVal = task.energy || 3;
+            const energyVal = task.energy || 2;
             document.querySelector(`input[name="energy"][value="${energyVal}"]`).checked = true;
             updateEnergyLabel(energyVal);
             document.getElementById('emoji-display').textContent = selectedEmoji;
@@ -1659,7 +1722,7 @@
     });
     </script>
 
-    <!-- ゆうかがテンプレートのためにここから書き加えました -->
+    <!-- ゆうかがテンプレートとエネルギーのためにここから書き加えました -->
 
     <div id="template-modal" class="sidebar-overlay">
         <div class="modal-box" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 340px; background: white; border-radius: 24px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 16px;">
@@ -1680,6 +1743,18 @@
     </div>
 
     <script src="templateManager.js"></script>
+
+    <!-- ⚡️ 総エネルギー量変更用のポップアップ -->
+    <div id="energy-prompt-modal" class="energy-prompt-modal">
+        <div class="energy-prompt-box">
+            <h4 style="margin:0; font-size:14px; color:#1e293b;">1日の目標エネルギー量</h4>
+            <input type="number" id="max-energy-input" class="energy-prompt-input" min="1" max="99">
+            <div class="energy-prompt-buttons">
+                <button class="energy-prompt-btn energy-prompt-cancel" onclick="closeMaxEnergyPrompt()">キャンセル</button>
+                <button class="energy-prompt-btn energy-prompt-save" onclick="saveMaxEnergyConfig()">保存</button>
+            </div>
+        </div>
+    </div>
 
     <!-- ここまで書き加えました -->
 

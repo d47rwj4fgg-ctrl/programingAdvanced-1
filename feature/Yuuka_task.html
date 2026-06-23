@@ -537,14 +537,7 @@
                                         <input type="radio" name="energy" value="3" checked onclick="updateEnergyLabel(3)">
                                         <span class="energy-radio-btn">3</span>
                                     </label>
-                                    <label class="energy-radio-label">
-                                        <input type="radio" name="energy" value="4" onclick="updateEnergyLabel(4)">
-                                        <span class="energy-radio-btn">4</span>
-                                    </label>
-                                    <label class="energy-radio-label">
-                                        <input type="radio" name="energy" value="5" onclick="updateEnergyLabel(5)">
-                                        <span class="energy-radio-btn">5</span>
-                                    </label>
+
                                 </div>
                                 <div style="text-align: center; font-size: 13px; font-weight: 600; color: #8e8e93;" id="energy-value-label">ふつう</div>
                             </div>
@@ -1132,7 +1125,7 @@
         }
 
         // エネルギーラベルの更新
-        const energyLabels = { 1: "とても低い", 2: "低い", 3: "ふつう", 4: "高い", 5: "とても高い" };
+        const energyLabels = { 1: "すくない", 2: "ふつう", 3: "おおい" };
         function updateEnergyLabel(val) {
             const label = document.getElementById('energy-value-label');
             if (label) {
@@ -1218,7 +1211,7 @@
             document.getElementById('emoji-display').textContent = selectedEmoji;
             selectColor(selectedColor);
 
-            const energyVal = task.energy || 3;
+            const energyVal = task.energy || 2;
             const energyInput = document.querySelector(`input[name="energy"][value="${energyVal}"]`);
             if (energyInput) energyInput.checked = true;
             updateEnergyLabel(energyVal);
