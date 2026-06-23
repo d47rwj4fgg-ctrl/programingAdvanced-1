@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>拠点・移動設定</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="daily-main-page">
+
+    <div class="pc-info">
+        <h2>Timeline App</h2>
+        <p>「Structured」アプリにインスパイアされた、クリーンで視覚的なデイリープランナーのプロトタイプです。</p>
+        <ul>
+            <li>「拠点・移動設定」画面では、よく行く場所（拠点）と、その拠点間の移動時間を事前に登録できます。</li>
+            <li>登録したデータはブラウザの localStorage に保存され、今後のスケジュール作成で利用可能になります。</li>
+        </ul>
+        <p style="margin-top: 24px; font-size: 12px; color: #64748b;">※スマホ実機やデベロッパーツールで開くと、全画面表示 of スマホUIになります。</p>
+    </div>
+
+    <!-- スマホ本体フレーム -->
+    <div class="phone-frame">
+        <div class="phone-notch"></div>
+
+        <!-- 仮想ステータスバー -->
+        <div class="status-bar">
+            <span id="status-bar-time">9:41</span>
+            <div class="right-icons">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                </svg>
+            </div>
+        </div>
+
+        <!-- サイドバー (TimeTree風ドロワー) -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+        <div class="sidebar-drawer" id="sidebar-drawer">
+            <div class="sidebar-header">
+                <span class="sidebar-logo">Timeline</span>
+                <button class="sidebar-close-btn" id="sidebar-close-btn" aria-label="閉じる">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="sidebar-profile">
+                <div class="profile-avatar">KH</div>
+                <div class="profile-info">
+                    <span class="profile-name">肥後 佳苗</span>
+                    <span class="profile-role">大学開発メンバー</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="Kanae_dailymain.html" class="nav-item">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-text">デイリーカレンダー</span>
+                </a>
+                <a href="Yuuka_task.html" class="nav-item">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-text">タスクリスト</span>
+                </a>
+                <a href="templateRegister.html" class="nav-item">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-text">テンプレートの登録</span>
+                </a>
+                <a href="timetableRegister.html" class="nav-item">
+                    <span class="nav-icon">🏫</span>
+                    <span class="nav-text">時間割の登録</span>
+                </a>
+                <a href="locationSettings.html" class="nav-item active">
+                    <span class="nav-icon">📍</span>
+                    <span class="nav-text">拠点・移動設定</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <span>Timeline App v1.0.0</span>
+            </div>
+        </div>
+
+        <div class="app-container">
+            <!-- アプリヘッダー -->
+            <header class="app-header">
+                <div class="header-top">
+                    <button class="icon-btn" id="menu-toggle-btn" aria-label="メニュー" style="margin-right: 8px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                    <div class="header-center-title" style="flex: 1; text-align: center; font-weight: 800; font-size: 18px; color: var(--text-main);">
+                        拠点・移動設定
+                    </div>
+                    <div style="width: 28px;"></div> <!-- バランス用の余白 -->
+                </div>
+            </header>
+
+            <!-- スクロール可能なメインコンテンツ -->
+            <div class="task-container" id="scroll-container" style="overflow-y: auto; flex: 1; padding: 16px 20px;">
+                
+                <!-- iOS風セグメントコントロール (タブ) -->
+                <div class="segmented-control">
+                    <button type="button" class="segment-btn active" data-tab="locations" onclick="switchTab('locations')">📍 拠点登録</button>
+                    <button type="button" class="segment-btn" data-tab="travel-times" onclick="switchTab('travel-times')">🚗 移動時間</button>
+                </div>
+
+                <!-- 拠点設定タブコンテンツ -->
+                <div id="tab-locations" class="tab-content active">
+                    <div class="card">
+                        <h2 style="font-size: 16px; font-weight: 800; color: #1c1c1e; margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                            <span>📍</span> 拠点（よく行く場所）
+                        </h2>
+                        <ul class="location-list" id="location-list">
+                            <!-- JSで動的に表示 -->
+                        </ul>
+                        
+                        <div class="location-add-form" style="border-top: 1px dashed #e5e5ea; margin-top: 12px;">
+                            <span style="font-size: 12px; font-weight: 700; color: #8e8e93; margin-bottom: 4px;">新しい拠点をつくる</span>
+                            <div class="location-input-group">
+                                <button type="button" class="emoji-input-btn" id="location-emoji-btn" onclick="toggleEmojiSelect()">🏠</button>
+                                <input type="text" id="location-name-input" class="text-input-field" placeholder="場所の名前（例: バイト先）">
+                            </div>
+                            
+                            <!-- 絵文字選択パレット -->
+                            <div class="emoji-palette" id="location-emoji-palette" style="display: none; max-height: 120px; overflow-y: auto; background-color: #f2f2f6; border-radius: 10px; padding: 8px; margin-top: 4px; gap: 8px; grid-template-columns: repeat(6, 1fr);">
+                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('🏠')">🏠</button>
+                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('🏫')">🏫</button>
+                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('🍳')">🍳</button>
+                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('📚')">📚</button>
+                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('☕')">☕</button>
+                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('🏢')">🏢</button>
+                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('🌳')">🌳</button>
+                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('🛍️')">🛍️</button>
+                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('🍜')">🍜</button>
+                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('🏊')">🏊</button>
+                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('🏥')">🏥</button>
+                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('🚂')">🚂</button>
+                            </div>
+                            
+                            <button type="button" class="action-btn-primary" onclick="addLocation()" style="margin-top: 4px;">拠点をつくる</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 移動時間設定タブコンテンツ -->
+                <div id="tab-travel-times" class="tab-content">
+                    <div class="card">
+                        <h2 style="font-size: 16px; font-weight: 800; color: #1c1c1e; margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                            <span>🚗</span> 拠点間の移動時間（相互）
+                        </h2>
+                        <ul class="travel-time-list" id="travel-time-list">
+                            <!-- JSで動的に表示 -->
+                        </ul>
+                        
+                        <div class="travel-time-add-form" style="border-top: 1px dashed #e5e5ea; margin-top: 12px;">
+                            <span style="font-size: 12px; font-weight: 700; color: #8e8e93; margin-bottom: 4px;">移動時間を設定する</span>
+                            <div class="travel-time-input-group">
+                                <div class="select-arrow-wrapper">
+                                    <select id="travel-from-select" class="location-select">
+                                        <!-- JSで拠点リストを挿入 -->
+                                    </select>
+                                </div>
+                                <span class="travel-time-arrow" style="font-size: 16px; margin: 0 8px;">⇄</span>
+                                <div class="select-arrow-wrapper">
+                                    <select id="travel-to-select" class="location-select">
+                                        <!-- JSで拠点リストを挿入 -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="travel-time-input-row" style="margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 14px; font-weight: 600; color: #475569;">所要時間:</span>
+                                <input type="number" id="travel-minutes-input" class="minutes-input" min="1" max="999" value="30">
+                                <span style="font-size: 14px; font-weight: 600; color: #475569;">分</span>
+                            </div>
+                            <button type="button" class="action-btn-primary" onclick="addTravelTime()" style="margin-top: 12px;">移動時間を保存</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- iOS風ホームインジケータ -->
+            <div class="phone-home-indicator"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- 状態管理 ---
+        let locations = [];
+        let travelTimes = [];
+        let selectedEmoji = '🏠';
+
+        // --- 初期化 ---
+        window.addEventListener('DOMContentLoaded', () => {
+            initSidebar();
+            updateStatusBarTime();
+            setInterval(updateStatusBarTime, 1000);
+            loadData();
+        });
+
+        // --- ステータスバーの時計 ---
+        function updateStatusBarTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const timeEl = document.getElementById('status-bar-time');
+            if (timeEl) {
+                timeEl.textContent = `${hours}:${minutes}`;
+            }
+        }
+
+        // --- サイドバーの開閉イベント ---
+        function initSidebar() {
+            const drawer = document.getElementById('sidebar-drawer');
+            const overlay = document.getElementById('sidebar-overlay');
+            const openBtn = document.getElementById('menu-toggle-btn');
+            const closeBtn = document.getElementById('sidebar-close-btn');
+
+            if (!drawer || !overlay || !openBtn || !closeBtn) return;
+
+            openBtn.addEventListener('click', () => {
+                drawer.classList.add('active');
+                overlay.classList.add('active');
+            });
+
+            closeBtn.addEventListener('click', () => {
+                drawer.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+
+            overlay.addEventListener('click', () => {
+                drawer.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        }
+
+        // --- タブ切り替え ---
+        function switchTab(tabId) {
+            // タブボタンのアクティブ切り替え
+            const buttons = document.querySelectorAll('.segmented-control .segment-btn');
+            buttons.forEach(btn => {
+                if (btn.getAttribute('data-tab') === tabId) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // コンテンツのアクティブ切り替え
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => {
+                if (content.id === `tab-${tabId}`) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+        }
+
+        // --- データ読み込みと保存 ---
+        function loadData() {
+            // 拠点データの読み込み
+            const storedLocations = localStorage.getItem('savedLocations');
+            if (storedLocations) {
+                locations = JSON.parse(storedLocations);
+            } else {
+                // デフォルトの拠点データ (自宅、大学)
+                locations = [
+                    { id: 'loc-1', name: '自宅', icon: '🏠', isDeletable: false },
+                    { id: 'loc-2', name: '大学', icon: '🏫', isDeletable: false }
+                ];
+                saveLocations();
+            }
+
+            // 移動時間データの読み込み
+            const storedTravelTimes = localStorage.getItem('savedTravelTimes');
+            if (storedTravelTimes) {
+                travelTimes = JSON.parse(storedTravelTimes);
+            } else {
+                travelTimes = [];
+                saveTravelTimes();
+            }
+
+            renderLocations();
+            renderTravelTimes();
+        }
+
+        function saveLocations() {
+            localStorage.setItem('savedLocations', JSON.stringify(locations));
+        }
+
+        function saveTravelTimes() {
+            localStorage.setItem('savedTravelTimes', JSON.stringify(travelTimes));
+        }
+
+        // --- 絵文字パレット制御 ---
+        function toggleEmojiSelect() {
+            const palette = document.getElementById('location-emoji-palette');
+            if (palette.style.display === 'none' || palette.style.display === '') {
+                palette.style.display = 'grid';
+            } else {
+                palette.style.display = 'none';
+            }
+        }
+
+        function selectLocationEmoji(emoji) {
+            selectedEmoji = emoji;
+            document.getElementById('location-emoji-btn').textContent = emoji;
+            document.getElementById('location-emoji-palette').style.display = 'none';
+        }
+
+        // --- 拠点 (Locations) の描画 ---
+        function renderLocations() {
+            const listEl = document.getElementById('location-list');
+            listEl.innerHTML = '';
+
+            locations.forEach(loc => {
+                const li = document.createElement('li');
+                li.className = 'location-item';
+                
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'location-item-info';
+                
+                const iconSpan = document.createElement('span');
+                iconSpan.className = 'location-item-icon';
+                iconSpan.textContent = loc.icon;
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = loc.name;
+                
+                infoDiv.appendChild(iconSpan);
+                infoDiv.appendChild(nameSpan);
+                li.appendChild(infoDiv);
+
+                // 削除可能ボタン (デフォルト拠点以外)
+                if (loc.isDeletable !== false) {
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-btn-icon';
+                    deleteBtn.innerHTML = `
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
+                    `;
+                    deleteBtn.onclick = () => deleteLocation(loc.id);
+                    li.appendChild(deleteBtn);
+                }
+
+                listEl.appendChild(li);
+            });
+
+            // プルダウンセレクトの更新
+            updateSelectOptions();
+        }
+
+        // プルダウンメニューの更新
+        function updateSelectOptions() {
+            const fromSelect = document.getElementById('travel-from-select');
+            const toSelect = document.getElementById('travel-to-select');
+            
+            fromSelect.innerHTML = '';
+            toSelect.innerHTML = '';
+
+            locations.forEach(loc => {
+                const optFrom = document.createElement('option');
+                optFrom.value = loc.id;
+                optFrom.textContent = `${loc.icon} ${loc.name}`;
+                fromSelect.appendChild(optFrom);
+
+                const optTo = document.createElement('option');
+                optTo.value = loc.id;
+                optTo.textContent = `${loc.icon} ${loc.name}`;
+                toSelect.appendChild(optTo);
+            });
+
+            // 初期選択値をずらす (使いやすさのため)
+            if (locations.length >= 2) {
+                toSelect.selectedIndex = 1;
+            }
+        }
+
+        // 拠点の追加
+        function addLocation() {
+            const nameInput = document.getElementById('location-name-input');
+            const name = nameInput.value.trim();
+
+            if (!name) {
+                alert('拠点の名前を入力してください。');
+                return;
+            }
+
+            // 重複チェック
+            const isDuplicate = locations.some(loc => loc.name === name);
+            if (isDuplicate) {
+                alert('その名前の拠点は既に登録されています。');
+                return;
+            }
+
+            const newLoc = {
+                id: 'loc-' + Date.now(),
+                name: name,
+                icon: selectedEmoji,
+                isDeletable: true
+            };
+
+            locations.push(newLoc);
+            saveLocations();
+            
+            // リセット
+            nameInput.value = '';
+            selectLocationEmoji('🏠');
+            
+            renderLocations();
+        }
+
+        // 拠点の削除
+        function deleteLocation(id) {
+            if (!confirm('この拠点を削除しますか？\n(関連する移動時間設定も同時に削除されます)')) {
+                return;
+            }
+
+            // 拠点リストから削除
+            locations = locations.filter(loc => loc.id !== id);
+            saveLocations();
+
+            // 関連する移動時間設定も削除
+            travelTimes = travelTimes.filter(t => t.from !== id && t.to !== id);
+            saveTravelTimes();
+
+            renderLocations();
+            renderTravelTimes();
+        }
+
+        // --- 移動時間 (TravelTimes) の描画 ---
+        function renderTravelTimes() {
+            const listEl = document.getElementById('travel-time-list');
+            listEl.innerHTML = '';
+
+            if (travelTimes.length === 0) {
+                const emptyLi = document.createElement('li');
+                emptyLi.style.padding = '12px 0';
+                emptyLi.style.textAlign = 'center';
+                emptyLi.style.color = '#8e8e93';
+                emptyLi.style.fontSize = '14px';
+                emptyLi.textContent = '登録された移動時間はまだありません。';
+                listEl.appendChild(emptyLi);
+                return;
+            }
+
+            travelTimes.forEach(t => {
+                const fromLoc = locations.find(l => l.id === t.from);
+                const toLoc = locations.find(l => l.id === t.to);
+
+                // 削除された拠点のゴミデータがあればスキップ
+                if (!fromLoc || !toLoc) return;
+
+                const li = document.createElement('li');
+                li.className = 'travel-time-item';
+
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'travel-time-item-info';
+                
+                infoDiv.innerHTML = `
+                    <span>${fromLoc.icon} ${fromLoc.name}</span>
+                    <span class="travel-time-arrow" style="font-size: 16px; margin: 0 8px;">⇄</span>
+                    <span>${toLoc.icon} ${toLoc.name}</span>
+                    <span style="margin-left: 8px; font-weight: 800; color: #ff8e98;">${t.minutes}分</span>
+                `;
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-btn-icon';
+                deleteBtn.innerHTML = `
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                    </svg>
+                `;
+                deleteBtn.onclick = () => deleteTravelTime(t.from, t.to);
+
+                li.appendChild(infoDiv);
+                li.appendChild(deleteBtn);
+                listEl.appendChild(li);
+            });
+        }
+
+        // 移動時間の保存
+        function addTravelTime() {
+            const fromId = document.getElementById('travel-from-select').value;
+            const toId = document.getElementById('travel-to-select').value;
+            const minutesInput = document.getElementById('travel-minutes-input');
+            const minutes = parseInt(minutesInput.value, 10);
+
+            if (fromId === toId) {
+                alert('出発地と到着地に同じ場所は設定できません。');
+                return;
+            }
+
+            if (isNaN(minutes) || minutes <= 0) {
+                alert('移動時間は1分以上で入力してください。');
+                return;
+            }
+
+            // 相互作用（双方向）として扱うため、ID順でソートして一意にする
+            const sortedFrom = fromId < toId ? fromId : toId;
+            const sortedTo = fromId < toId ? toId : fromId;
+
+            // 重複チェック (同一区間があれば上書き)
+            const existingIndex = travelTimes.findIndex(t => t.from === sortedFrom && t.to === sortedTo);
+            
+            if (existingIndex > -1) {
+                travelTimes[existingIndex].minutes = minutes;
+            } else {
+                travelTimes.push({
+                    from: sortedFrom,
+                    to: sortedTo,
+                    minutes: minutes
+                });
+            }
+
+            saveTravelTimes();
+            renderTravelTimes();
+
+            // 初期化
+            minutesInput.value = 30;
+        }
+
+        // 移動時間の削除
+        function deleteTravelTime(fromId, toId) {
+            if (!confirm('この移動時間設定を削除しますか？')) {
+                return;
+            }
+
+            // 相互作用のため、ソートして比較対象を一意にする
+            const sortedFrom = fromId < toId ? fromId : toId;
+            const sortedTo = fromId < toId ? toId : fromId;
+
+            travelTimes = travelTimes.filter(t => !(t.from === sortedFrom && t.to === sortedTo));
+            saveTravelTimes();
+            renderTravelTimes();
+        }
+    </script>
+</body>
+</html>

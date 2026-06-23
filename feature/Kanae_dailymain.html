@@ -75,6 +75,14 @@
                     <span class="nav-text">テンプレートの登録</span>
                 </a>
                 <!-- ゆうかが追加したのここまでです -->
+                <a href="timetableRegister.html" class="nav-item">
+                    <span class="nav-icon">🏫</span>
+                    <span class="nav-text">時間割の登録</span>
+                </a>
+                <a href="locationSettings.html" class="nav-item">
+                    <span class="nav-icon">📍</span>
+                    <span class="nav-text">拠点・移動設定</span>
+                </a>
 
 
             </nav>
@@ -147,7 +155,7 @@
                     <!-- 新規予定の追加 -->
                     <button class="fab-sub-btn" onclick="triggerNewScheduleOpen()" aria-label="予定を追加">
                         <span class="sub-btn-icon">📅</span>
-                        <span class="sub-btn-label">タスクの追加</span>
+                        <span class="sub-btn-label">予定の追加</span>
                     </button>
                 </div>
                 <!-- メインの＋ボタン -->
@@ -642,6 +650,47 @@
             // localStorage からデータを読み込む
             const allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
             const tasksForDay = allTasks.filter(t => t.startDate === isoDate);
+
+            // 時間割データの自動マージ
+            const timetable = JSON.parse(localStorage.getItem('savedTimetable'));
+            if (timetable && timetable.selectedSlots && timetable.selectedSlots[dayId]) {
+                const periods = timetable.selectedSlots[dayId];
+                const defaultConfig = {
+                    periods: 5,
+                    periodTimes: {
+                        "1": { "start": "08:50", "end": "10:20" },
+                        "2": { "start": "10:30", "end": "12:00" },
+                        "3": { "start": "13:00", "end": "14:30" },
+                        "4": { "start": "14:40", "end": "16:10" },
+                        "5": { "start": "16:20", "end": "17:50" },
+                        "6": { "start": "18:00", "end": "19:30" },
+                        "7": { "start": "19:40", "end": "21:10" }
+                    }
+                };
+                const config = JSON.parse(localStorage.getItem('timetableConfig')) || defaultConfig;
+
+                periods.forEach(p => {
+                    // 設定された時限数を超えるものはマージしない
+                    if (p > parseInt(config.periods)) return;
+
+                    const timeConfig = config.periodTimes[p];
+                    if (timeConfig) {
+                        tasksForDay.push({
+                            id: `timetable-${dayId}-${p}`,
+                            title: `授業（${p}限）`,
+                            location: `${timeConfig.start}〜${timeConfig.end}`,
+                            isAllDay: false,
+                            startDate: isoDate,
+                            startTime: timeConfig.start,
+                            endDate: isoDate,
+                            endTime: timeConfig.end,
+                            icon: "📚",
+                            type: "study",
+                            color: "blue"
+                        });
+                    }
+                });
+            }
 
             // 表示用にデータをマップ
             const mappedTasks = tasksForDay.map(t => {
@@ -1433,6 +1482,10 @@
         }
 
         function openEditScheduleModal(id) {
+            if (typeof id === 'string' && id.startsWith('timetable-')) {
+                alert('時間割の予定は「時間割の登録」画面から変更してください。');
+                return;
+            }
             currentEditingId = id;
             const allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
             const task = allTasks.find(t => t.id === id);

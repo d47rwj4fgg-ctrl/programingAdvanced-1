@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>時間割の登録</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="daily-main-page">
+
+    <div class="pc-info">
+        <h2>Timeline App</h2>
+        <p>「Structured」アプリにインスパイアされた、クリーンで視覚的なデイリープランナーのプロトタイプです。</p>
+        <ul>
+            <li>サイドバーから時間割登録画面に入り、曜日・時限を選択して時間割を登録できます。</li>
+            <li>登録した時間割は、デイリーカレンダー（タイムライン）に授業予定として自動挿入されます。</li>
+            <li>⚙️アイコンから、授業時間・時限数・表示する曜日などを細かくカスタマイズできます。</li>
+        </ul>
+        <p style="margin-top: 24px; font-size: 12px; color: #64748b;">※スマホ実機やデベロッパーツールで開くと、全画面表示のスマホUIになります。</p>
+    </div>
+
+    <!-- スマホ本体フレーム -->
+    <div class="phone-frame">
+        <div class="phone-notch"></div>
+
+        <!-- 仮想ステータスバー -->
+        <div class="status-bar">
+            <span id="status-bar-time">9:41</span>
+            <div class="right-icons">
+            </div>
+        </div>
+
+        <!-- サイドバー (ドロワー) -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+        <div class="sidebar-drawer" id="sidebar-drawer">
+            <div class="sidebar-header">
+                <span class="sidebar-logo">Timeline</span>
+                <button class="sidebar-close-btn" id="sidebar-close-btn" aria-label="閉じる">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="sidebar-profile">
+                <div class="profile-avatar">KH</div>
+                <div class="profile-info">
+                    <span class="profile-name">肥後 佳苗</span>
+                    <span class="profile-role">大学開発メンバー</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="Kanae_dailymain.html" class="nav-item">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-text">デイリーカレンダー</span>
+                </a>
+                <a href="Yuuka_task.html" class="nav-item">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-text">タスクリスト</span>
+                </a>
+                <a href="templateRegister.html" class="nav-item">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-text">テンプレートの登録</span>
+                </a>
+                <a href="timetableRegister.html" class="nav-item active">
+                    <span class="nav-icon">🏫</span>
+                    <span class="nav-text">時間割の登録</span>
+                </a>
+                <a href="locationSettings.html" class="nav-item">
+                    <span class="nav-icon">📍</span>
+                    <span class="nav-text">拠点・移動設定</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <span>Timeline App v1.0.0</span>
+            </div>
+        </div>
+
+        <div class="app-container">
+            <!-- アプリヘッダー -->
+            <header class="app-header">
+                <div class="header-top">
+                    <button class="icon-btn" id="menu-toggle-btn" aria-label="メニュー" style="margin-right: 8px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                    
+                    <!-- 中央：タイトルと学期切替ボタン -->
+                    <div class="header-center-title" style="flex: 1; text-align: center; display: flex; justify-content: center; align-items: center; gap: 6px; cursor: pointer;" onclick="openTermModal()">
+                        <span id="term-title" style="font-weight: 800; font-size: 16px; color: var(--text-main);">2026年 1学期</span>
+                        <span style="font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 8px; background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1;">切替</span>
+                    </div>
+
+                    <!-- 右側：設定（歯車）ボタン -->
+                    <div class="header-icons">
+                        <button class="icon-btn" id="settings-toggle-btn" aria-label="設定" onclick="openSettingsModal()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 時間割グリッド表示エリア -->
+            <div class="timetable-viewport">
+                <div class="timetable-container" id="timetable-grid-container">
+                    <!-- JavaScriptで動的生成されます -->
+                </div>
+            </div>
+
+            <!-- iOS風ホームインジケータ -->
+            <div class="phone-home-indicator"></div>
+        </div>
+    </div>
+
+    <!-- 1. 年度・学期切替モーダル -->
+    <div id="term-modal" class="modal-overlay">
+        <div class="modal-box config-modal-box">
+            <div class="config-modal-header">
+                <button class="close-icon-btn" onclick="closeTermModal()">✕</button>
+                <div class="config-modal-title">年度・学期切替</div>
+            </div>
+            <div class="config-modal-body">
+                <p class="config-desc-text">
+                    年度や学期が変わったときは、こちらから表示を切り替えましょう💡<br>
+                    <span style="font-size: 11px; color: #94a3b8;">※過去に作成した時間割も引き続きご利用できます</span>
+                </p>
+                
+                <div class="config-form-group">
+                    <label class="config-label">年度</label>
+                    <select id="term-year-select" class="config-select">
+                        <option value="2025">2025</option>
+                        <option value="2026" selected>2026</option>
+                        <option value="2027">2027</option>
+                        <option value="2028">2028</option>
+                    </select>
+                </div>
+
+                <div class="config-form-group">
+                    <label class="config-label">学期</label>
+                    <div class="config-radio-list">
+                        <label class="config-radio-item">
+                           <input type="radio" name="term-semester" value="1学期 / 前期 / 春学期" class="config-radio-input" checked>
+                           <span class="config-radio-label-text">1学期 / 前期 / 春学期</span>
+                        </label>
+                        <label class="config-radio-item">
+                           <input type="radio" name="term-semester" value="2学期 / 後期 / 秋学期" class="config-radio-input">
+                           <span class="config-radio-label-text">2学期 / 後期 / 秋学期</span>
+                        </label>
+                        <label class="config-radio-item">
+                           <input type="radio" name="term-semester" value="3学期" class="config-radio-input">
+                           <span class="config-radio-label-text">3学期</span>
+                        </label>
+                        <label class="config-radio-item">
+                           <input type="radio" name="term-semester" value="4学期" class="config-radio-input">
+                           <span class="config-radio-label-text">4学期</span>
+                        </label>
+                        <label class="config-radio-item">
+                           <input type="radio" name="term-semester" value="通年" class="config-radio-input">
+                           <span class="config-radio-label-text">通年</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="config-modal-footer-fixed">
+                <button class="btn-primary-blue" onclick="saveTermConfig()">変更する</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 時限・曜日・授業時間設定モーダル -->
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-box config-modal-box">
+            <div class="config-modal-header">
+                <button class="back-icon-btn" onclick="closeSettingsModal()">←</button>
+                <div class="config-modal-title">時限・曜日・授業時間</div>
+            </div>
+            <div class="config-modal-body">
+                <div class="config-form-row">
+                    <div class="config-form-group">
+                        <label class="config-label">時限数</label>
+                        <select id="config-periods-select" class="config-select" onchange="onPeriodsChange(this.value)">
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5" selected>5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                        </select>
+                    </div>
+                    <div class="config-form-group">
+                        <label class="config-label">表示する曜日</label>
+                        <select id="config-days-select" class="config-select">
+                            <option value="weekday">平日のみ</option>
+                            <option value="week-sat" selected>平日＋土曜日</option>
+                            <option value="everyday">毎日</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="config-form-group" style="margin-top: 10px;">
+                    <label class="config-label">授業時間</label>
+                    <div id="class-time-list" class="class-time-settings-area">
+                        <!-- JSで動的生成されます -->
+                    </div>
+                </div>
+            </div>
+            <div class="config-modal-footer-fixed">
+                <button class="btn-primary-blue" onclick="saveTimetableConfig()">保存する</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // サイドバーの開閉イベント設定
+        function initSidebar() {
+            const drawer = document.getElementById('sidebar-drawer');
+            const overlay = document.getElementById('sidebar-overlay');
+            const openBtn = document.getElementById('menu-toggle-btn');
+            const closeBtn = document.getElementById('sidebar-close-btn');
+
+            if (!drawer || !overlay || !openBtn || !closeBtn) return;
+
+            openBtn.addEventListener('click', () => {
+                drawer.classList.add('active');
+                overlay.classList.add('active');
+            });
+
+            closeBtn.addEventListener('click', () => {
+                drawer.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+
+            overlay.addEventListener('click', () => {
+                drawer.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        }
+
+        function updateStatusBarTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const timeEl = document.getElementById('status-bar-time');
+            if (timeEl) {
+                timeEl.textContent = `${hours}:${minutes}`;
+            }
+        }
+
+        // デフォルト設定値
+        const DEFAULT_CONFIG = {
+            periods: 5,
+            daysType: "week-sat",
+            periodTimes: {
+                "1": { "start": "08:50", "end": "10:20" },
+                "2": { "start": "10:30", "end": "12:00" },
+                "3": { "start": "13:00", "end": "14:30" },
+                "4": { "start": "14:40", "end": "16:10" },
+                "5": { "start": "16:20", "end": "17:50" },
+                "6": { "start": "18:00", "end": "19:30" },
+                "7": { "start": "19:40", "end": "21:10" }
+            }
+        };
+
+        const dayConfigMap = {
+            "weekday": { count: 5, labels: ["月", "火", "水", "木", "金"], indices: [0, 1, 2, 3, 4] },
+            "week-sat": { count: 6, labels: ["月", "火", "水", "木", "金", "土"], indices: [0, 1, 2, 3, 4, 5] },
+            "everyday": { count: 7, labels: ["月", "火", "水", "木", "金", "土", "日"], indices: [0, 1, 2, 3, 4, 5, 6] }
+        };
+
+        // 時間オプションHTMLの生成（08:00〜22:00まで5分刻み）
+        function generateTimeOptions(selectedVal) {
+            let html = '';
+            for (let h = 8; h <= 22; h++) {
+                for (let m = 0; m < 60; m += 5) {
+                    const timeStr = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+                    const displayStr = `${h}:${String(m).padStart(2, '0')}`;
+                    const selected = timeStr === selectedVal ? 'selected' : '';
+                    html += `<option value="${timeStr}" ${selected}>${displayStr}</option>`;
+                }
+            }
+            return html;
+        }
+
+        // 時間割グリッドの動的生成
+        function renderTimetableGrid() {
+            const container = document.getElementById('timetable-grid-container');
+            if (!container) return;
+
+            // データ読み込み
+            const config = JSON.parse(localStorage.getItem('timetableConfig')) || DEFAULT_CONFIG;
+            const timetable = JSON.parse(localStorage.getItem('savedTimetable')) || {
+                term: "2026年 1学期",
+                selectedSlots: { "0": [], "1": [], "2": [], "3": [], "4": [], "5": [], "6": [] }
+            };
+
+            const dayInfo = dayConfigMap[config.daysType] || dayConfigMap["week-sat"];
+            const periodCount = parseInt(config.periods);
+
+            let html = '';
+
+            // 1. 曜日ヘッダー
+            html += `<div class="timetable-week-header">`;
+            html += `<div class="time-header-label"></div>`;
+            dayInfo.labels.forEach(label => {
+                html += `<div class="day-header-label">${label}</div>`;
+            });
+            html += `</div>`;
+
+            // 2. 時限ごとの行
+            for (let p = 1; p <= periodCount; p++) {
+                const times = config.periodTimes[p] || { start: "08:00", end: "09:30" };
+                // 開始・終了時間の表示テキスト成形 (08:50 -> 08:50)
+                const startStr = times.start;
+                const endStr = times.end;
+
+                html += `<div class="timetable-row">`;
+                html += `
+                    <div class="period-label-cell">
+                        <div class="period-num">${p}</div>
+                        <div class="period-time">${startStr}<br>|<br>${endStr}</div>
+                    </div>
+                `;
+
+                // 曜日ごとのセル
+                dayInfo.indices.forEach(dayIdx => {
+                    html += `<div class="timetable-cell" data-day="${dayIdx}" data-period="${p}"></div>`;
+                });
+
+                html += `</div>`;
+            }
+
+            container.innerHTML = html;
+
+            // セルの選択状態復元とクリックイベントバインド
+            const cells = container.querySelectorAll('.timetable-cell');
+            cells.forEach(cell => {
+                const day = cell.dataset.day;
+                const period = parseInt(cell.dataset.period);
+
+                if (timetable.selectedSlots[day] && timetable.selectedSlots[day].includes(period)) {
+                    cell.classList.add('selected');
+                }
+
+                cell.addEventListener('click', () => {
+                    const dayList = timetable.selectedSlots[day] || [];
+                    const index = dayList.indexOf(period);
+                    
+                    if (index === -1) {
+                        dayList.push(period);
+                        cell.classList.add('selected');
+                    } else {
+                        dayList.splice(index, 1);
+                        cell.classList.remove('selected');
+                    }
+                    
+                    timetable.selectedSlots[day] = dayList;
+                    localStorage.setItem('savedTimetable', JSON.stringify(timetable));
+                });
+            });
+
+            // 今日の曜日のハイライト
+            const today = new Date();
+            const dayNames = ["日", "月", "火", "水", "木", "金", "土"];
+            const todayDayName = dayNames[today.getDay()];
+            
+            const dayHeaders = container.querySelectorAll('.day-header-label');
+            dayHeaders.forEach(header => {
+                if (header.textContent === todayDayName) {
+                    header.classList.add('active');
+                } else {
+                    header.classList.remove('active');
+                }
+            });
+        }
+
+        // --- モーダル制御 ---
+
+        // 1. 年度・学期切替モーダル
+        function openTermModal() {
+            const timetable = JSON.parse(localStorage.getItem('savedTimetable')) || { term: "2026年 1学期" };
+            const parts = timetable.term.split('年 ');
+            let year = "2026";
+            let semester = "1学期 / 前期 / 春学期";
+            if (parts.length >= 2) {
+                year = parts[0];
+                semester = parts[1];
+            }
+
+            document.getElementById('term-year-select').value = year;
+            
+            const radio = document.querySelector(`input[name="term-semester"][value="${semester}"]`);
+            if (radio) radio.checked = true;
+
+            document.getElementById('term-modal').classList.add('active');
+        }
+
+        function closeTermModal() {
+            document.getElementById('term-modal').classList.remove('active');
+        }
+
+        function saveTermConfig() {
+            const year = document.getElementById('term-year-select').value;
+            const semester = document.querySelector('input[name="term-semester"]:checked').value;
+            const newTerm = `${year}年 ${semester}`;
+
+            let timetable = JSON.parse(localStorage.getItem('savedTimetable')) || {
+                selectedSlots: { "0": [], "1": [], "2": [], "3": [], "4": [], "5": [], "6": [] }
+            };
+            timetable.term = newTerm;
+            localStorage.setItem('savedTimetable', JSON.stringify(timetable));
+
+            document.getElementById('term-title').textContent = newTerm;
+            closeTermModal();
+        }
+
+        // 2. 設定（時限・曜日・時間）モーダル
+        function openSettingsModal() {
+            const config = JSON.parse(localStorage.getItem('timetableConfig')) || DEFAULT_CONFIG;
+
+            document.getElementById('config-periods-select').value = config.periods;
+            document.getElementById('config-days-select').value = config.daysType;
+
+            buildClassTimeSettings(config.periods, config.periodTimes);
+
+            document.getElementById('settings-modal').classList.add('active');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settings-modal').classList.remove('active');
+        }
+
+        // 時限変更時の行数増減トグル
+        function onPeriodsChange(periodsVal) {
+            const config = JSON.parse(localStorage.getItem('timetableConfig')) || DEFAULT_CONFIG;
+            buildClassTimeSettings(periodsVal, config.periodTimes);
+        }
+
+        // 授業時間設定フォーム行の生成
+        function buildClassTimeSettings(periodsCount, savedTimes) {
+            const container = document.getElementById('class-time-list');
+            if (!container) return;
+
+            let html = '';
+            for (let p = 1; p <= periodsCount; p++) {
+                // デフォルト時間フォールバック定義
+                const defaultTimes = DEFAULT_CONFIG.periodTimes[p] || { start: "18:00", end: "19:30" };
+                const times = savedTimes[p] || defaultTimes;
+
+                html += `
+                    <div class="class-time-row" data-period="${p}">
+                        <div class="class-time-label">${p}限</div>
+                        <select class="class-time-select class-time-start">
+                            ${generateTimeOptions(times.start)}
+                        </select>
+                        <span class="class-time-separator">~</span>
+                        <select class="class-time-select class-time-end">
+                            ${generateTimeOptions(times.end)}
+                        </select>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        // 設定の保存
+        function saveTimetableConfig() {
+            const periods = parseInt(document.getElementById('config-periods-select').value);
+            const daysType = document.getElementById('config-days-select').value;
+            
+            const rows = document.querySelectorAll('.class-time-row');
+            const periodTimes = {};
+            rows.forEach(row => {
+                const p = row.dataset.period;
+                const start = row.querySelector('.class-time-start').value;
+                const end = row.querySelector('.class-time-end').value;
+                periodTimes[p] = { start: start, end: end };
+            });
+
+            const newConfig = {
+                periods: periods,
+                daysType: daysType,
+                periodTimes: periodTimes
+            };
+
+            localStorage.setItem('timetableConfig', JSON.stringify(newConfig));
+
+            // グリッドを再描画
+            renderTimetableGrid();
+            closeSettingsModal();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // ローカルストレージに初期構成がなければデフォルト値をセット
+            if (!localStorage.getItem('timetableConfig')) {
+                localStorage.setItem('timetableConfig', JSON.stringify(DEFAULT_CONFIG));
+            }
+
+            updateStatusBarTime();
+            setInterval(updateStatusBarTime, 1000);
+            initSidebar();
+
+            // 時間割タイトルの初期設定
+            const timetable = JSON.parse(localStorage.getItem('savedTimetable')) || { term: "2026年 1学期" };
+            document.getElementById('term-title').textContent = timetable.term;
+
+            // 初期描画
+            renderTimetableGrid();
+
+            // モーダル背景クリックで閉じる処理
+            window.addEventListener('click', (e) => {
+                const termModal = document.getElementById('term-modal');
+                const settingsModal = document.getElementById('settings-modal');
+                if (e.target === termModal) closeTermModal();
+                if (e.target === settingsModal) closeSettingsModal();
+            });
+        });
+    </script>
+</body>
+
+</html>
