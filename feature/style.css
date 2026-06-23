@@ -2323,7 +2323,6 @@ body.register-page:not(.daily-main-page) {
 }
 
 /* ==========================================================================
-<<<<<<< HEAD:feature/0602_all.css
    🛠️ テンプレート呼び出しボタン用の追加スタイル
    ========================================================================== */
 #template-open-btn {
@@ -2355,7 +2354,8 @@ body.register-page:not(.daily-main-page) {
 .timeline-overlap-container .task-card {
     width: 100%;
 }
-=======
+
+/* ==========================================================================
    7. カラー選択パレット (共通)
    ========================================================================== */
 .color-palette {
@@ -2392,4 +2392,3 @@ body.register-page:not(.daily-main-page) {
 .color-palette-btn.green { background-color: #bbf7d0; }
 .color-palette-btn.orange { background-color: #fde68a; }
 .color-palette-btn.purple { background-color: #e9d5ff; }
->>>>>>> 7a8673584bcba07a0aa2a2c10c7e1469df30edc4:feature/style.css

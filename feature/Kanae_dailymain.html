@@ -69,7 +69,6 @@
                     <span class="nav-icon">📋</span>
                     <span class="nav-text">タスクリスト</span>
                 </a>
-<<<<<<< HEAD
                 <!-- ゆうかがテンプレートの登録を追加しました -->
                 <a href="templateRegister.html" class="nav-item">
                     <span class="nav-icon">📝</span>
@@ -78,12 +77,10 @@
                 <!-- ゆうかが追加したのここまでです -->
 
                 <div class="sidebar-divider"></div>
-                <a href="register.html" class="nav-item">
+                <a href="javascript:void(0)" class="nav-item">
                     <span class="nav-icon">➕</span>
                     <span class="nav-text">新規予定の登録</span>
                 </a>
-=======
->>>>>>> 7a8673584bcba07a0aa2a2c10c7e1469df30edc4
             </nav>
 
             <div class="sidebar-footer">
@@ -558,9 +555,6 @@
             updateNowIndicator();
         }
 
-<<<<<<< HEAD
-// タイムラインのレンダリング (重複時の自動列分割・空き時間の自動挿入)
-=======
         const colorMap = {
             pink: { main: '#FF7082', bg: '#FFF0F1' },
             blue: { main: '#38bdf8', bg: '#f0f9ff' },
@@ -569,17 +563,11 @@
             purple: { main: '#c084fc', bg: '#faf5ff' }
         };
 
-        // タイムラインのレンダリング (空き時間の自動挿入)
->>>>>>> 7a8673584bcba07a0aa2a2c10c7e1469df30edc4
+        // タイムラインのレンダリング (重複時の自動列分割・空き時間の自動挿入)
         function renderTimeline(dayId) {
             const container = document.getElementById('structured-timeline');
             container.innerHTML = '';
 
-<<<<<<< HEAD
-            const rawTasks = schedules[dayId] || [];
-            // 開始時間順にソート
-            const tasks = [...rawTasks].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
-=======
             const dayInfo = weekDays.find(d => d.id === dayId);
             if (!dayInfo) return;
             const isoDate = dayInfo.isoDate;
@@ -607,7 +595,6 @@
 
             // 開始時間順にソート
             const tasks = [...mappedTasks].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
->>>>>>> 7a8673584bcba07a0aa2a2c10c7e1469df30edc4
 
             const dayStart = 7 * 60; // 07:00
             const dayEnd = 23 * 60;  // 23:00
@@ -681,7 +668,6 @@
                         <div class="item-line-col"><div class="timeline-path"></div><div class="icon-circle"></div></div>
                         <div class="item-card-col"><div class="gap-card"><span>💤 ${getDurationText(item.start, item.end)} の空き時間</span></div></div>
                     `;
-<<<<<<< HEAD
                     container.appendChild(itemDiv);
 
                 } else if (item.isOverlapGroup) {
@@ -735,40 +721,31 @@
 
                         const targetCol = document.getElementById(`overlap-col-${index}-${columnIndex}`);
                         const card = document.createElement('div');
-                        card.className = `item-card-col theme-${task.type}`;
+                        card.className = `item-card-col`;
                         card.style.width = '100%';
                         card.style.paddingLeft = '0';
+                        
+                        const taskColor = colorMap[task.color] || colorMap.pink;
                         card.innerHTML = `
-                            <div class="task-card" style="min-height: ${calculatedHeight}px; display: flex; flex-direction: column; justify-content: center;">
+                            <div class="task-card" style="min-height: ${calculatedHeight}px; display: flex; flex-direction: column; justify-content: center; border-left: 4px solid ${taskColor.main}; background-color: ${taskColor.bg};">
                                 <div class="task-info">
-                                    <h3 class="task-title">${task.icon} ${task.title}</h3>
-                                    <span class="task-desc">${task.start}〜${task.end}<br>${task.desc}</span>
+                                    <h3 class="task-title" style="color: #1e293b;">${task.icon} ${task.title}</h3>
+                                    <span class="task-desc" style="color: #64748b;">${task.start}〜${task.end}<br>${task.desc}</span>
                                 </div>
                             </div>
                         `;
+                        // 予定カードをクリックした時に編集モーダルを開く
+                        card.querySelector('.task-card').addEventListener('click', () => {
+                            openEditScheduleModal(task.id);
+                        });
                         targetCol.appendChild(card);
                     });
 
                 } else {
-                    // --- 通常の予定（被りなし）の表示 ---
-                    itemDiv.className = `timeline-item theme-${item.type}`;
-                    itemDiv.dataset.start = item.start;
-                    itemDiv.dataset.end = item.end;
-                    itemDiv.innerHTML = `
-                        <div class="item-time-col"><span class="time-start">${item.start}</span><span class="time-end">${item.end}</span></div>
-                        <div class="item-line-col"><div class="timeline-path"></div><div class="icon-circle">${item.icon}</div></div>
-                        <div class="item-card-col">
-                            <div class="task-card">
-                                <div class="task-info"><h3 class="task-title">${item.title}</h3><span class="task-desc">${item.desc}</span></div>
-                                <div class="task-meta"><span class="task-duration">${getDurationText(item.start, item.end)}</span></div>
-                            </div>
-                        </div>
-                    `;
-                    container.appendChild(itemDiv);
-=======
-                } else {
                     const taskColor = colorMap[item.color] || colorMap.pink;
                     itemDiv.className = `timeline-item`;
+                    itemDiv.dataset.start = item.start;
+                    itemDiv.dataset.end = item.end;
                     itemDiv.innerHTML = `
                         <div class="item-time-col">
                             <span class="time-start">${item.start}</span>
@@ -781,7 +758,7 @@
                         <div class="item-card-col">
                             <div class="task-card" style="border-left: 4px solid ${taskColor.main}; background-color: ${taskColor.bg};">
                                 <div class="task-info">
-                                    <h3 class="task-title" style="color: #1e293b;">${item.title}</h3>
+                                    <h3 class="task-title" style="color: #1e293b;">${item.icon} ${item.title}</h3>
                                     <span class="task-desc" style="color: #64748b;">${item.desc}</span>
                                 </div>
                                 <div class="task-meta">
@@ -795,7 +772,7 @@
                     itemDiv.querySelector('.task-card').addEventListener('click', () => {
                         openEditScheduleModal(item.id);
                     });
->>>>>>> 7a8673584bcba07a0aa2a2c10c7e1469df30edc4
+                    container.appendChild(itemDiv);
                 }
             });
 

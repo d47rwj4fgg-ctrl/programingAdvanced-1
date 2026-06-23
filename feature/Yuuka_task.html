@@ -172,6 +172,18 @@
             top: 0;
             border-radius: 10px 0 0 10px;
         }
+
+        .task-duration-slim {
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            background-color: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+        }
     </style>
 </head>
 
@@ -226,6 +238,18 @@
                 <a href="Yuuka_task.html" class="nav-item active">
                     <span class="nav-icon">📋</span>
                     <span class="nav-text">タスクリスト</span>
+                </a>
+                <!-- ゆうかがテンプレートの登録を追加しました -->
+                <a href="templateRegister.html" class="nav-item">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-text">テンプレートの登録</span>
+                </a>
+                <!-- ゆうかが追加したのここまでです -->
+
+                <div class="sidebar-divider"></div>
+                <a href="javascript:void(0)" class="nav-item">
+                    <span class="nav-icon">➕</span>
+                    <span class="nav-text">新規予定の登録</span>
                 </a>
             </nav>
             <div class="sidebar-footer">
@@ -585,6 +609,20 @@
             return `📅 ${month}/${date}(${dayName}) ${hours}:${minutes}`;
         }
 
+        // 所要時間をわかりやすくフォーマット (例: 90 -> "1時間30分", 45 -> "45分")
+        function formatDuration(minutes) {
+            if (!minutes || minutes <= 0) return "0分";
+            const h = Math.floor(minutes / 60);
+            const m = minutes % 60;
+            if (h > 0 && m > 0) {
+                return `${h}時間${m}分`;
+            } else if (h > 0) {
+                return `${h}時間`;
+            } else {
+                return `${m}分`;
+            }
+        }
+
         // タスクの名前に沿ったピクトグラムの自動選択
         function getTaskIcon(title) {
             if (!title) return '📌';
@@ -700,7 +738,10 @@
                         <span class="task-item-icon" style="background-color: ${taskColor.bg}; color: ${taskColor.main};">${icon}</span>
                         <div class="todo-content">
                             <span class="task-text">${task.title}</span>
-                            <span class="task-deadline-slim">${deadlineText}</span>
+                            <div style="display: flex; gap: 8px; align-items: center; margin-top: 2px;">
+                                <span class="task-deadline-slim">${deadlineText}</span>
+                                <span class="task-duration-slim">⏳ ${formatDuration(task.durationMinutes)}</span>
+                            </div>
                         </div>
                         <button class="todo-star-btn ${task.starred ? 'active' : ''}"
                             onclick="toggleStar(${task.id}, this); event.stopPropagation();">${task.starred ? '★' : '☆'}</button>
