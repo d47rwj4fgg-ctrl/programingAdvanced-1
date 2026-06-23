@@ -336,7 +336,7 @@
                                 <option value="4">4時間</option>
                             </select>
                             <select id="quick-task-minutes" class="quick-select">
-                                <option value="0">0分</option>
+                                <option value="5">5分</option>
                                 <option value="15">15分</option>
                                 <option value="30" selected>30分</option>
                                 <option value="45">45分</option>
@@ -484,6 +484,7 @@
                             <div class="modal-card" id="duration-picker-card">
                                 <span class="modal-card-label">⌛️ 所要時間</span>
                                 <div class="duration-chips" id="duration-chips-container">
+                                    <button class="duration-chip" data-minutes="5">5分</button>
                                     <button class="duration-chip" data-minutes="15">15分</button>
                                     <button class="duration-chip active" data-minutes="30">30分</button>
                                     <button class="duration-chip" data-minutes="60">1時間</button>
@@ -536,26 +537,18 @@
                                 <div class="energy-radio-group">
                                     <label class="energy-radio-label">
                                         <input type="radio" name="energy" value="1" onclick="updateEnergyLabel(1)">
-                                        <span class="energy-radio-btn">1</span>
+                                        <span class="energy-radio-btn">1低い</span>
                                     </label>
                                     <label class="energy-radio-label">
-                                        <input type="radio" name="energy" value="2" onclick="updateEnergyLabel(2)">
-                                        <span class="energy-radio-btn">2</span>
+                                        <input type="radio" name="energy" value="2" checked onclick="updateEnergyLabel(2)">
+                                        <span class="energy-radio-btn">2ふつう</span>
                                     </label>
                                     <label class="energy-radio-label">
-                                        <input type="radio" name="energy" value="3" checked onclick="updateEnergyLabel(3)">
-                                        <span class="energy-radio-btn">3</span>
-                                    </label>
-                                    <label class="energy-radio-label">
-                                        <input type="radio" name="energy" value="4" onclick="updateEnergyLabel(4)">
-                                        <span class="energy-radio-btn">4</span>
-                                    </label>
-                                    <label class="energy-radio-label">
-                                        <input type="radio" name="energy" value="5" onclick="updateEnergyLabel(5)">
-                                        <span class="energy-radio-btn">5</span>
+                                        <input type="radio" name="energy" value="3" onclick="updateEnergyLabel(3)">
+                                        <span class="energy-radio-btn">3高い</span>
                                     </label>
                                 </div>
-                                <div style="text-align: center; font-size: 13px; font-weight: 600; color: #8e8e93;" id="energy-value-label">ふつう</div>
+                                    <div style="text-align: center; font-size: 13px; font-weight: 600; color: #8e8e93;" id="energy-value-label">ふつう</div>
                             </div>
 
                             <!-- ノートカード -->
@@ -629,10 +622,19 @@
         }
 
         // 所要時間をわかりやすくフォーマット (例: 90 -> "1時間30分", 45 -> "45分")
+        function normalizeTaskDurationMinutes(minutes) {
+            const parsed = parseInt(minutes, 10);
+            if (Number.isNaN(parsed) || parsed <= 0) {
+                return 1;
+            }
+            return parsed;
+        }
+
         function formatDuration(minutes) {
-            if (!minutes || minutes <= 0) return "0分";
-            const h = Math.floor(minutes / 60);
-            const m = minutes % 60;
+            const normalizedMinutes = normalizeTaskDurationMinutes(minutes);
+            if (normalizedMinutes <= 0) return "1分";
+            const h = Math.floor(normalizedMinutes / 60);
+            const m = normalizedMinutes % 60;
             if (h > 0 && m > 0) {
                 return `${h}時間${m}分`;
             } else if (h > 0) {
@@ -698,6 +700,22 @@
             if (!tasks || tasks.length === 0) {
                 tasks = defaultTasks;
                 localStorage.setItem('savedTasks', JSON.stringify(tasks));
+            } else {
+                let updated = false;
+                tasks = tasks.map(task => {
+                    if (task && (task.deadline || task.durationMinutes !== undefined)) {
+                        const normalizedDuration = normalizeTaskDurationMinutes(task.durationMinutes);
+                        if (normalizedDuration !== task.durationMinutes) {
+                            updated = true;
+                            return { ...task, durationMinutes: normalizedDuration };
+                        }
+                    }
+                    return task;
+                });
+
+                if (updated) {
+                    localStorage.setItem('savedTasks', JSON.stringify(tasks));
+                }
             }
             return tasks;
         }
@@ -1093,7 +1111,7 @@
                     if (newChip.dataset.minutes === 'custom') {
                         if (wrapper) wrapper.style.display = 'block';
                         initDurationWheelSelects();
-                        const defaultPresets = [15, 30, 60, 90, 120, 180];
+                        const defaultPresets = [5, 15, 30, 60, 90, 120, 180];
                         if (defaultPresets.includes(selectedDuration)) {
                             selectedDurationHour = Math.floor(selectedDuration / 60);
                             selectedDurationMinute = selectedDuration % 60;
@@ -1141,11 +1159,18 @@
         }
 
         // エネルギーラベルの更新
-        const energyLabels = { 1: "とても低い", 2: "低い", 3: "ふつう", 4: "高い", 5: "とても高い" };
+        const energyLabels = { 1: "低い", 2: "ふつう", 3: "高い" };
+        function normalizeEnergyValue(val) {
+            const parsed = parseInt(val, 10);
+            if (Number.isNaN(parsed)) {
+                return 2;
+            }
+            return Math.min(3, Math.max(1, parsed));
+        }
         function updateEnergyLabel(val) {
             const label = document.getElementById('energy-value-label');
             if (label) {
-                label.textContent = energyLabels[val] || "ふつう";
+                label.textContent = energyLabels[normalizeEnergyValue(val)] || "ふつう";
             }
         }
 
@@ -1227,7 +1252,7 @@
             document.getElementById('emoji-display').textContent = selectedEmoji;
             selectColor(selectedColor);
 
-            const energyVal = task.energy || 3;
+            const energyVal = normalizeEnergyValue(task.energy || 2);
             const energyInput = document.querySelector(`input[name="energy"][value="${energyVal}"]`);
             if (energyInput) energyInput.checked = true;
             updateEnergyLabel(energyVal);
@@ -1321,9 +1346,9 @@
             document.getElementById('emoji-display').textContent = selectedEmoji;
             selectColor(selectedColor);
 
-            const energyInput = document.querySelector('input[name="energy"][value="3"]');
+            const energyInput = document.querySelector('input[name="energy"][value="2"]');
             if (energyInput) energyInput.checked = true;
-            updateEnergyLabel(3);
+            updateEnergyLabel(2);
 
             // 今日をデフォルト日付にする
             const today = new Date();
@@ -1391,7 +1416,7 @@
             const dateVal = document.getElementById('schedule-startdate').value;
             const totalMinutes = selectedDuration;
             const memo = document.getElementById('schedule-notes').value || '';
-            const energy = parseInt(document.querySelector('input[name="energy"]:checked').value);
+            const energy = normalizeEnergyValue(document.querySelector('input[name="energy"]:checked').value);
 
             // 時間合成
             const startTimeStr = `${selectedHour}:${selectedMinute}`;
@@ -1580,7 +1605,7 @@
                     const dateVal = quickTaskDate.value;
                     const hours = parseInt(document.getElementById('quick-task-hours').value || 0);
                     const minutes = parseInt(document.getElementById('quick-task-minutes').value || 0);
-                    const totalMinutes = (hours * 60) + minutes;
+                    const totalMinutes = Math.max(1, (hours * 60) + minutes);
 
                     // カレンダーとの連携のために、開始日付・開始時間・終了日付・終了時間を算出
                     let startDate = "";
