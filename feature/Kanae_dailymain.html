@@ -177,10 +177,13 @@
                 <!-- モーダルヘッダー（コーラルピンク背景） -->
                 <div class="structured-modal-header">
                     <button class="modal-close-circle-btn" onclick="closeScheduleModal()" aria-label="閉じる">✕</button>
-                    <button class="modal-delete-circle-btn" id="structured-delete-btn" onclick="deleteSchedule()" aria-label="削除" style="display: none;">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <button class="modal-delete-circle-btn" id="structured-delete-btn" onclick="deleteSchedule()"
+                        aria-label="削除" style="display: none;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="3 6 5 6 21 6"></polyline>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                            </path>
                             <line x1="10" y1="11" x2="10" y2="17"></line>
                             <line x1="14" y1="11" x2="14" y2="17"></line>
                         </svg>
@@ -222,11 +225,16 @@
                         <div class="modal-card">
                             <span class="modal-card-label">🎨 カラーを選択</span>
                             <div class="color-palette">
-                                <button type="button" class="color-palette-btn pink active" onclick="selectColor('pink')"></button>
-                                <button type="button" class="color-palette-btn blue" onclick="selectColor('blue')"></button>
-                                <button type="button" class="color-palette-btn green" onclick="selectColor('green')"></button>
-                                <button type="button" class="color-palette-btn orange" onclick="selectColor('orange')"></button>
-                                <button type="button" class="color-palette-btn purple" onclick="selectColor('purple')"></button>
+                                <button type="button" class="color-palette-btn pink active"
+                                    onclick="selectColor('pink')"></button>
+                                <button type="button" class="color-palette-btn blue"
+                                    onclick="selectColor('blue')"></button>
+                                <button type="button" class="color-palette-btn green"
+                                    onclick="selectColor('green')"></button>
+                                <button type="button" class="color-palette-btn orange"
+                                    onclick="selectColor('orange')"></button>
+                                <button type="button" class="color-palette-btn purple"
+                                    onclick="selectColor('purple')"></button>
                             </div>
                         </div>
                     </div>
@@ -274,13 +282,17 @@
                                 <button class="duration-chip" data-minutes="90">1.5時間</button>
                                 <button class="duration-chip" data-minutes="120">2時間</button>
                                 <button class="duration-chip" data-minutes="180">3時間</button>
-                                <button class="duration-chip" data-minutes="custom" id="custom-duration-btn">•••</button>
+                                <button class="duration-chip" data-minutes="custom"
+                                    id="custom-duration-btn">•••</button>
                             </div>
 
                             <!-- カスタム所要時間ドラムロール（デフォルト非表示、•••選択時のみ表示） -->
-                            <div id="custom-duration-picker-wrapper" style="display: none; margin-top: 16px; border-top: 1px solid #e5e5ea; padding-top: 16px;">
-                                <div style="text-align: center; margin-bottom: 8px; font-size: 14px; font-weight: 600; color: #FFB1B6;" id="custom-duration-text">0時間30分</div>
-                                <div class="drum-picker-container" style="justify-content: center; height: 120px; width: 240px;">
+                            <div id="custom-duration-picker-wrapper"
+                                style="display: none; margin-top: 16px; border-top: 1px solid #e5e5ea; padding-top: 16px;">
+                                <div style="text-align: center; margin-bottom: 8px; font-size: 14px; font-weight: 600; color: #FFB1B6;"
+                                    id="custom-duration-text">0時間30分</div>
+                                <div class="drum-picker-container"
+                                    style="justify-content: center; height: 120px; width: 240px;">
                                     <!-- 時間のドラム -->
                                     <div class="drum-picker" id="drum-duration-hour">
                                         <div class="drum-picker-scroll" id="drum-duration-hour-scroll">
@@ -291,7 +303,8 @@
                                             <div class="drum-picker-padding-bottom"></div>
                                         </div>
                                     </div>
-                                    <span class="drum-picker-separator" style="line-height: 120px; font-size: 13px; font-weight: 600; white-space: nowrap;">時間</span>
+                                    <span class="drum-picker-separator"
+                                        style="line-height: 120px; font-size: 13px; font-weight: 600; white-space: nowrap;">時間</span>
 
                                     <!-- 分のドラム -->
                                     <div class="drum-picker" id="drum-duration-minute">
@@ -303,8 +316,9 @@
                                             <div class="drum-picker-padding-bottom"></div>
                                         </div>
                                     </div>
-                                    <span class="drum-picker-separator" style="line-height: 120px; font-size: 13px; font-weight: 600; white-space: nowrap;">分</span>
-                                    
+                                    <span class="drum-picker-separator"
+                                        style="line-height: 120px; font-size: 13px; font-weight: 600; white-space: nowrap;">分</span>
+
                                     <!-- 中央の選択用ハイライトバー -->
                                     <div class="drum-picker-overlay"></div>
                                 </div>
@@ -328,18 +342,19 @@
                             <div class="energy-radio-group">
                                 <label class="energy-radio-label">
                                     <input type="radio" name="energy" value="1" onclick="updateEnergyLabel(1)">
-                                    <span class="energy-radio-btn">1</span>
+                                    <span class="energy-radio-btn">1低い</span>
                                 </label>
                                 <label class="energy-radio-label">
-                                    <input type="radio" name="energy" value="2" onclick="updateEnergyLabel(2)">
-                                    <span class="energy-radio-btn">2</span>
+                                    <input type="radio" name="energy" value="2" checked onclick="updateEnergyLabel(2)">
+                                    <span class="energy-radio-btn">2ふつう</span>
                                 </label>
                                 <label class="energy-radio-label">
-                                    <input type="radio" name="energy" value="3" checked onclick="updateEnergyLabel(3)">
-                                    <span class="energy-radio-btn">3</span>
+                                    <input type="radio" name="energy" value="3" onclick="updateEnergyLabel(3)">
+                                    <span class="energy-radio-btn">3高い</span>
                                 </label>
                             </div>
-                            <div style="text-align: center; font-size: 13px; font-weight: 600; color: #8e8e93;" id="energy-value-label">ふつう</div>
+                            <div style="text-align: center; font-size: 13px; font-weight: 600; color: #8e8e93;"
+                                id="energy-value-label">ふつう</div>
                         </div>
 
                         <!-- ノートカード -->
@@ -638,6 +653,214 @@
             purple: { main: '#c084fc', bg: '#faf5ff' }
         };
 
+        let taskPickerState = {
+            start: '',
+            end: '',
+            gapMinutes: 0
+        };
+
+        function getTaskDurationMinutes(task) {
+            if (typeof task.durationMinutes === 'number' && task.durationMinutes > 0) {
+                return task.durationMinutes;
+            }
+
+            if (task.startTime && task.endTime) {
+                const diff = timeToMinutes(task.endTime) - timeToMinutes(task.startTime);
+                if (diff > 0) {
+                    return diff;
+                }
+            }
+
+            if (task.deadline && task.startTime) {
+                const deadlineParts = String(task.deadline).split('T');
+                if (deadlineParts.length >= 2) {
+                    const diff = timeToMinutes(deadlineParts[1]) - timeToMinutes(task.startTime);
+                    if (diff > 0) {
+                        return diff;
+                    }
+                }
+            }
+
+            return 1;
+        }
+
+        function formatTaskDuration(minutes) {
+            const normalizedMinutes = Math.max(1, parseInt(minutes, 10) || 0);
+            if (normalizedMinutes <= 0) {
+                return '1分';
+            }
+
+            const hours = Math.floor(normalizedMinutes / 60);
+            const remainingMinutes = normalizedMinutes % 60;
+
+            if (hours > 0 && remainingMinutes > 0) {
+                return `${hours}時間${remainingMinutes}分`;
+            }
+
+            if (hours > 0) {
+                return `${hours}時間`;
+            }
+
+            return `${remainingMinutes}分`;
+        }
+
+        function formatTaskDeadline(task) {
+            if (!task.deadline) {
+                return '期限なし';
+            }
+
+            if (task.deadline.includes('T')) {
+                return task.deadline.replace('T', ' ');
+            }
+
+            return task.deadline;
+        }
+
+        function normalizeSavedTaskDurations() {
+            const allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+            let updated = false;
+
+            const normalizedTasks = allTasks.map(task => {
+                if (task && (task.deadline || task.durationMinutes !== undefined)) {
+                    const normalizedDuration = getTaskDurationMinutes(task);
+                    if (normalizedDuration !== task.durationMinutes) {
+                        updated = true;
+                        return { ...task, durationMinutes: normalizedDuration };
+                    }
+                }
+                return task;
+            });
+
+            if (updated) {
+                localStorage.setItem('savedTasks', JSON.stringify(normalizedTasks));
+            }
+        }
+
+        function openTaskPickerModal(gapStart, gapEnd) {
+            taskPickerState = {
+                start: gapStart,
+                end: gapEnd,
+                gapMinutes: Math.max(0, timeToMinutes(gapEnd) - timeToMinutes(gapStart))
+            };
+
+            renderTaskPickerList();
+
+            const modal = document.getElementById('task-picker-modal');
+            if (modal) {
+                modal.classList.add('active');
+            }
+        }
+
+        function closeTaskPickerModal() {
+            const modal = document.getElementById('task-picker-modal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        function renderTaskPickerList() {
+            const list = document.getElementById('task-picker-list');
+            const gapInfo = document.getElementById('task-picker-gap-info');
+            if (!list || !gapInfo) return;
+
+            const dayInfo = weekDays.find(d => d.id === currentActiveDay);
+            const dayLabel = dayInfo ? dayInfo.fullName : '';
+            gapInfo.textContent = `${dayLabel} の ${taskPickerState.start}〜${taskPickerState.end}（${formatTaskDuration(taskPickerState.gapMinutes)}）に入れられるタスクを選んでください。`;
+
+            list.innerHTML = '';
+
+            const allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+            const availableTasks = allTasks
+                .filter(task => task.deadline && !task.completed)
+                .map(task => ({
+                    ...task,
+                    durationMinutes: getTaskDurationMinutes(task)
+                }))
+                .filter(task => task.durationMinutes <= taskPickerState.gapMinutes)
+                .sort((a, b) => {
+                    const deadlineA = a.deadline || '9999-12-31T23:59';
+                    const deadlineB = b.deadline || '9999-12-31T23:59';
+                    return deadlineA.localeCompare(deadlineB);
+                });
+
+            if (availableTasks.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'task-picker-empty';
+                empty.textContent = 'この空き時間に入る未完了タスクがありません。タスクリストで所要時間を確認してからもう一度試してください。';
+                list.appendChild(empty);
+                return;
+            }
+
+            availableTasks.forEach(task => {
+                const taskColor = colorMap[task.color] || colorMap.pink;
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'task-picker-item';
+                button.style.borderLeftColor = taskColor.main;
+                button.addEventListener('click', () => addTaskToDailyCalendar(task.id));
+
+                button.innerHTML = `
+                    <div class="task-picker-item-main">
+                        <div class="task-picker-item-title">${task.icon || '📅'} ${task.title}</div>
+                        <div class="task-picker-item-info">所要時間: ${formatTaskDuration(task.durationMinutes)}<br>期限: ${formatTaskDeadline(task)}</div>
+                    </div>
+                    <div class="task-picker-item-meta">
+                        <span class="task-picker-item-badge">選択</span>
+                    </div>
+                `;
+
+                list.appendChild(button);
+            });
+        }
+
+        function addTaskToDailyCalendar(taskId) {
+            const allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+            const sourceTask = allTasks.find(task => task.id === taskId);
+            if (!sourceTask) {
+                alert('タスクが見つかりませんでした。');
+                return;
+            }
+
+            const durationMinutes = getTaskDurationMinutes(sourceTask);
+            if (durationMinutes > taskPickerState.gapMinutes) {
+                alert('このタスクは空き時間に収まりません。');
+                return;
+            }
+
+            const dayInfo = weekDays.find(d => d.id === currentActiveDay);
+            if (!dayInfo) {
+                alert('日付情報を取得できませんでした。');
+                return;
+            }
+
+            const startMinutes = timeToMinutes(taskPickerState.start);
+            const endMinutes = startMinutes + durationMinutes;
+            const endTime = minutesToTime(endMinutes);
+
+            const newSchedule = {
+                id: `task-${Date.now()}`,
+                title: sourceTask.title,
+                location: sourceTask.memo || sourceTask.notes || sourceTask.location || '',
+                isAllDay: false,
+                startDate: dayInfo.isoDate,
+                startTime: taskPickerState.start,
+                endDate: dayInfo.isoDate,
+                endTime: endTime,
+                icon: sourceTask.icon || '📅',
+                type: sourceTask.type || 'routine',
+                color: sourceTask.color || 'pink',
+                notes: sourceTask.memo || sourceTask.notes || '',
+                energy: sourceTask.energy || 3,
+                sourceTaskId: sourceTask.id
+            };
+
+            allTasks.push(newSchedule);
+            localStorage.setItem('savedTasks', JSON.stringify(allTasks));
+
+            closeTaskPickerModal();
+            switchDay(currentActiveDay);
+        }
+
         // タイムラインのレンダリング (重複時の自動列分割・空き時間の自動挿入)
         function renderTimeline(dayId) {
             const container = document.getElementById('structured-timeline');
@@ -782,7 +1005,7 @@
                     itemDiv.innerHTML = `
                         <div class="item-time-col"><span class="time-start">${item.start}</span></div>
                         <div class="item-line-col"><div class="timeline-path"></div><div class="icon-circle"></div></div>
-                        <div class="item-card-col"><div class="gap-card"><span>💤 ${getDurationText(item.start, item.end)} の空き時間</span></div></div>
+                        <div class="item-card-col"><div class="gap-card"><span class="gap-card-label">💤 ${getDurationText(item.start, item.end)} の空き時間</span><button type="button" class="gap-add-btn" aria-label="この空き時間にタスクを追加" onclick="openTaskPickerModal('${item.start}', '${item.end}')">＋</button></div></div>
                     `;
                     container.appendChild(itemDiv);
 
@@ -800,12 +1023,12 @@
                     container.appendChild(itemDiv);
 
                     const overlapContainer = document.getElementById(`overlap-container-${index}`);
-                    const columns = []; 
+                    const columns = [];
 
                     item.tasks.forEach(task => {
                         const taskStartMin = timeToMinutes(task.start);
                         const taskEndMin = timeToMinutes(task.end);
-                        
+
                         const durationMinutes = taskEndMin - taskStartMin;
                         const calculatedHeight = durationMinutes * 2.2;
 
@@ -821,7 +1044,7 @@
                         if (columnIndex === -1) {
                             columns.push(taskEndMin);
                             columnIndex = columns.length - 1;
-                            
+
                             const colDiv = document.createElement('div');
                             colDiv.className = 'overlap-column';
                             colDiv.id = `overlap-col-${index}-${columnIndex}`;
@@ -840,7 +1063,7 @@
                         card.className = `item-card-col`;
                         card.style.width = '100%';
                         card.style.paddingLeft = '0';
-                        
+
                         const taskColor = colorMap[task.color] || colorMap.pink;
                         card.innerHTML = `
                             <div class="task-card" style="min-height: ${calculatedHeight}px; display: flex; flex-direction: column; justify-content: center; border-left: 4px solid ${taskColor.main}; background-color: ${taskColor.bg};">
@@ -1239,7 +1462,7 @@
             const scrollTop = el.scrollTop;
             const itemHeight = 40;
             const targetIndex = Math.round(scrollTop / itemHeight);
-            
+
             const listId = type === 'hour' ? 'drum-duration-hour-list' : 'drum-duration-minute-list';
             const list = document.getElementById(listId);
             if (!list) return;
@@ -1323,14 +1546,14 @@
                     const wrapper = document.getElementById('custom-duration-picker-wrapper');
                     if (newChip.dataset.minutes === 'custom') {
                         if (wrapper) wrapper.style.display = 'block';
-                        
+
                         initDurationWheelSelects();
                         const defaultPresets = [15, 30, 60, 90, 120, 180];
                         if (defaultPresets.includes(selectedDuration)) {
                             selectedDurationHour = Math.floor(selectedDuration / 60);
                             selectedDurationMinute = selectedDuration % 60;
                         }
-                        
+
                         setTimeout(() => {
                             scrollDurationDrumToValue('hour', String(selectedDurationHour), 'auto');
                             scrollDurationDrumToValue('minute', String(selectedDurationMinute).padStart(2, '0'), 'auto');
@@ -1364,10 +1587,17 @@
 
         // エネルギーラベルの更新
         const energyLabels = { 1: "すくない", 2: "ふつう", 3: "おおい" };
+        function normalizeEnergyValue(val) {
+            const parsed = parseInt(val, 10);
+            if (Number.isNaN(parsed)) {
+                return 2;
+            }
+            return Math.min(3, Math.max(1, parsed));
+        }
         function updateEnergyLabel(val) {
             const label = document.getElementById('energy-value-label');
             if (label) {
-                label.textContent = energyLabels[val] || "ふつう";
+                label.textContent = energyLabels[normalizeEnergyValue(val)] || "ふつう";
             }
         }
 
@@ -1395,7 +1625,7 @@
                 setTimeout(() => {
                     scrollDrumToValue('hour', selectedHour, 'auto');
                     scrollDrumToValue('minute', selectedMinute, 'auto');
-                    
+
                     // カスタム所要時間ドラムロールが開いている場合はそちらも同期
                     const wrapper = document.getElementById('custom-duration-picker-wrapper');
                     if (wrapper && wrapper.style.display !== 'none') {
@@ -1498,7 +1728,7 @@
             document.getElementById('schedule-title').value = task.title;
             document.getElementById('schedule-startdate').value = task.startDate;
             document.getElementById('schedule-notes').value = task.notes || '';
-            const energyVal = task.energy || 2;
+            const energyVal = normalizeEnergyValue(task.energy || 2);
             document.querySelector(`input[name="energy"][value="${energyVal}"]`).checked = true;
             updateEnergyLabel(energyVal);
             document.getElementById('emoji-display').textContent = selectedEmoji;
@@ -1533,7 +1763,7 @@
             initDurationChips();
             const presetDurations = [15, 30, 60, 90, 120, 180];
             const isCustom = !presetDurations.includes(selectedDuration);
-            
+
             const container = document.getElementById('duration-chips-container');
             if (container) {
                 container.querySelectorAll('.duration-chip').forEach(c => {
@@ -1572,225 +1802,256 @@
             currentEditingId = null;
         }
 
-    function saveSchedule() {
-        const title = document.getElementById('schedule-title').value;
-        if (!title.trim()) {
-            alert('タイトルを入力してください！');
-            return;
+        function saveSchedule() {
+            const title = document.getElementById('schedule-title').value;
+            if (!title.trim()) {
+                alert('タイトルを入力してください！');
+                return;
+            }
+
+            const location = '';
+            const isAllDay = false;
+            const startDate = document.getElementById('schedule-startdate').value;
+            const notes = document.getElementById('schedule-notes').value;
+            const energy = normalizeEnergyValue(document.querySelector('input[name="energy"]:checked').value);
+
+            let startTime = '09:00';
+            let endTime = '10:00';
+
+            if (!isAllDay) {
+                startTime = `${selectedHour}:${selectedMinute}`;
+
+                // 開始時間に期間を足して終了時間を計算
+                const startMins = timeToMinutes(startTime);
+                const endMins = startMins + selectedDuration;
+                endTime = minutesToTime(endMins);
+            } else {
+                startTime = '';
+                endTime = '';
+            }
+
+            // アイコンの設定 (デフォルトは選択された絵文字、手動選択が優先される)
+            let icon = selectedEmoji;
+            if (icon === "📅" || !icon) {
+                // 自動割り当てのフォールバック
+                if (title.includes("起床") || title.includes("朝") || title.includes("起き")) icon = "🌅";
+                else if (title.includes("バイト") || title.includes("仕事") || title.includes("勤務")) icon = "💼";
+                else if (title.includes("大学") || title.includes("講義") || title.includes("授業") || title.includes("勉強") || title.includes("自習")) icon = "📚";
+                else if (title.includes("カフェ") || title.includes("友達") || title.includes("おしゃべり") || title.includes("コーヒー")) icon = "☕️";
+                else if (title.includes("映画") || title.includes("シネマ")) icon = "🎬";
+                else if (title.includes("電車") || title.includes("移動") || title.includes("通学")) icon = "🚃";
+                else if (title.includes("ジム") || title.includes("トレ") || title.includes("筋トレ")) icon = "🏃";
+                else if (title.includes("ヨガ") || title.includes("ストレッチ")) icon = "🧘";
+                else if (title.includes("ランチ") || title.includes("ディナー") || title.includes("ご飯")) icon = "🍔";
+            }
+
+            // 予定タイプの判定
+            let type = "routine";
+            if (title.includes("バイト") || title.includes("仕事")) type = "work";
+            else if (title.includes("カフェ") || title.includes("友達") || title.includes("飲み") || title.includes("おしゃべり") || title.includes("ライブ") || title.includes("演奏")) type = "social";
+            else if (title.includes("大学") || title.includes("講義") || title.includes("授業") || title.includes("勉強") || title.includes("自習") || title.includes("図書館") || title.includes("レポート")) type = "study";
+            else if (title.includes("ジム") || title.includes("ヨガ") || title.includes("トレ") || title.includes("ランニング")) type = "health";
+            else if (title.includes("掃除") || title.includes("洗濯") || title.includes("自炊") || title.includes("買い物")) type = "home";
+
+            let allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+
+            if (currentEditingId) {
+                // 編集
+                allTasks = allTasks.map(t => {
+                    if (t.id === currentEditingId) {
+                        return {
+                            ...t,
+                            title,
+                            location,
+                            isAllDay,
+                            startDate,
+                            startTime,
+                            endDate: startDate,
+                            endTime,
+                            icon,
+                            type,
+                            notes,
+                            energy,
+                            color: selectedColor,
+                            subtasks: []
+                        };
+                    }
+                    return t;
+                });
+            } else {
+                // 新規
+                const newTask = {
+                    id: `task-${Date.now()}`,
+                    title,
+                    location,
+                    isAllDay,
+                    startDate,
+                    startTime,
+                    endDate: startDate,
+                    endTime,
+                    icon,
+                    type,
+                    notes,
+                    energy,
+                    color: selectedColor,
+                    subtasks: []
+                };
+                allTasks.push(newTask);
+            }
+
+            localStorage.setItem('savedTasks', JSON.stringify(allTasks));
+            closeScheduleModal();
+
+            // 登録した日付の曜日に合わせて画面を切り替える
+            const targetDayInfo = weekDays.find(d => d.isoDate === startDate);
+            if (targetDayInfo && targetDayInfo.id !== currentActiveDay) {
+                switchDay(targetDayInfo.id);
+                // 週間カレンダーの active クラスを更新する
+                document.querySelectorAll('.calendar-day').forEach(el => {
+                    if (parseInt(el.dataset.id) === targetDayInfo.id) {
+                        el.classList.add('active');
+                    } else {
+                        el.classList.remove('active');
+                    }
+                });
+            } else {
+                switchDay(currentActiveDay);
+            }
         }
 
-        const location = '';
-        const isAllDay = false;
-        const startDate = document.getElementById('schedule-startdate').value;
-        const notes = document.getElementById('schedule-notes').value;
-        const energy = parseInt(document.querySelector('input[name="energy"]:checked').value);
+        function deleteSchedule() {
+            if (!currentEditingId) return;
+            if (!confirm('本当にこの予定を削除しますか？')) return;
 
-        let startTime = '09:00';
-        let endTime = '10:00';
+            let allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+            allTasks = allTasks.filter(t => t.id !== currentEditingId);
+            localStorage.setItem('savedTasks', JSON.stringify(allTasks));
 
-        if (!isAllDay) {
-            startTime = `${selectedHour}:${selectedMinute}`;
-
-            // 開始時間に期間を足して終了時間を計算
-            const startMins = timeToMinutes(startTime);
-            const endMins = startMins + selectedDuration;
-            endTime = minutesToTime(endMins);
-        } else {
-            startTime = '';
-            endTime = '';
-        }
-
-        // アイコンの設定 (デフォルトは選択された絵文字、手動選択が優先される)
-        let icon = selectedEmoji;
-        if (icon === "📅" || !icon) {
-            // 自動割り当てのフォールバック
-            if (title.includes("起床") || title.includes("朝") || title.includes("起き")) icon = "🌅";
-            else if (title.includes("バイト") || title.includes("仕事") || title.includes("勤務")) icon = "💼";
-            else if (title.includes("大学") || title.includes("講義") || title.includes("授業") || title.includes("勉強") || title.includes("自習")) icon = "📚";
-            else if (title.includes("カフェ") || title.includes("友達") || title.includes("おしゃべり") || title.includes("コーヒー")) icon = "☕️";
-            else if (title.includes("映画") || title.includes("シネマ")) icon = "🎬";
-            else if (title.includes("電車") || title.includes("移動") || title.includes("通学")) icon = "🚃";
-            else if (title.includes("ジム") || title.includes("トレ") || title.includes("筋トレ")) icon = "🏃";
-            else if (title.includes("ヨガ") || title.includes("ストレッチ")) icon = "🧘";
-            else if (title.includes("ランチ") || title.includes("ディナー") || title.includes("ご飯")) icon = "🍔";
-        }
-
-        // 予定タイプの判定
-        let type = "routine";
-        if (title.includes("バイト") || title.includes("仕事")) type = "work";
-        else if (title.includes("カフェ") || title.includes("友達") || title.includes("飲み") || title.includes("おしゃべり") || title.includes("ライブ") || title.includes("演奏")) type = "social";
-        else if (title.includes("大学") || title.includes("講義") || title.includes("授業") || title.includes("勉強") || title.includes("自習") || title.includes("図書館") || title.includes("レポート")) type = "study";
-        else if (title.includes("ジム") || title.includes("ヨガ") || title.includes("トレ") || title.includes("ランニング")) type = "health";
-        else if (title.includes("掃除") || title.includes("洗濯") || title.includes("自炊") || title.includes("買い物")) type = "home";
-
-        let allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
-
-        if (currentEditingId) {
-            // 編集
-            allTasks = allTasks.map(t => {
-                if (t.id === currentEditingId) {
-                    return {
-                        ...t,
-                        title,
-                        location,
-                        isAllDay,
-                        startDate,
-                        startTime,
-                        endDate: startDate,
-                        endTime,
-                        icon,
-                        type,
-                        notes,
-                        energy,
-                        color: selectedColor,
-                        subtasks: []
-                    };
-                }
-                return t;
-            });
-        } else {
-            // 新規
-            const newTask = {
-                id: `task-${Date.now()}`,
-                title,
-                location,
-                isAllDay,
-                startDate,
-                startTime,
-                endDate: startDate,
-                endTime,
-                icon,
-                type,
-                notes,
-                energy,
-                color: selectedColor,
-                subtasks: []
-            };
-            allTasks.push(newTask);
-        }
-
-        localStorage.setItem('savedTasks', JSON.stringify(allTasks));
-        closeScheduleModal();
-
-        // 登録した日付の曜日に合わせて画面を切り替える
-        const targetDayInfo = weekDays.find(d => d.isoDate === startDate);
-        if (targetDayInfo && targetDayInfo.id !== currentActiveDay) {
-            switchDay(targetDayInfo.id);
-            // 週間カレンダーの active クラスを更新する
-            document.querySelectorAll('.calendar-day').forEach(el => {
-                if (parseInt(el.dataset.id) === targetDayInfo.id) {
-                    el.classList.add('active');
-                } else {
-                    el.classList.remove('active');
-                }
-            });
-        } else {
+            closeScheduleModal();
             switchDay(currentActiveDay);
         }
-    }
 
-    function deleteSchedule() {
-        if (!currentEditingId) return;
-        if (!confirm('本当にこの予定を削除しますか？')) return;
+        function autoDeleteOldTasks() {
+            let tasks = JSON.parse(localStorage.getItem('savedTasks'));
+            if (!tasks || tasks.length === 0) return;
 
-        let allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
-        allTasks = allTasks.filter(t => t.id !== currentEditingId);
-        localStorage.setItem('savedTasks', JSON.stringify(allTasks));
+            const now = new Date().getTime();
+            const oneWeekMs = 7 * 24 * 60 * 60 * 1000;
 
-        closeScheduleModal();
-        switchDay(currentActiveDay);
-    }
-
-    function autoDeleteOldTasks() {
-        let tasks = JSON.parse(localStorage.getItem('savedTasks'));
-        if (!tasks || tasks.length === 0) return;
-
-        const now = new Date().getTime();
-        const oneWeekMs = 7 * 24 * 60 * 60 * 1000;
-
-        const filteredTasks = tasks.filter(task => {
-            if (task.completed) {
-                if (task.completedAt) {
-                    const completedTime = new Date(task.completedAt).getTime();
-                    if (now - completedTime >= oneWeekMs) {
-                        return false; // 削除
+            const filteredTasks = tasks.filter(task => {
+                if (task.completed) {
+                    if (task.completedAt) {
+                        const completedTime = new Date(task.completedAt).getTime();
+                        if (now - completedTime >= oneWeekMs) {
+                            return false; // 削除
+                        }
+                    } else if (task.deadline) {
+                        const deadlineTime = new Date(task.deadline).getTime();
+                        if (now - deadlineTime >= oneWeekMs) {
+                            return false; // 削除
+                        }
                     }
-                } else if (task.deadline) {
-                    const deadlineTime = new Date(task.deadline).getTime();
-                    if (now - deadlineTime >= oneWeekMs) {
-                        return false; // 削除
+                } else {
+                    if (task.deadline) {
+                        const deadlineTime = new Date(task.deadline).getTime();
+                        if (now - deadlineTime >= oneWeekMs) {
+                            return false; // 削除
+                        }
                     }
                 }
-            } else {
-                if (task.deadline) {
-                    const deadlineTime = new Date(task.deadline).getTime();
-                    if (now - deadlineTime >= oneWeekMs) {
-                        return false; // 削除
-                    }
-                }
-            }
-            return true;
-        });
-
-        if (filteredTasks.length !== tasks.length) {
-            localStorage.setItem('savedTasks', JSON.stringify(filteredTasks));
-        }
-    }
-
-    function updateStatusBarTime() {
-        const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const timeEl = document.getElementById('status-bar-time');
-        if (timeEl) {
-            timeEl.textContent = `${hours}:${minutes}`;
-        }
-    }
-
-    // 初期化処理
-    window.addEventListener('DOMContentLoaded', () => {
-        updateStatusBarTime();      // 時刻の即時反映
-        setInterval(updateStatusBarTime, 1000); // 1秒ごとに更新
-
-        setupWeeklyCalendarData(); // 週間データを今日基準で生成
-        autoDeleteOldTasks();      // 自動削除処理の実行
-        initLocalStorageData();    // ローカルストレージデータの初期化 (バグ修正: ここで呼ぶ)
-        initCalendar();
-        initSidebar();
-        initSpeedDial();
-        switchDay(currentActiveDay); // 初期表示は今日にする
-
-        // インジケータを定期更新 (1秒ごと)
-        setInterval(updateNowIndicator, 1000);
-
-        // モーダルの背景（オーバーレイ）をクリックした時に閉じる
-        const modalOverlay = document.getElementById('schedule-modal');
-        if (modalOverlay) {
-            modalOverlay.addEventListener('click', (e) => {
-                if (e.target === modalOverlay) {
-                    closeScheduleModal();
-                }
+                return true;
             });
+
+            if (filteredTasks.length !== tasks.length) {
+                localStorage.setItem('savedTasks', JSON.stringify(filteredTasks));
+            }
         }
-    });
+
+        function updateStatusBarTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const timeEl = document.getElementById('status-bar-time');
+            if (timeEl) {
+                timeEl.textContent = `${hours}:${minutes}`;
+            }
+        }
+
+        // 初期化処理
+        window.addEventListener('DOMContentLoaded', () => {
+            updateStatusBarTime();      // 時刻の即時反映
+            setInterval(updateStatusBarTime, 1000); // 1秒ごとに更新
+
+            setupWeeklyCalendarData(); // 週間データを今日基準で生成
+            autoDeleteOldTasks();      // 自動削除処理の実行
+            initLocalStorageData();    // ローカルストレージデータの初期化 (バグ修正: ここで呼ぶ)
+            normalizeSavedTaskDurations();
+            initCalendar();
+            initSidebar();
+            initSpeedDial();
+            switchDay(currentActiveDay); // 初期表示は今日にする
+
+            // インジケータを定期更新 (1秒ごと)
+            setInterval(updateNowIndicator, 1000);
+
+            // モーダルの背景（オーバーレイ）をクリックした時に閉じる
+            const modalOverlay = document.getElementById('schedule-modal');
+            if (modalOverlay) {
+                modalOverlay.addEventListener('click', (e) => {
+                    if (e.target === modalOverlay) {
+                        closeScheduleModal();
+                    }
+                });
+            }
+
+            const taskPickerOverlay = document.getElementById('task-picker-modal');
+            if (taskPickerOverlay) {
+                taskPickerOverlay.addEventListener('click', (e) => {
+                    if (e.target === taskPickerOverlay) {
+                        closeTaskPickerModal();
+                    }
+                });
+            }
+        });
     </script>
 
     <!-- ゆうかがテンプレートとエネルギーのためにここから書き加えました -->
 
     <div id="template-modal" class="sidebar-overlay">
-        <div class="modal-box" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 340px; background: white; border-radius: 24px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 16px;">
-            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
-                <h3 style="margin:0; font-size: 1.1rem; font-weight: 800; background: linear-gradient(135deg, #FFB1B6, #FFA2B2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">テンプレートから配置</h3>
-                <button id="template-close-btn" style="background: #f1f5f9; border: none; color: #64748b; font-size: 20px; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">&times;</button>
+        <div class="modal-box"
+            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 340px; background: white; border-radius: 24px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 16px;">
+            <div class="modal-header"
+                style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                <h3
+                    style="margin:0; font-size: 1.1rem; font-weight: 800; background: linear-gradient(135deg, #FFB1B6, #FFA2B2); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    テンプレートから配置</h3>
+                <button id="template-close-btn"
+                    style="background: #f1f5f9; border: none; color: #64748b; font-size: 20px; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">&times;</button>
             </div>
             <div class="modal-body" style="display: flex; flex-direction: column; gap: 12px;">
                 <div class="form-group" style="display: flex; flex-direction: column; gap: 6px;">
                     <label style="font-size: 0.75rem; font-weight: 700; color: #64748b;">配置する開始時刻</label>
-                    <input type="time" id="template-start-time" value="07:00" style="width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; background-color: #f8fafc; outline: none;">
+                    <input type="time" id="template-start-time" value="07:00"
+                        style="width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; background-color: #f8fafc; outline: none;">
                 </div>
                 <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; margin-top: 8px;">テンプレートを選択</label>
-                <div id="template-list-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto;">
-                    </div>
+                <div id="template-list-container"
+                    style="display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="task-picker-modal" class="modal-overlay">
+        <div class="modal-box task-picker-modal-box">
+            <div class="task-picker-header">
+                <button type="button" class="task-picker-close-btn" aria-label="閉じる" onclick="closeTaskPickerModal()">×</button>
+                <div class="task-picker-title">タスクを追加</div>
+                <div class="task-picker-subtitle">空き時間に入る未完了タスクを選択すると、この日の予定として追加されます。</div>
+            </div>
+            <div class="task-picker-body">
+                <div id="task-picker-gap-info" class="task-picker-gap-info"></div>
+                <div id="task-picker-list" class="task-picker-list"></div>
             </div>
         </div>
     </div>
