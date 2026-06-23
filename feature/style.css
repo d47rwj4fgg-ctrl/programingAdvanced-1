@@ -2676,6 +2676,57 @@ body.register-page:not(.daily-main-page) {
     padding: 4px;
     width: 32px;
     height: 32px;
+   📍 拠点・移動設定画面 (locationSettings) 用スタイル
+   ========================================================================== */
+.location-list, .travel-time-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.location-item, .travel-time-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 44px;
+    border-bottom: 0.5px solid #e5e5ea;
+    padding: 10px 0;
+}
+
+.location-item:last-child, .travel-time-item:last-child {
+    border-bottom: none;
+}
+
+.location-item-info, .travel-time-item-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1c1c1e;
+}
+
+.location-item-icon {
+    font-size: 20px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f2f2f6;
+    border-radius: 50%;
+}
+
+.delete-btn-icon {
+    background: none;
+    border: none;
+    color: #ff3b30;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 50%;
     transition: background-color 0.2s;
 }
@@ -2887,3 +2938,178 @@ body.register-page:not(.daily-main-page) {
 .btn-primary-blue:active {
     transform: scale(0.98);
 }
+.delete-btn-icon:hover {
+    background-color: rgba(255, 59, 48, 0.1);
+}
+
+/* 追加フォーム */
+.location-add-form, .travel-time-add-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px 0 8px 0;
+}
+
+.location-input-group, .travel-time-input-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.select-arrow-wrapper {
+    position: relative;
+    flex: 1;
+}
+
+.location-select {
+    width: 100%;
+    background-color: #f2f2f6;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-family: inherit;
+    font-weight: 600;
+    color: #1c1c1e;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+}
+
+.select-arrow-wrapper::after {
+    content: "▼";
+    font-size: 10px;
+    color: #8e8e93;
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.travel-time-input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.minutes-input {
+    width: 80px;
+    background-color: #f2f2f6;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 14px;
+    text-align: center;
+    font-family: inherit;
+    font-weight: 600;
+    outline: none;
+}
+
+.action-btn-primary {
+    background: linear-gradient(135deg, #FFB1B6, #FFA2B2);
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(255, 112, 130, 0.2);
+    transition: opacity 0.2s, transform 0.1s;
+    width: 100%;
+}
+
+.action-btn-primary:hover {
+    opacity: 0.9;
+}
+
+.action-btn-primary:active {
+    transform: scale(0.98);
+}
+
+.emoji-input-btn {
+    width: 44px;
+    height: 44px;
+    background-color: #f2f2f6;
+    border: none;
+    border-radius: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.text-input-field {
+    flex: 1;
+    background-color: #f2f2f6;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    font-family: inherit;
+    font-weight: 600;
+    outline: none;
+}
+
+.travel-time-arrow {
+    color: #ff8e98;
+    font-weight: 800;
+    margin: 0 4px;
+}
+
+/* ==========================================================================
+   segmented-control (タブ切り替え) 用スタイル
+   ========================================================================== */
+.segmented-control {
+    display: flex;
+    background-color: #f2f2f6;
+    border-radius: 9px;
+    padding: 2px;
+    margin: 0 4px 16px 4px;
+    position: relative;
+    border: 0.5px solid rgba(0, 0, 0, 0.04);
+}
+
+.segment-btn {
+    flex: 1;
+    border: none;
+    background: none;
+    font-size: 13px;
+    font-weight: 700;
+    color: #8e8e93;
+    padding: 8px 0;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+    outline: none;
+}
+
+.segment-btn.active {
+    background-color: #ffffff;
+    color: #1c1c1e;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeInTab 0.25s ease-in-out;
+}
+
+@keyframes fadeInTab {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
