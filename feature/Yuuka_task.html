@@ -544,9 +544,10 @@
                                         <span class="energy-radio-btn">2ふつう</span>
                                     </label>
                                     <label class="energy-radio-label">
-                                        <input type="radio" name="energy" value="3" onclick="updateEnergyLabel(3)">
-                                        <span class="energy-radio-btn">3高い</span>
+                                        <input type="radio" name="energy" value="3" checked onclick="updateEnergyLabel(3)">
+                                        <span class="energy-radio-btn">3</span>
                                     </label>
+
                                 </div>
                                     <div style="text-align: center; font-size: 13px; font-weight: 600; color: #8e8e93;" id="energy-value-label">ふつう</div>
                             </div>
@@ -1159,7 +1160,7 @@
         }
 
         // エネルギーラベルの更新
-        const energyLabels = { 1: "低い", 2: "ふつう", 3: "高い" };
+        const energyLabels = { 1: "すくない", 2: "ふつう", 3: "おおい" };
         function normalizeEnergyValue(val) {
             const parsed = parseInt(val, 10);
             if (Number.isNaN(parsed)) {
