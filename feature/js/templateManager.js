@@ -101,7 +101,7 @@ function applyTemplateToSchedule(templateName) {
             type: subTask.type
         };
 
-        // 現在アクティブな曜日（Kanae_dailymain.htmlのグローバル変数 `currentActiveDay`）の辞書に追加
+        // 現在アクティブな曜日（daily.htmlのグローバル変数 `currentActiveDay`）の辞書に追加
         if (!schedules[currentActiveDay]) {
             schedules[currentActiveDay] = [];
         }

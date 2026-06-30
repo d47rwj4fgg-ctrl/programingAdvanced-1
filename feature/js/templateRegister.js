@@ -101,5 +101,5 @@ saveBtn.addEventListener('click', () => {
     localStorage.setItem('savedTemplates', JSON.stringify(currentTemplates));
     
     // デイリー画面に戻る
-    location.href = 'Kanae_dailymain.html';
+    location.href = 'daily.html';
 });

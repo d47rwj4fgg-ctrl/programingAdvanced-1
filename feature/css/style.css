@@ -2682,7 +2682,6 @@ body.register-page:not(.daily-main-page) {
 }
 
 /* ==========================================================================
-<<<<<<< HEAD
    ⚡️ エネルギー残量（バッテリー風）＆ポップアップ用の追加スタイル
    ========================================================================== */
 .energy-battery-wrapper {
@@ -2775,7 +2774,8 @@ body.register-page:not(.daily-main-page) {
 }
 .energy-prompt-cancel { background: #f1f5f9; color: #64748b; }
 .energy-prompt-save { background: #FFB1B6; color: white; }
-=======
+
+/* ==========================================================================
    時間割登録画面専用のスタイル定義
    ========================================================================== */
 .timetable-container {
@@ -2944,6 +2944,9 @@ body.register-page:not(.daily-main-page) {
     padding: 4px;
     width: 32px;
     height: 32px;
+}
+
+/* ==========================================================================
    📍 拠点・移動設定画面 (locationSettings) 用スタイル
    ========================================================================== */
 .location-list, .travel-time-list {
@@ -3380,5 +3383,3 @@ body.register-page:not(.daily-main-page) {
         transform: translateY(0);
     }
 }
-
->>>>>>> d94913f9ff88469b6b6ae4dd7724e4b71e9ca411
