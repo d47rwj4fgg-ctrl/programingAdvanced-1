@@ -32,13 +32,11 @@ const tCloseBtn = document.getElementById('template-close-btn');
 if (tOpenBtn && tCloseBtn && tModal) {
     tOpenBtn.addEventListener('click', () => {
         renderTemplateList();
-        tModal.style.opacity = "1";
-        tModal.style.pointerEvents = "auto";
+        tModal.classList.add('active');
     });
 
     tCloseBtn.addEventListener('click', () => {
-        tModal.style.opacity = "0";
-        tModal.style.pointerEvents = "none";
+        tModal.classList.remove('active');
     });
 }
 
@@ -81,36 +79,50 @@ function renderTemplateList() {
 function applyTemplateToSchedule(templateName) {
     const templates = JSON.parse(localStorage.getItem('savedTemplates'));
     const selectedSubTasks = templates[templateName];
+    if (!selectedSubTasks || selectedSubTasks.length === 0) return;
     
     // 画面から指定された開始時刻（例: "07:00"）を取得
     const startTimeStr = document.getElementById('template-start-time').value;
     let currentMinutes = timeToMinutes(startTimeStr); // 既存の共通関数を利用
 
+    // 現在のアクティブな曜日の日付を取得
+    const activeDayInfo = weekDays.find(d => d.id === currentActiveDay);
+    const isoDate = activeDayInfo ? activeDayInfo.isoDate : '2026-06-02';
+
+    const allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+    const groupId = `group-${Date.now()}`;
+
     // 各サブタスクを開始時間から数珠つなぎで時間割に変換する
-    selectedSubTasks.forEach(subTask => {
+    selectedSubTasks.forEach((subTask, index) => {
         const startStr = minutesToTime(currentMinutes);
-        currentMinutes += subTask.duration;
+        currentMinutes += (parseInt(subTask.duration, 10) || 10);
         const endStr = minutesToTime(currentMinutes);
 
         const newEvent = {
-            start: startStr,
-            end: endStr,
+            id: `task-${Date.now()}-${index}`,
+            groupId: groupId,
             title: subTask.title,
-            desc: subTask.desc,
-            icon: subTask.icon,
-            type: subTask.type
+            location: subTask.desc || '',
+            isAllDay: false,
+            startDate: isoDate,
+            startTime: startStr,
+            endDate: isoDate,
+            endTime: endStr,
+            icon: subTask.icon || getScheduleTemplateIcon(subTask.title),
+            type: subTask.type || 'routine',
+            notes: subTask.desc || '',
+            energy: 2,
+            color: 'pink',
+            subtasks: []
         };
 
-        // 現在アクティブな曜日（daily.htmlのグローバル変数 `currentActiveDay`）の辞書に追加
-        if (!schedules[currentActiveDay]) {
-            schedules[currentActiveDay] = [];
-        }
-        schedules[currentActiveDay].push(newEvent);
+        allTasks.push(newEvent);
     });
 
+    localStorage.setItem('savedTasks', JSON.stringify(allTasks));
+
     // ポップアップを閉じる
-    tModal.style.opacity = "0";
-    tModal.style.pointerEvents = "none";
+    tModal.classList.remove('active');
 
     // 既存のメインロジックの関数を呼び出して画面を再描画する
     switchDay(currentActiveDay);
