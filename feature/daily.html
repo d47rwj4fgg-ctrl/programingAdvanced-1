@@ -121,6 +121,8 @@
                             <span class="battery-text" id="battery-remain-text">10/10</span>
                         </div>
 
+                        <button class="select-mode-btn" id="group-mode-btn" onclick="toggleSelectionMode()" style="background: rgba(255, 112, 130, 0.1); border: 1.5px solid #FF7082; color: #FF7082; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; height: 26px; transition: all 0.2s ease;">選択</button>
+
                         <button class="icon-btn" aria-label="通知">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -144,23 +146,10 @@
                 </div>
             </div>
 
-            <!-- 統合された予定追加ボタン (スピードダイアルメニュー) -->
+            <!-- 統合された予定追加ボタン (直接追加モーダルを開く) -->
             <div class="fab-container" id="fab-container">
-                <!-- 展開するサブメニュー -->
-                <div class="fab-menu" id="fab-menu">
-                    <!-- テンプレートから追加（元のIDを継承してtemplateManager.jsをそのまま動作させる） -->
-                    <button class="fab-sub-btn" id="template-open-btn" aria-label="テンプレートから追加">
-                        <span class="sub-btn-icon">📋</span>
-                        <span class="sub-btn-label">テンプレートの反映</span>
-                    </button>
-                    <!-- 新規予定の追加 -->
-                    <button class="fab-sub-btn" onclick="triggerNewScheduleOpen()" aria-label="予定を追加">
-                        <span class="sub-btn-icon">📅</span>
-                        <span class="sub-btn-label">予定の追加</span>
-                    </button>
-                </div>
                 <!-- メインの＋ボタン -->
-                <button class="fab-main-btn" id="fab-main-btn" aria-label="追加メニューを開く">
+                <button class="fab-main-btn" id="fab-main-btn" onclick="triggerNewScheduleOpen()" aria-label="予定を追加">
                     <svg viewBox="0 0 24 24" class="fab-main-icon">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
                         <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -189,8 +178,8 @@
                             <line x1="14" y1="11" x2="14" y2="17"></line>
                         </svg>
                     </button>
-                    <!-- 絵文字選択エリア -->
-                    <div class="emoji-select-area" id="emoji-display">📅</div>
+                    <!-- 静的な絵文字表示エリア (アイコン選択は廃止) -->
+                    <div class="emoji-display-static" id="emoji-display">📅</div>
                     <!-- 白のアンダーライン付きタイトル入力 -->
                     <input type="text" id="schedule-title" class="modal-title-underline-input" placeholder="タイトルを入力">
                 </div>
@@ -198,30 +187,16 @@
                 <!-- モーダルボディ (iOS風薄いグレー背景) -->
                 <div class="structured-modal-body">
 
-                    <!-- 【ステップ1】アイコン選択 -->
+                    <!-- 【ステップ1】テンプレート候補の提案 (アイコン選択は廃止) -->
                     <div id="modal-step-1" class="modal-step-section active">
                         <div class="modal-card">
-                            <span class="modal-card-label">🎨 アイコン（絵文字）を選択</span>
-                            <div class="emoji-palette" style="display: grid; max-height: none;">
-                                <button class="emoji-palette-btn" onclick="selectEmoji('🌅')">🌅</button>
-                                <button class="emoji-palette-btn" onclick="selectEmoji('📚')">📚</button>
-                                <button class="emoji-palette-btn" onclick="selectEmoji('💼')">💼</button>
-                                <button class="emoji-palette-btn" onclick="selectEmoji('☕️')">☕️</button>
-                                <button class="emoji-palette-btn" onclick="selectEmoji('🏃')">🏃</button>
-                                <button class="emoji-palette-btn" onclick="selectEmoji('🚶')">🚶</button>
-                                <button class="emoji-palette-btn" onclick="selectEmoji('🎸')">🎸</button>
-                                <button class="emoji-palette-btn" onclick="selectEmoji('🎤')">🎤</button>
-                                <button class="emoji-palette-btn" onclick="selectEmoji('🧘')">🧘</button>
-                                <button class="emoji-palette-btn" onclick="selectEmoji('🛒')">🛒</button>
-                                <button class="emoji-palette-btn" onclick="selectEmoji('💻')">💻</button>
-                                <button class="emoji-palette-btn" onclick="selectEmoji('🍳')">🍳</button>
-                                <button class="emoji-palette-btn" onclick="selectEmoji('📖')">📖</button>
-                                <button class="emoji-palette-btn" onclick="selectEmoji('🎬')">🎬</button>
-                                <button class="emoji-palette-btn" onclick="selectEmoji('🍣')">🍣</button>
-                                <button class="emoji-palette-btn" onclick="selectEmoji('🥞')">🥞</button>
-                                <button class="emoji-palette-btn" onclick="selectEmoji('🎨')">🎨</button>
-                                <button class="emoji-palette-btn" onclick="selectEmoji('🛁')">🛁</button>
+                            <span class="modal-card-label">📋 保存済みテンプレートから作成</span>
+                            <div class="template-suggestion-note" style="font-size: 11px; color: #64748b; margin-bottom: 6px;">既存テンプレートを選択すると、タイトルや所要時間の入力を省略してすぐに作成できます。</div>
+                            <div class="template-suggestion-list" id="schedule-template-suggestion-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 110px; overflow-y: auto;">
+                                <!-- JSで動的生成 -->
                             </div>
+                            <div class="template-suggestion-preview" id="schedule-template-suggestion-preview" style="display: none; margin-top: 12px; padding: 10px; background: rgba(255, 112, 130, 0.05); border: 1.5px dashed #FF7082; border-radius: 12px; font-size: 12px; color: #1e293b;"></div>
+                            <button type="button" class="template-suggestion-clear-btn" id="schedule-template-clear-btn" style="display: none; margin-top: 8px; background: #f1f5f9; border: none; color: #64748b; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; align-items: center; justify-content: center; width: 100%;" onclick="clearTemplateSuggestionSelection()">選択を解除</button>
                         </div>
                         <div class="modal-card">
                             <span class="modal-card-label">🎨 カラーを選択</span>
@@ -862,6 +837,185 @@
             switchDay(currentActiveDay);
         }
 
+        let selectionMode = false;
+        let selectedTimelineTaskIds = [];
+        let currentDragTargetTime = null;
+
+        function toggleSelectionMode(forceValue) {
+            selectionMode = typeof forceValue === 'boolean' ? forceValue : !selectionMode;
+            const button = document.getElementById('group-mode-btn');
+            if (button) {
+                button.classList.toggle('active', selectionMode);
+                button.textContent = selectionMode ? 'キャンセル' : '選択';
+            }
+            document.body.classList.toggle('selection-mode', selectionMode);
+            if (!selectionMode) {
+                clearSelectedTimelineTasks();
+            }
+            updateSelectionToolbar();
+        }
+
+        function toggleTimelineTaskSelection(id) {
+            const idx = selectedTimelineTaskIds.indexOf(id);
+            if (idx > -1) {
+                selectedTimelineTaskIds.splice(idx, 1);
+            } else {
+                selectedTimelineTaskIds.push(id);
+            }
+            
+            // 対象要素の見た目切り替え
+            document.querySelectorAll(`[data-task-id="${id}"]`).forEach(el => {
+                el.classList.toggle('selected-for-group', idx === -1);
+            });
+            
+            updateSelectionToolbar();
+        }
+
+        function clearSelectedTimelineTasks() {
+            selectedTimelineTaskIds = [];
+            document.querySelectorAll('.selected-for-group').forEach(el => {
+                el.classList.remove('selected-for-group');
+            });
+            updateSelectionToolbar();
+        }
+
+        function updateSelectionToolbar() {
+            const toolbar = document.getElementById('selection-toolbar');
+            const count = document.getElementById('selection-toolbar-count');
+            if (toolbar && count) {
+                if (selectionMode && selectedTimelineTaskIds.length > 0) {
+                    toolbar.style.display = 'flex';
+                    count.textContent = `${selectedTimelineTaskIds.length}件選択中`;
+                } else {
+                    toolbar.style.display = 'none';
+                }
+            }
+        }
+
+        function openGroupTemplateModal() {
+            if (selectedTimelineTaskIds.length === 0) return;
+            const modal = document.getElementById('group-template-modal');
+            if (modal) modal.classList.add('active');
+        }
+
+        function closeGroupTemplateModal() {
+            const modal = document.getElementById('group-template-modal');
+            if (modal) modal.classList.remove('active');
+            const input = document.getElementById('group-template-name');
+            if (input) input.value = '';
+        }
+
+        function saveSelectedTasksAsTemplate() {
+            const templateNameInput = document.getElementById('group-template-name');
+            const templateName = templateNameInput ? templateNameInput.value.trim() : '';
+            if (!templateName) {
+                alert('テンプレート名を入力してください。');
+                return;
+            }
+
+            const allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+            const selectedTasks = allTasks
+                .filter(task => selectedTimelineTaskIds.includes(String(task.id)))
+                .sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
+
+            if (selectedTasks.length === 0) {
+                alert('対象の予定が見つかりませんでした。');
+                return;
+            }
+
+            const subtasks = selectedTasks.map(task => {
+                const duration = timeToMinutes(task.endTime) - timeToMinutes(task.startTime);
+                return {
+                    title: task.title,
+                    duration: duration,
+                    icon: task.icon || '📅',
+                    type: task.type || 'routine',
+                    desc: task.notes || ''
+                };
+            });
+
+            // テンプレート一覧に保存
+            const currentTemplates = JSON.parse(localStorage.getItem('savedTemplates')) || {};
+            currentTemplates[templateName] = subtasks;
+            localStorage.setItem('savedTemplates', JSON.stringify(currentTemplates));
+
+            // 元のタスク群をグループIDで結びつける
+            const groupId = `group-${Date.now()}`;
+            const selectedIds = selectedTasks.map(t => t.id);
+            const updatedTasks = allTasks.map(task => {
+                if (selectedIds.includes(task.id)) {
+                    return { ...task, groupId: groupId };
+                }
+                return task;
+            });
+            localStorage.setItem('savedTasks', JSON.stringify(updatedTasks));
+
+            closeGroupTemplateModal();
+            clearSelectedTimelineTasks();
+            toggleSelectionMode(false);
+            switchDay(currentActiveDay);
+
+            alert(`「${templateName}」をテンプレートとして保存しました。`);
+        }
+
+        function deleteSelectedTasks() {
+            if (selectedTimelineTaskIds.length === 0) return;
+            if (!confirm(`選択された ${selectedTimelineTaskIds.length} 件の予定を削除しますか？`)) {
+                return;
+            }
+
+            let allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+            const idsToDelete = selectedTimelineTaskIds.map(id => String(id));
+            allTasks = allTasks.filter(task => !idsToDelete.includes(String(task.id)));
+
+            localStorage.setItem('savedTasks', JSON.stringify(allTasks));
+
+            clearSelectedTimelineTasks();
+            toggleSelectionMode(false);
+            switchDay(currentActiveDay);
+
+            alert('選択された予定を削除しました。');
+        }
+
+        function moveGroupToStartTime(groupId, newStartStr) {
+            let allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+            const groupTasks = allTasks
+                .filter(t => t.groupId === groupId)
+                .sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
+                
+            if (groupTasks.length === 0) return;
+
+            let currentMinutes = timeToMinutes(newStartStr);
+            const timeUpdates = {};
+            
+            groupTasks.forEach(task => {
+                const duration = timeToMinutes(task.endTime) - timeToMinutes(task.startTime);
+                const startStr = minutesToTime(currentMinutes);
+                currentMinutes += duration;
+                const endStr = minutesToTime(currentMinutes);
+                
+                timeUpdates[task.id] = {
+                    startTime: startStr,
+                    endTime: endStr
+                };
+            });
+
+            allTasks = allTasks.map(task => {
+                const update = timeUpdates[task.id];
+                if (update) {
+                    return {
+                        ...task,
+                        startTime: update.startTime,
+                        endTime: update.endTime
+                    };
+                }
+                return task;
+            });
+
+            localStorage.setItem('savedTasks', JSON.stringify(allTasks));
+            switchDay(currentActiveDay);
+        }
+
         // タイムラインのレンダリング (重複時の自動列分割・空き時間の自動挿入)
         function renderTimeline(dayId) {
             const container = document.getElementById('structured-timeline');
@@ -922,6 +1076,7 @@
                 const end = t.isAllDay ? "23:00" : (t.endTime || "10:00");
                 return {
                     id: t.id,
+                    groupId: t.groupId || null,
                     start: start,
                     end: end,
                     title: t.title,
@@ -936,7 +1091,7 @@
             // 開始時間順にソート
             const tasks = [...mappedTasks].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
 
-            const dayStart = 7 * 60; // 07:00
+            const dayStart = 5 * 60; // 05:00
             const dayEnd = 23 * 60;  // 23:00
             let currentMinutes = dayStart;
 
@@ -1008,6 +1163,89 @@
                         <div class="item-line-col"><div class="timeline-path"></div><div class="icon-circle"></div></div>
                         <div class="item-card-col"><div class="gap-card"><span class="gap-card-label">💤 ${getDurationText(item.start, item.end)} の空き時間</span><button type="button" class="gap-add-btn" aria-label="この空き時間にタスクを追加" onclick="openTaskPickerModal('${item.start}', '${item.end}')">＋</button></div></div>
                     `;
+
+                    // ドラッグ＆ドロップイベントの紐付け
+                    itemDiv.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
+                        itemDiv.classList.add('drag-over');
+
+                        const timelineEl = document.getElementById('structured-timeline');
+                        if (timelineEl) {
+                            const rect = timelineEl.getBoundingClientRect();
+                            const relativeY = e.clientY - rect.top + timelineEl.scrollTop;
+                            const totalHeight = timelineEl.scrollHeight;
+
+                            const dayStart = 5 * 60;
+                            const dayEnd = 23 * 60;
+                            const totalMinutes = dayEnd - dayStart;
+
+                            if (totalHeight > 0) {
+                                const ratio = Math.max(0, Math.min(1, relativeY / totalHeight));
+                                const minutesFromStart = totalMinutes * ratio;
+                                const roundedMinutes = Math.round(minutesFromStart / 5) * 5;
+                                const targetMinutes = dayStart + roundedMinutes;
+                                const targetTimeStr = minutesToTime(targetMinutes);
+
+                                currentDragTargetTime = targetTimeStr;
+
+                                const timeStartEl = itemDiv.querySelector('.time-start');
+                                if (timeStartEl) {
+                                    if (!timeStartEl.dataset.originalText) {
+                                        timeStartEl.dataset.originalText = timeStartEl.textContent;
+                                    }
+                                    timeStartEl.textContent = targetTimeStr;
+                                    timeStartEl.style.color = '#ff7082';
+                                    timeStartEl.style.fontWeight = '900';
+                                }
+
+                                const tooltip = document.getElementById('drag-time-tooltip');
+                                if (tooltip) {
+                                    tooltip.style.display = 'block';
+                                    tooltip.style.left = `${e.clientX + 15}px`;
+                                    tooltip.style.top = `${e.clientY + 15}px`;
+                                    tooltip.textContent = `⏰ ${targetTimeStr}`;
+                                }
+                            }
+                        }
+                    });
+
+                    itemDiv.addEventListener('dragleave', () => {
+                        itemDiv.classList.remove('drag-over');
+
+                        const timeStartEl = itemDiv.querySelector('.time-start');
+                        if (timeStartEl && timeStartEl.dataset.originalText) {
+                            timeStartEl.textContent = timeStartEl.dataset.originalText;
+                            timeStartEl.dataset.originalText = '';
+                            timeStartEl.style.color = '';
+                            timeStartEl.style.fontWeight = '';
+                        }
+
+                        const tooltip = document.getElementById('drag-time-tooltip');
+                        if (tooltip) tooltip.style.display = 'none';
+                    });
+
+                    itemDiv.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        itemDiv.classList.remove('drag-over');
+
+                        const timeStartEl = itemDiv.querySelector('.time-start');
+                        if (timeStartEl && timeStartEl.dataset.originalText) {
+                            timeStartEl.textContent = timeStartEl.dataset.originalText;
+                            timeStartEl.dataset.originalText = '';
+                            timeStartEl.style.color = '';
+                            timeStartEl.style.fontWeight = '';
+                        }
+
+                        const tooltip = document.getElementById('drag-time-tooltip');
+                        if (tooltip) tooltip.style.display = 'none';
+
+                        const dragGroupId = e.dataTransfer.getData('text/plain');
+                        if (!dragGroupId || !currentDragTargetTime) return;
+
+                        moveGroupToStartTime(dragGroupId, currentDragTargetTime);
+                    });
+
                     container.appendChild(itemDiv);
 
                 } else if (item.isOverlapGroup) {
@@ -1025,6 +1263,7 @@
 
                     const overlapContainer = document.getElementById(`overlap-container-${index}`);
                     const columns = [];
+                    const groupColumnMap = {}; // groupId -> columnIndex の対応表
 
                     item.tasks.forEach(task => {
                         const taskStartMin = timeToMinutes(task.start);
@@ -1035,10 +1274,15 @@
 
                         let columnIndex = -1;
 
-                        for (let c = 0; c < columns.length; c++) {
-                            if (taskStartMin >= columns[c]) {
-                                columnIndex = c;
-                                break;
+                        // 同一グループのタスクは常に同じカラムに整列させる
+                        if (task.groupId && groupColumnMap[task.groupId] !== undefined) {
+                            columnIndex = groupColumnMap[task.groupId];
+                        } else {
+                            for (let c = 0; c < columns.length; c++) {
+                                if (taskStartMin >= columns[c]) {
+                                    columnIndex = c;
+                                    break;
+                                }
                             }
                         }
 
@@ -1056,36 +1300,215 @@
                             colDiv.style.minWidth = '0';
                             overlapContainer.appendChild(colDiv);
                         } else {
-                            columns[columnIndex] = taskEndMin;
+                            // グループ強制等により被る時間が発生する場合は最大値に更新
+                            columns[columnIndex] = Math.max(columns[columnIndex], taskEndMin);
+                        }
+
+                        // 新しくグループを配置したカラムをマップに記録
+                        if (task.groupId && groupColumnMap[task.groupId] === undefined) {
+                            groupColumnMap[task.groupId] = columnIndex;
                         }
 
                         const targetCol = document.getElementById(`overlap-col-${index}-${columnIndex}`);
                         const card = document.createElement('div');
-                        card.className = `item-card-col`;
+                        
+                        // 重複グループ内の連結ブロッククラス判定
+                        let groupClass = '';
+                        let isGroupFirst = false;
+                        if (task.groupId) {
+                            const groupTasks = tasks
+                                .filter(t => t.groupId === task.groupId)
+                                .sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
+                            const groupIdx = groupTasks.findIndex(t => t.id === task.id);
+                            
+                            if (groupIdx > -1) {
+                                const hasPrev = groupIdx > 0;
+                                const hasNext = groupIdx < groupTasks.length - 1;
+                                if (hasPrev && hasNext) {
+                                    groupClass = ' group-middle';
+                                } else if (hasPrev) {
+                                    groupClass = ' group-last';
+                                } else if (hasNext) {
+                                    groupClass = ' group-first';
+                                    isGroupFirst = true;
+                                }
+                            }
+                        }
+
+                        card.className = `item-card-col${groupClass}`;
                         card.style.width = '100%';
                         card.style.paddingLeft = '0';
+                        if (task.groupId) {
+                            card.dataset.groupId = task.groupId;
+                        }
 
                         const taskColor = colorMap[task.color] || colorMap.pink;
                         card.innerHTML = `
-                            <div class="task-card" style="min-height: ${calculatedHeight}px; display: flex; flex-direction: column; justify-content: center; border-left: 4px solid ${taskColor.main}; background-color: ${taskColor.bg};">
+                            <div class="task-card" style="min-height: ${calculatedHeight}px; display: flex; flex-direction: column; justify-content: center; border-left: 4px solid ${taskColor.main}; background-color: ${taskColor.bg}; position: relative;">
                                 <div class="task-info">
                                     <h3 class="task-title" style="color: #1e293b;">${task.icon} ${task.title}</h3>
                                     <span class="task-desc" style="color: #64748b;">${task.start}〜${task.end}<br>${task.desc}</span>
                                 </div>
+                                <div class="task-meta" style="position: absolute; right: 8px; bottom: 8px; display: flex; align-items: center; gap: 8px; z-index: 20;">
+                                    ${isGroupFirst ? `<div class="group-drag-handle" draggable="true" data-group-id="${task.groupId}" style="cursor: grab; padding: 4px 6px; font-size: 13px; color: ${taskColor.main}; font-weight: bold; background: rgba(255,255,255,0.7); border: 1px solid ${taskColor.main}; border-radius: 6px; display: flex; align-items: center; justify-content: center; user-select: none;">☰</div>` : ''}
+                                </div>
                             </div>
                         `;
-                        // 予定カードをクリックした時に編集モーダルを開く
+                        card.dataset.taskId = String(task.id);
+                        
+                        // 選択済み状態の表示クラスを復元
+                        if (selectedTimelineTaskIds.includes(String(task.id))) {
+                            card.classList.add('selected-for-group');
+                        }
+
                         card.querySelector('.task-card').addEventListener('click', () => {
+                            if (selectionMode) {
+                                toggleTimelineTaskSelection(String(task.id));
+                                return;
+                            }
                             openEditScheduleModal(task.id);
                         });
+
+                        // ドラッグハンドルのドラッグ開始・終了イベントを設定
+                        const handle = card.querySelector('.group-drag-handle');
+                        if (handle) {
+                            handle.addEventListener('dragstart', (e) => {
+                                e.dataTransfer.setData('text/plain', task.groupId);
+                                e.dataTransfer.effectAllowed = 'move';
+                                
+                                // グループ全体の全カードに半透明スタイルを付与
+                                document.querySelectorAll(`.timeline-item[data-group-id="${task.groupId}"] .task-card, .item-card-col[data-group-id="${task.groupId}"] .task-card`).forEach(c => {
+                                    c.classList.add('group-dragging');
+                                });
+                                
+                                createGroupDragImage(e, task.groupId);
+                            });
+                            handle.addEventListener('dragend', () => {
+                                document.querySelectorAll(`.timeline-item[data-group-id="${task.groupId}"] .task-card, .item-card-col[data-group-id="${task.groupId}"] .task-card`).forEach(c => {
+                                    c.classList.remove('group-dragging');
+                                });
+                                const tooltip = document.getElementById('drag-time-tooltip');
+                                if (tooltip) tooltip.style.display = 'none';
+                            });
+                        }
+
                         targetCol.appendChild(card);
+                    });
+
+                    // 重複グループにもドラッグ＆ドロップイベントを紐付け
+                    itemDiv.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
+                        itemDiv.classList.add('drag-over');
+
+                        const timelineEl = document.getElementById('structured-timeline');
+                        if (timelineEl) {
+                            const rect = timelineEl.getBoundingClientRect();
+                            const relativeY = e.clientY - rect.top + timelineEl.scrollTop;
+                            const totalHeight = timelineEl.scrollHeight;
+
+                            const dayStart = 5 * 60;
+                            const dayEnd = 23 * 60;
+                            const totalMinutes = dayEnd - dayStart;
+
+                            if (totalHeight > 0) {
+                                const ratio = Math.max(0, Math.min(1, relativeY / totalHeight));
+                                const minutesFromStart = totalMinutes * ratio;
+                                const roundedMinutes = Math.round(minutesFromStart / 5) * 5;
+                                const targetMinutes = dayStart + roundedMinutes;
+                                const targetTimeStr = minutesToTime(targetMinutes);
+
+                                currentDragTargetTime = targetTimeStr;
+
+                                const timeStartEl = itemDiv.querySelector('.time-start');
+                                if (timeStartEl) {
+                                    if (!timeStartEl.dataset.originalText) {
+                                        timeStartEl.dataset.originalText = timeStartEl.textContent;
+                                    }
+                                    timeStartEl.textContent = targetTimeStr;
+                                    timeStartEl.style.color = '#ff7082';
+                                    timeStartEl.style.fontWeight = '900';
+                                }
+
+                                const tooltip = document.getElementById('drag-time-tooltip');
+                                if (tooltip) {
+                                    tooltip.style.display = 'block';
+                                    tooltip.style.left = `${e.clientX + 15}px`;
+                                    tooltip.style.top = `${e.clientY + 15}px`;
+                                    tooltip.textContent = `⏰ ${targetTimeStr}`;
+                                }
+                            }
+                        }
+                    });
+
+                    itemDiv.addEventListener('dragleave', () => {
+                        itemDiv.classList.remove('drag-over');
+
+                        const timeStartEl = itemDiv.querySelector('.time-start');
+                        if (timeStartEl && timeStartEl.dataset.originalText) {
+                            timeStartEl.textContent = timeStartEl.dataset.originalText;
+                            timeStartEl.dataset.originalText = '';
+                            timeStartEl.style.color = '';
+                            timeStartEl.style.fontWeight = '';
+                        }
+
+                        const tooltip = document.getElementById('drag-time-tooltip');
+                        if (tooltip) tooltip.style.display = 'none';
+                    });
+
+                    itemDiv.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        itemDiv.classList.remove('drag-over');
+
+                        const timeStartEl = itemDiv.querySelector('.time-start');
+                        if (timeStartEl && timeStartEl.dataset.originalText) {
+                            timeStartEl.textContent = timeStartEl.dataset.originalText;
+                            timeStartEl.dataset.originalText = '';
+                            timeStartEl.style.color = '';
+                            timeStartEl.style.fontWeight = '';
+                        }
+
+                        const tooltip = document.getElementById('drag-time-tooltip');
+                        if (tooltip) tooltip.style.display = 'none';
+
+                        const dragGroupId = e.dataTransfer.getData('text/plain');
+                        if (!dragGroupId || !currentDragTargetTime) return;
+
+                        moveGroupToStartTime(dragGroupId, currentDragTargetTime);
                     });
 
                 } else {
                     const taskColor = colorMap[item.color] || colorMap.pink;
-                    itemDiv.className = `timeline-item`;
+                    
+                    let groupClass = '';
+                    let isGroupFirst = false;
+                    if (item.groupId) {
+                        const groupTasks = tasks
+                            .filter(t => t.groupId === item.groupId)
+                            .sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
+                        const groupIdx = groupTasks.findIndex(t => t.id === item.id);
+                        
+                        if (groupIdx > -1) {
+                            const hasPrev = groupIdx > 0;
+                            const hasNext = groupIdx < groupTasks.length - 1;
+                            if (hasPrev && hasNext) {
+                                groupClass = ' group-middle';
+                            } else if (hasPrev) {
+                                groupClass = ' group-last';
+                            } else if (hasNext) {
+                                groupClass = ' group-first';
+                                isGroupFirst = true;
+                            }
+                        }
+                    }
+
+                    itemDiv.className = `timeline-item${groupClass}`;
                     itemDiv.dataset.start = item.start;
                     itemDiv.dataset.end = item.end;
+                    if (item.groupId) {
+                        itemDiv.dataset.groupId = item.groupId;
+                    }
+
                     itemDiv.innerHTML = `
                         <div class="item-time-col">
                             <span class="time-start">${item.start}</span>
@@ -1096,22 +1519,139 @@
                             <div class="icon-circle" style="background-color: ${taskColor.bg}; border-color: ${taskColor.main}; color: ${taskColor.main};">${item.icon}</div>
                         </div>
                         <div class="item-card-col">
-                            <div class="task-card" style="border-left: 4px solid ${taskColor.main}; background-color: ${taskColor.bg};">
+                            <div class="task-card" style="border-left: 4px solid ${taskColor.main}; background-color: ${taskColor.bg}; position: relative;">
                                 <div class="task-info">
                                     <h3 class="task-title" style="color: #1e293b;">${item.icon} ${item.title}</h3>
                                     <span class="task-desc" style="color: #64748b;">${item.desc}</span>
                                 </div>
-                                <div class="task-meta">
+                                <div class="task-meta" style="display: flex; align-items: center; gap: 8px;">
+                                    ${isGroupFirst ? `<div class="group-drag-handle" draggable="true" data-group-id="${item.groupId}" style="cursor: grab; padding: 4px 6px; font-size: 13px; color: ${taskColor.main}; font-weight: bold; background: rgba(255,255,255,0.7); border: 1px solid ${taskColor.main}; border-radius: 6px; display: flex; align-items: center; justify-content: center; user-select: none;">☰</div>` : ''}
                                     <span class="task-duration" style="background-color: ${taskColor.main}; color: #ffffff;">${item.isAllDay ? '終日' : getDurationText(item.start, item.end)}</span>
                                 </div>
                             </div>
                         </div>
                     `;
+                    itemDiv.dataset.taskId = String(item.id);
 
-                    // 予定カードをクリックした時に編集モーダルを開く
+                    // 選択済み状態の表示クラスを復元
+                    if (selectedTimelineTaskIds.includes(String(item.id))) {
+                        itemDiv.classList.add('selected-for-group');
+                    }
+
+                    // 予定カードをクリックした時のアクション
                     itemDiv.querySelector('.task-card').addEventListener('click', () => {
+                        if (selectionMode) {
+                            toggleTimelineTaskSelection(String(item.id));
+                            return;
+                        }
                         openEditScheduleModal(item.id);
                     });
+
+                    // ドラッグハンドルのドラッグ開始・終了イベントを設定
+                    const handle = itemDiv.querySelector('.group-drag-handle');
+                    if (handle) {
+                        handle.addEventListener('dragstart', (e) => {
+                            e.dataTransfer.setData('text/plain', item.groupId);
+                            e.dataTransfer.effectAllowed = 'move';
+                            
+                            // グループ全体の全カードに半透明スタイルを付与
+                            document.querySelectorAll(`.timeline-item[data-group-id="${item.groupId}"] .task-card, .item-card-col[data-group-id="${item.groupId}"] .task-card`).forEach(c => {
+                                c.classList.add('group-dragging');
+                            });
+                            
+                            createGroupDragImage(e, item.groupId);
+                        });
+                        handle.addEventListener('dragend', () => {
+                            document.querySelectorAll(`.timeline-item[data-group-id="${item.groupId}"] .task-card, .item-card-col[data-group-id="${item.groupId}"] .task-card`).forEach(c => {
+                                c.classList.remove('group-dragging');
+                            });
+                            const tooltip = document.getElementById('drag-time-tooltip');
+                            if (tooltip) tooltip.style.display = 'none';
+                        });
+                    }
+
+                    // ドラッグオーバー、リーブ、ドロップの紐付け
+                    itemDiv.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
+                        itemDiv.classList.add('drag-over');
+
+                        const timelineEl = document.getElementById('structured-timeline');
+                        if (timelineEl) {
+                            const rect = timelineEl.getBoundingClientRect();
+                            const relativeY = e.clientY - rect.top + timelineEl.scrollTop;
+                            const totalHeight = timelineEl.scrollHeight;
+
+                            const dayStart = 5 * 60;
+                            const dayEnd = 23 * 60;
+                            const totalMinutes = dayEnd - dayStart;
+
+                            if (totalHeight > 0) {
+                                const ratio = Math.max(0, Math.min(1, relativeY / totalHeight));
+                                const minutesFromStart = totalMinutes * ratio;
+                                const roundedMinutes = Math.round(minutesFromStart / 5) * 5;
+                                const targetMinutes = dayStart + roundedMinutes;
+                                const targetTimeStr = minutesToTime(targetMinutes);
+
+                                currentDragTargetTime = targetTimeStr;
+
+                                const timeStartEl = itemDiv.querySelector('.time-start');
+                                if (timeStartEl) {
+                                    if (!timeStartEl.dataset.originalText) {
+                                        timeStartEl.dataset.originalText = timeStartEl.textContent;
+                                    }
+                                    timeStartEl.textContent = targetTimeStr;
+                                    timeStartEl.style.color = '#ff7082';
+                                    timeStartEl.style.fontWeight = '900';
+                                }
+
+                                const tooltip = document.getElementById('drag-time-tooltip');
+                                if (tooltip) {
+                                    tooltip.style.display = 'block';
+                                    tooltip.style.left = `${e.clientX + 15}px`;
+                                    tooltip.style.top = `${e.clientY + 15}px`;
+                                    tooltip.textContent = `⏰ ${targetTimeStr}`;
+                                }
+                            }
+                        }
+                    });
+
+                    itemDiv.addEventListener('dragleave', () => {
+                        itemDiv.classList.remove('drag-over');
+
+                        const timeStartEl = itemDiv.querySelector('.time-start');
+                        if (timeStartEl && timeStartEl.dataset.originalText) {
+                            timeStartEl.textContent = timeStartEl.dataset.originalText;
+                            timeStartEl.dataset.originalText = '';
+                            timeStartEl.style.color = '';
+                            timeStartEl.style.fontWeight = '';
+                        }
+
+                        const tooltip = document.getElementById('drag-time-tooltip');
+                        if (tooltip) tooltip.style.display = 'none';
+                    });
+
+                    itemDiv.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        itemDiv.classList.remove('drag-over');
+
+                        const timeStartEl = itemDiv.querySelector('.time-start');
+                        if (timeStartEl && timeStartEl.dataset.originalText) {
+                            timeStartEl.textContent = timeStartEl.dataset.originalText;
+                            timeStartEl.dataset.originalText = '';
+                            timeStartEl.style.color = '';
+                            timeStartEl.style.fontWeight = '';
+                        }
+
+                        const tooltip = document.getElementById('drag-time-tooltip');
+                        if (tooltip) tooltip.style.display = 'none';
+
+                        const dragGroupId = e.dataTransfer.getData('text/plain');
+                        if (!dragGroupId || !currentDragTargetTime) return;
+
+                        moveGroupToStartTime(dragGroupId, currentDragTargetTime);
+                    });
+
                     container.appendChild(itemDiv);
                 }
             });
@@ -1219,27 +1759,7 @@
 
         // 統合FAB（スピードダイアル）の制御ロジック
         function initSpeedDial() {
-            const container = document.getElementById('fab-container');
-            const mainBtn = document.getElementById('fab-main-btn');
-            if (!container || !mainBtn) return;
-
-            mainBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                container.classList.toggle('active');
-            });
-
-            // サブボタンをクリックした際にも閉じるようにする
-            const subButtons = container.querySelectorAll('.fab-sub-btn');
-            subButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    container.classList.remove('active');
-                });
-            });
-
-            // 画面の他の場所をクリックした時にメニューを閉じる
-            document.addEventListener('click', () => {
-                container.classList.remove('active');
-            });
+            // スピードダイアルは廃止し直接起動するようになったため、何もしない
         }
 
         function triggerNewScheduleOpen() {
@@ -1261,6 +1781,135 @@
         let selectedEmoji = "📅";
         let selectedDuration = 30;
         let selectedColor = "pink";
+        let currentScheduleTemplateSuggestion = null;
+
+        function getSavedTemplateDictionary() {
+            return JSON.parse(localStorage.getItem('savedTemplates')) || {};
+        }
+
+        function getTemplateSuggestionItems() {
+            const templates = getSavedTemplateDictionary();
+            return Object.keys(templates).map(name => {
+                const items = templates[name];
+                const totalMinutes = items.reduce((sum, item) => sum + (parseInt(item.duration, 10) || 0), 0);
+                const previewText = items.map(item => `${item.icon || '📅'} ${item.title}`).join(', ');
+                return {
+                    name: name,
+                    items: items,
+                    totalMinutes: totalMinutes,
+                    preview: previewText
+                };
+            }).sort((a, b) => b.totalMinutes - a.totalMinutes);
+        }
+
+        function renderScheduleTemplateSuggestions() {
+            const list = document.getElementById('schedule-template-suggestion-list');
+            const preview = document.getElementById('schedule-template-suggestion-preview');
+            const clearBtn = document.getElementById('schedule-template-clear-btn');
+            if (!list) return;
+
+            const suggestions = getTemplateSuggestionItems();
+            list.innerHTML = '';
+
+            if (suggestions.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'template-suggestion-empty';
+                empty.style.fontSize = '12px';
+                empty.style.color = '#64748b';
+                empty.style.textAlign = 'center';
+                empty.style.padding = '16px 0';
+                empty.textContent = 'テンプレートがまだありません。まずは予定を複数選択して「グループ化」から作成してください。';
+                list.appendChild(empty);
+                if (preview) preview.style.display = 'none';
+                if (clearBtn) clearBtn.style.display = 'none';
+                return;
+            }
+
+            suggestions.forEach(template => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = `template-suggestion-card${currentScheduleTemplateSuggestion === template.name ? ' active' : ''}`;
+                button.style.width = '100%';
+                button.style.padding = '12px';
+                button.style.background = currentScheduleTemplateSuggestion === template.name ? 'rgba(255, 112, 130, 0.08)' : '#f8fafc';
+                button.style.border = currentScheduleTemplateSuggestion === template.name ? '1.5px solid #FF7082' : '1.5px solid #e2e8f0';
+                button.style.borderRadius = '14px';
+                button.style.textAlign = 'left';
+                button.style.cursor = 'pointer';
+                button.style.display = 'flex';
+                button.style.flexDirection = 'column';
+                button.style.gap = '4px';
+                button.style.transition = 'all 0.2s ease';
+
+                button.innerHTML = `
+                    <div style="font-weight: 800; font-size: 13px; color: #1e293b;">📋 ${template.name}</div>
+                    <div style="font-size: 11px; color: #64748b;">${template.items.length}件・計 ${template.totalMinutes}分</div>
+                    <div style="font-size: 11px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;">${template.preview || '内容のプレビューなし'}</div>
+                `;
+                button.addEventListener('click', () => applyTemplateSuggestion(template.name));
+                list.appendChild(button);
+            });
+
+            if (currentScheduleTemplateSuggestion) {
+                const currentTemplate = suggestions.find(item => item.name === currentScheduleTemplateSuggestion);
+                if (currentTemplate && preview) {
+                    preview.style.display = 'block';
+                    preview.innerHTML = `選択中: <strong>${currentTemplate.name}</strong> / ${currentTemplate.items.length}件 / 計 ${currentTemplate.totalMinutes}分`;
+                }
+                if (clearBtn) clearBtn.style.display = 'inline-flex';
+            } else {
+                if (preview) preview.style.display = 'none';
+                if (clearBtn) clearBtn.style.display = 'none';
+            }
+
+            const nextBtn = document.getElementById('modal-next-btn');
+            if (nextBtn && currentStep === 1) {
+                nextBtn.textContent = currentScheduleTemplateSuggestion ? '作成' : '次へ';
+            }
+        }
+
+        function applyTemplateSuggestion(templateName) {
+            const templates = getSavedTemplateDictionary();
+            const selectedTemplate = templates[templateName];
+            if (!Array.isArray(selectedTemplate) || selectedTemplate.length === 0) {
+                return;
+            }
+
+            currentScheduleTemplateSuggestion = templateName;
+            const titleInput = document.getElementById('schedule-title');
+            if (titleInput) {
+                titleInput.value = templateName;
+            }
+
+            const totalMinutes = selectedTemplate.reduce((sum, item) => sum + (parseInt(item.duration, 10) || 0), 0);
+            if (totalMinutes > 0) {
+                selectedDuration = totalMinutes;
+            }
+
+            renderScheduleTemplateSuggestions();
+        }
+
+        function clearTemplateSuggestionSelection() {
+            currentScheduleTemplateSuggestion = null;
+            const titleInput = document.getElementById('schedule-title');
+            if (titleInput) {
+                titleInput.value = '';
+            }
+            renderScheduleTemplateSuggestions();
+        }
+
+        function getScheduleTemplateIcon(title) {
+            const text = String(title || '').toLowerCase();
+            if (text.includes('起床') || text.includes('朝') || text.includes('支度')) return '🌅';
+            if (text.includes('大学') || text.includes('講義') || text.includes('勉強') || text.includes('授業')) return '📚';
+            if (text.includes('仕事') || text.includes('バイト')) return '💼';
+            if (text.includes('カフェ') || text.includes('友達') || text.includes('おしゃべり')) return '☕️';
+            if (text.includes('運動') || text.includes('ジム') || text.includes('ヨガ') || text.includes('ランニング')) return '🏃';
+            if (text.includes('移動') || text.includes('電車') || text.includes('通学')) return '🚃';
+            if (text.includes('食') || text.includes('ご飯') || text.includes('ランチ') || text.includes('ディナー')) return '🍳';
+            if (text.includes('風呂') || text.includes('入浴')) return '🛁';
+            return '📅';
+        }
 
         // カラーの選択
         function selectColor(colorName) {
@@ -1618,7 +2267,7 @@
 
             if (step === 1) {
                 backBtn.style.visibility = 'hidden';
-                nextBtn.textContent = '次へ';
+                nextBtn.textContent = currentScheduleTemplateSuggestion ? '作成' : '次へ';
             } else if (step === 2) {
                 backBtn.style.visibility = 'visible';
                 nextBtn.textContent = '次へ';
@@ -1646,6 +2295,10 @@
                 const titleInput = document.getElementById('schedule-title');
                 if (!titleInput || !titleInput.value.trim()) {
                     alert('予定のタイトルを入力してください。');
+                    return;
+                }
+                if (currentScheduleTemplateSuggestion) {
+                    saveSchedule();
                     return;
                 }
                 goToStep(2);
@@ -1707,6 +2360,8 @@
             if (wrapper) wrapper.style.display = 'none';
 
             document.getElementById('structured-delete-btn').style.display = 'none';
+            currentScheduleTemplateSuggestion = null;
+            renderScheduleTemplateSuggestions();
             goToStep(1);
 
             document.getElementById('schedule-modal').classList.add('active');
@@ -1733,6 +2388,9 @@
             document.querySelector(`input[name="energy"][value="${energyVal}"]`).checked = true;
             updateEnergyLabel(energyVal);
             document.getElementById('emoji-display').textContent = selectedEmoji;
+
+            currentScheduleTemplateSuggestion = null;
+            renderScheduleTemplateSuggestions();
 
             // 時間ドラムピッカー値の設定
             initTimeWheelSelects();
@@ -1881,23 +2539,56 @@
                 });
             } else {
                 // 新規
-                const newTask = {
-                    id: `task-${Date.now()}`,
-                    title,
-                    location,
-                    isAllDay,
-                    startDate,
-                    startTime,
-                    endDate: startDate,
-                    endTime,
-                    icon,
-                    type,
-                    notes,
-                    energy,
-                    color: selectedColor,
-                    subtasks: []
-                };
-                allTasks.push(newTask);
+                if (currentScheduleTemplateSuggestion) {
+                    const templates = getSavedTemplateDictionary();
+                    const selectedTemplate = templates[currentScheduleTemplateSuggestion];
+                    if (Array.isArray(selectedTemplate) && selectedTemplate.length > 0) {
+                        const groupId = `group-${Date.now()}`;
+                        let currentMinutes = timeToMinutes(startTime);
+                        selectedTemplate.forEach((subTask, index) => {
+                            const startStr = minutesToTime(currentMinutes);
+                            currentMinutes += (parseInt(subTask.duration, 10) || 10);
+                            const endStr = minutesToTime(currentMinutes);
+
+                            const newTask = {
+                                id: `task-${Date.now()}-${index}`,
+                                groupId: groupId,
+                                title: subTask.title,
+                                location: subTask.desc || '',
+                                isAllDay: false,
+                                startDate: startDate,
+                                startTime: startStr,
+                                endDate: startDate,
+                                endTime: endStr,
+                                icon: subTask.icon || getScheduleTemplateIcon(subTask.title),
+                                type: subTask.type || 'routine',
+                                notes: subTask.desc || '',
+                                energy: energy,
+                                color: selectedColor,
+                                subtasks: []
+                            };
+                            allTasks.push(newTask);
+                        });
+                    }
+                } else {
+                    const newTask = {
+                        id: `task-${Date.now()}`,
+                        title,
+                        location,
+                        isAllDay,
+                        startDate,
+                        startTime,
+                        endDate: startDate,
+                        endTime,
+                        icon,
+                        type,
+                        notes,
+                        energy,
+                        color: selectedColor,
+                        subtasks: []
+                    };
+                    allTasks.push(newTask);
+                }
             }
 
             localStorage.setItem('savedTasks', JSON.stringify(allTasks));
@@ -2013,7 +2704,83 @@
                     }
                 });
             }
+
+            const groupModalOverlay = document.getElementById('group-template-modal');
+            if (groupModalOverlay) {
+                groupModalOverlay.addEventListener('click', (e) => {
+                    if (e.target === groupModalOverlay) {
+                        closeGroupTemplateModal();
+                    }
+                });
+            }
+
+            const templateModalOverlay = document.getElementById('template-modal');
+            if (templateModalOverlay) {
+                templateModalOverlay.addEventListener('click', (e) => {
+                    if (e.target === templateModalOverlay) {
+                        templateModalOverlay.classList.remove('active');
+                    }
+                });
+            }
+
+            const groupTemplateNameInput = document.getElementById('group-template-name');
+            if (groupTemplateNameInput) {
+                groupTemplateNameInput.addEventListener('focus', () => {
+                    groupTemplateNameInput.style.borderBottomColor = '#FF7082';
+                });
+                groupTemplateNameInput.addEventListener('blur', () => {
+                    groupTemplateNameInput.style.borderBottomColor = '#e2e8f0';
+                });
+            }
         });
+
+        function createGroupDragImage(e, groupId) {
+            const items = Array.from(document.querySelectorAll(`.timeline-item[data-group-id="${groupId}"], .item-card-col[data-group-id="${groupId}"]`));
+            if (items.length === 0) return;
+
+            const dragContainer = document.createElement('div');
+            dragContainer.id = 'temp-drag-image-container';
+            dragContainer.style.position = 'absolute';
+            dragContainer.style.left = '-9999px';
+            dragContainer.style.top = '-9999px';
+            dragContainer.style.display = 'flex';
+            dragContainer.style.flexDirection = 'column';
+            dragContainer.style.gap = '0';
+            dragContainer.style.width = '300px';
+            dragContainer.style.pointerEvents = 'none';
+
+            items.forEach((itemEl) => {
+                const cardCol = itemEl.classList.contains('item-card-col') ? itemEl : itemEl.querySelector('.item-card-col');
+                if (cardCol) {
+                    const clone = cardCol.cloneNode(true);
+                    const taskCard = clone.querySelector('.task-card');
+                    if (taskCard) {
+                        taskCard.style.boxShadow = 'none';
+                        if (itemEl.classList.contains('group-first')) {
+                            taskCard.style.borderBottomLeftRadius = '0';
+                            taskCard.style.borderBottomRightRadius = '0';
+                        } else if (itemEl.classList.contains('group-middle')) {
+                            taskCard.style.borderRadius = '0';
+                            taskCard.style.borderTop = '1px dashed rgba(0,0,0,0.08)';
+                        } else if (itemEl.classList.contains('group-last')) {
+                            taskCard.style.borderTopLeftRadius = '0';
+                            taskCard.style.borderTopRightRadius = '0';
+                            taskCard.style.borderTop = '1px dashed rgba(0,0,0,0.08)';
+                        }
+                    }
+                    dragContainer.appendChild(clone);
+                }
+            });
+
+            document.body.appendChild(dragContainer);
+            e.dataTransfer.setDragImage(dragContainer, 250, 20);
+
+            setTimeout(() => {
+                if (dragContainer.parentNode) {
+                    dragContainer.parentNode.removeChild(dragContainer);
+                }
+            }, 0);
+        }
     </script>
 
     <!-- ゆうかがテンプレートとエネルギーのためにここから書き加えました -->
@@ -2070,6 +2837,46 @@
             </div>
         </div>
     </div>
+
+    <!-- グループテンプレート保存用のポップアップモーダル -->
+    <div id="group-template-modal" class="sidebar-overlay">
+        <div class="modal-box group-template-modal-box"
+            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 340px; background: white; border-radius: 24px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 16px;">
+            <div class="modal-header"
+                style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                <h3
+                    style="margin:0; font-size: 1.1rem; font-weight: 800; background: linear-gradient(135deg, #FFB1B6, #FFA2B2); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    グループテンプレート作成</h3>
+                <button type="button"
+                    style="background: #f1f5f9; border: none; color: #64748b; font-size: 20px; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;"
+                    onclick="closeGroupTemplateModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-size: 0.75rem; font-weight: 700; color: #64748b;">テンプレートの名前</label>
+                    <input type="text" id="group-template-name" placeholder="朝の支度ルーティン など"
+                        style="width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; background-color: #f8fafc; outline: none;">
+                </div>
+                <button type="button" class="btn primary" onclick="saveSelectedTasksAsTemplate()"
+                    style="width: 100%; padding: 12px; border-radius: 12px; font-weight: bold; background: linear-gradient(135deg, #FFB1B6, #FFA2B2); color: white; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;">保存する</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 複数選択アクション用の下部フローティングツールバー -->
+    <div id="selection-toolbar" class="selection-toolbar" style="display: none;">
+        <div class="selection-toolbar-inner">
+            <span id="selection-toolbar-count" class="selection-toolbar-count">0件選択中</span>
+            <div class="selection-toolbar-actions">
+                <button type="button" class="selection-toolbar-btn danger" style="background-color: #ef4444; color: white;" onclick="deleteSelectedTasks()">削除</button>
+                <button type="button" class="selection-toolbar-btn secondary" onclick="clearSelectedTimelineTasks()">解除</button>
+                <button type="button" class="selection-toolbar-btn primary" onclick="openGroupTemplateModal()">グループ化</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ドラッグ中のリアルタイム時間プレビュー用ツールチップ -->
+    <div id="drag-time-tooltip" style="position: fixed; display: none; background: #ff7082; color: white; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 800; pointer-events: none; z-index: 9999; box-shadow: 0 4px 12px rgba(255,112,130,0.3); font-family: sans-serif;">07:00</div>
 
     <!-- ここまで書き加えました -->
 
