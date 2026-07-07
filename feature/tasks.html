@@ -319,12 +319,12 @@
                     </div>
 
                     <div class="settings-row">
-                        <div class="setting-btn-wrapper">
-                            <button class="setting-trigger-btn" id="quick-date-btn">
+                        <div class="setting-btn-wrapper" style="position: relative; overflow: hidden; display: inline-block;">
+                            <button type="button" class="setting-trigger-btn" id="quick-date-btn" style="pointer-events: none;">
                                 <span class="icon">📅</span> <span id="quick-date-label">期限</span>
                             </button>
                             <input type="datetime-local" id="quick-task-date"
-                                style="position: absolute; opacity: 0; width: 0; height: 0; z-index: -1;">
+                                style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; z-index: 10; cursor: pointer;">
                         </div>
 
                         <div class="duration-select-wrapper">
@@ -342,17 +342,6 @@
                                 <option value="30" selected>30分</option>
                                 <option value="45">45分</option>
                             </select>
-                        </div>
-                    </div>
-
-                    <div class="quick-color-row" style="display: flex; align-items: center; gap: 12px; margin-top: 4px; padding: 0 4px;">
-                        <span style="font-size: 12px; font-weight: 600; color: #64748b;">カラー:</span>
-                        <div class="color-palette" id="quick-color-palette" style="display: flex; gap: 8px; padding: 4px; background: none; margin: 0; justify-content: flex-start;">
-                            <button type="button" class="color-palette-btn pink active" onclick="selectQuickColor('pink')" style="width: 24px; height: 24px; border-width: 2px;"></button>
-                            <button type="button" class="color-palette-btn blue" onclick="selectQuickColor('blue')" style="width: 24px; height: 24px; border-width: 2px;"></button>
-                            <button type="button" class="color-palette-btn green" onclick="selectQuickColor('green')" style="width: 24px; height: 24px; border-width: 2px;"></button>
-                            <button type="button" class="color-palette-btn orange" onclick="selectQuickColor('orange')" style="width: 24px; height: 24px; border-width: 2px;"></button>
-                            <button type="button" class="color-palette-btn purple" onclick="selectQuickColor('purple')" style="width: 24px; height: 24px; border-width: 2px;"></button>
                         </div>
                     </div>
 
@@ -378,14 +367,7 @@
                         </div>
                     </div>
 
-                    <div class="quick-memo-row" id="quick-memo-row" style="display: none; margin-top: 8px;">
-                        <textarea id="quick-task-memo" placeholder="メモ・ノートを入力..." class="quick-input" style="height: 64px; resize: none; font-size: 13px; padding: 8px 12px; width: 100%; box-sizing: border-box;"></textarea>
-                    </div>
-
-                    <div class="quick-card-footer">
-                        <div class="footer-icons">
-                            <button type="button" class="quick-memo-btn" id="quick-memo-btn">📝 メモ</button>
-                        </div>
+                    <div class="quick-card-footer" style="justify-content: flex-end; margin-top: 12px;">
                         <button class="quick-add-btn" id="quickAddBtn">追加</button>
                     </div>
                 </div>
@@ -465,43 +447,10 @@
 
                         <!-- 【ステップ2】時間と期間の設定 -->
                         <div id="modal-step-2" class="modal-step-section">
-                            <!-- 日付選択 -->
+                            <!-- 期限選択 -->
                             <div class="modal-card">
-                                <div class="modal-card-row">
-                                    <span class="modal-card-label">📅 日付</span>
-                                    <input type="date" id="schedule-startdate" style="border: 1px solid #e5e5ea; padding: 6px 12px; border-radius: 8px; font-family: inherit; font-size: 14px; outline: none;">
-                                </div>
-                            </div>
-                            <!-- 开始時間ドラムピッカー風UI (縦ドラムロール) -->
-                            <div class="modal-card" id="time-picker-card">
-                                <span class="modal-card-label">⏰ 開始時間</span>
-                                <div class="time-wheel-container">
-                                    <div class="drum-picker-container">
-                                        <!-- 時のドラム -->
-                                        <div class="drum-picker" id="drum-hour">
-                                            <div class="drum-picker-scroll" id="drum-hour-scroll">
-                                                <div class="drum-picker-padding-top"></div>
-                                                <div class="drum-picker-list" id="drum-hour-list">
-                                                    <!-- JSで動的生成 -->
-                                                </div>
-                                                <div class="drum-picker-padding-bottom"></div>
-                                            </div>
-                                        </div>
-                                        <span class="drum-picker-separator">:</span>
-                                        <!-- 分のドラム -->
-                                        <div class="drum-picker" id="drum-minute">
-                                            <div class="drum-picker-scroll" id="drum-minute-scroll">
-                                                <div class="drum-picker-padding-top"></div>
-                                                <div class="drum-picker-list" id="drum-minute-list">
-                                                    <!-- JSで動的生成 -->
-                                                </div>
-                                                <div class="drum-picker-padding-bottom"></div>
-                                            </div>
-                                        </div>
-                                        <!-- 中央の選択用ハイライトバー -->
-                                        <div class="drum-picker-overlay"></div>
-                                    </div>
-                                </div>
+                                <span class="modal-card-label">📅 期限 (日付と時間)</span>
+                                <input type="datetime-local" id="schedule-startdate" style="width: 100%; border: 1.5px solid #e2e8f0; padding: 10px 14px; border-radius: 12px; font-family: inherit; font-size: 14px; outline: none; background-color: #f8fafc; font-weight: 600; color: #1e293b;">
                             </div>
                             <!-- 所要時間クイック選択 -->
                             <div class="modal-card" id="duration-picker-card">
@@ -517,36 +466,18 @@
                                     <button class="duration-chip" data-minutes="custom" id="custom-duration-btn">•••</button>
                                 </div>
 
-                                <!-- カスタム所要時間ドラムロール（デフォルト非表示、•••選択時のみ表示） -->
+                                <!-- カスタム所要時間入力（キーボード入力用） -->
                                 <div id="custom-duration-picker-wrapper" style="display: none; margin-top: 16px; border-top: 1px solid #e5e5ea; padding-top: 16px;">
-                                    <div style="text-align: center; margin-bottom: 8px; font-size: 14px; font-weight: 600; color: #FFB1B6;" id="custom-duration-text">0時間30分</div>
-                                    <div class="drum-picker-container" style="justify-content: center; height: 120px; width: 240px;">
-                                        <!-- 時間のドラム -->
-                                        <div class="drum-picker" id="drum-duration-hour">
-                                            <div class="drum-picker-scroll" id="drum-duration-hour-scroll">
-                                                <div class="drum-picker-padding-top"></div>
-                                                <div class="drum-picker-list" id="drum-duration-hour-list">
-                                                    <!-- JSで動的生成 -->
-                                                </div>
-                                                <div class="drum-picker-padding-bottom"></div>
-                                            </div>
+                                    <div style="text-align: center; margin-bottom: 12px; font-size: 14px; font-weight: 600; color: #FFB1B6;" id="custom-duration-text">0時間30分</div>
+                                    <div style="display: flex; justify-content: center; align-items: center; gap: 12px; padding: 10px 0;">
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <input type="number" id="custom-duration-hours-input" value="0" min="0" max="23" style="width: 70px; padding: 8px; border: 1.5px solid #e2e8f0; border-radius: 8px; text-align: center; font-size: 16px; font-weight: 600;" placeholder="0">
+                                            <span style="font-size: 13px; font-weight: 600; color: #64748b;">時間</span>
                                         </div>
-                                        <span class="drum-picker-separator" style="line-height: 120px; font-size: 13px; font-weight: 600; white-space: nowrap;">時間</span>
-
-                                        <!-- 分のドラム -->
-                                        <div class="drum-picker" id="drum-duration-minute">
-                                            <div class="drum-picker-scroll" id="drum-duration-minute-scroll">
-                                                <div class="drum-picker-padding-top"></div>
-                                                <div class="drum-picker-list" id="drum-duration-minute-list">
-                                                    <!-- JSで動的生成 -->
-                                                </div>
-                                                <div class="drum-picker-padding-bottom"></div>
-                                            </div>
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <input type="number" id="custom-duration-minutes-input" value="30" min="0" max="59" style="width: 70px; padding: 8px; border: 1.5px solid #e2e8f0; border-radius: 8px; text-align: center; font-size: 16px; font-weight: 600;" placeholder="30">
+                                            <span style="font-size: 13px; font-weight: 600; color: #64748b;">分</span>
                                         </div>
-                                        <span class="drum-picker-separator" style="line-height: 120px; font-size: 13px; font-weight: 600; white-space: nowrap;">分</span>
-                                        
-                                        <!-- 中央の選択用ハイライトバー -->
-                                        <div class="drum-picker-overlay"></div>
                                     </div>
                                 </div>
                             </div>
@@ -958,242 +889,10 @@
         let selectedDuration = 30;
         let selectedColor = "pink";
 
-        let quickSelectedColor = "pink";
 
-        function selectQuickColor(colorName) {
-            quickSelectedColor = colorName;
-            const container = document.getElementById('quick-color-palette');
-            if (!container) return;
-            const buttons = container.querySelectorAll('.color-palette-btn');
-            buttons.forEach(btn => {
-                if (btn.classList.contains(colorName)) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-        }
-
-        // ドラムロール選択中の現在値と制御タイマー
-        let selectedHour = "12";
-        let selectedMinute = "00";
-        let drumScrollTimers = { hour: null, minute: null };
 
         let selectedDurationHour = 0;
         let selectedDurationMinute = 30;
-        let drumDurationScrollTimers = { hour: null, minute: null };
-
-        // ドラムロール式ピッカーの初期化
-        function initTimeWheelSelects() {
-            const hourList = document.getElementById('drum-hour-list');
-            const minList = document.getElementById('drum-minute-list');
-            if (!hourList || !minList) return;
-
-            hourList.innerHTML = '';
-            minList.innerHTML = '';
-
-            for (let h = 0; h < 24; h++) {
-                const val = String(h).padStart(2, '0');
-                const div = document.createElement('div');
-                div.className = 'drum-picker-item';
-                div.dataset.value = val;
-                div.textContent = val;
-                div.addEventListener('click', () => {
-                    scrollDrumToValue('hour', val);
-                });
-                hourList.appendChild(div);
-            }
-
-            for (let m = 0; m < 60; m += 5) {
-                const val = String(m).padStart(2, '0');
-                const div = document.createElement('div');
-                div.className = 'drum-picker-item';
-                div.dataset.value = val;
-                div.textContent = val;
-                div.addEventListener('click', () => {
-                    scrollDrumToValue('minute', val);
-                });
-                minList.appendChild(div);
-            }
-
-            setupDrumScrollListeners('hour', 'drum-hour-scroll');
-            setupDrumScrollListeners('minute', 'drum-minute-scroll');
-        }
-
-        function setupDrumScrollListeners(type, scrollId) {
-            const el = document.getElementById(scrollId);
-            if (!el) return;
-            el.onscroll = null;
-            el.addEventListener('scroll', () => {
-                window.clearTimeout(drumScrollTimers[type]);
-                drumScrollTimers[type] = setTimeout(() => {
-                    onDrumScrollEnd(type, el);
-                }, 100);
-            });
-        }
-
-        function onDrumScrollEnd(type, el) {
-            const scrollTop = el.scrollTop;
-            const itemHeight = 40;
-            const index = Math.round(scrollTop / itemHeight);
-            const list = type === 'hour' ? document.getElementById('drum-hour-list') : document.getElementById('drum-minute-list');
-            const items = list.querySelectorAll('.drum-picker-item');
-
-            if (items[index]) {
-                el.scrollTo({
-                    top: index * itemHeight,
-                    behavior: 'smooth'
-                });
-                items.forEach(item => item.classList.remove('selected'));
-                items[index].classList.add('selected');
-                const val = items[index].dataset.value;
-                if (type === 'hour') {
-                    selectedHour = val;
-                } else {
-                    selectedMinute = val;
-                }
-            }
-        }
-
-        function scrollDrumToValue(type, val, behavior = 'smooth') {
-            const scrollId = type === 'hour' ? 'drum-hour-scroll' : 'drum-minute-scroll';
-            const listId = type === 'hour' ? 'drum-hour-list' : 'drum-minute-list';
-            const el = document.getElementById(scrollId);
-            const list = document.getElementById(listId);
-            if (!el || !list) return;
-
-            const items = list.querySelectorAll('.drum-picker-item');
-            let targetIndex = -1;
-            items.forEach((item, idx) => {
-                if (item.dataset.value === val) {
-                    targetIndex = idx;
-                }
-            });
-
-            if (targetIndex !== -1) {
-                const itemHeight = 40;
-                el.scrollTo({
-                    top: targetIndex * itemHeight,
-                    behavior: behavior
-                });
-                items.forEach(item => item.classList.remove('selected'));
-                items[targetIndex].classList.add('selected');
-                if (type === 'hour') {
-                    selectedHour = val;
-                } else {
-                    selectedMinute = val;
-                }
-            }
-        }
-
-        // カスタム所要時間ドラムピッカー制御ロジック
-        function initDurationWheelSelects() {
-            const hourList = document.getElementById('drum-duration-hour-list');
-            const minList = document.getElementById('drum-duration-minute-list');
-            if (!hourList || !minList) return;
-
-            hourList.innerHTML = '';
-            minList.innerHTML = '';
-
-            for (let h = 0; h <= 12; h++) {
-                const val = String(h);
-                const div = document.createElement('div');
-                div.className = 'drum-picker-item';
-                div.dataset.value = val;
-                div.textContent = val;
-                div.addEventListener('click', () => {
-                    scrollDurationDrumToValue('hour', val);
-                });
-                hourList.appendChild(div);
-            }
-
-            for (let m = 0; m < 60; m += 5) {
-                const val = String(m).padStart(2, '0');
-                const div = document.createElement('div');
-                div.className = 'drum-picker-item';
-                div.dataset.value = val;
-                div.textContent = val;
-                div.addEventListener('click', () => {
-                    scrollDurationDrumToValue('minute', val);
-                });
-                minList.appendChild(div);
-            }
-
-            setupDurationDrumScrollListeners('hour', 'drum-duration-hour-scroll');
-            setupDurationDrumScrollListeners('minute', 'drum-duration-minute-scroll');
-        }
-
-        function setupDurationDrumScrollListeners(type, scrollId) {
-            const el = document.getElementById(scrollId);
-            if (!el) return;
-            el.onscroll = null;
-            el.addEventListener('scroll', () => {
-                if (drumDurationScrollTimers[type]) {
-                    clearTimeout(drumDurationScrollTimers[type]);
-                }
-                drumDurationScrollTimers[type] = setTimeout(() => {
-                    onDurationDrumScrollEnd(type, el);
-                }, 100);
-            });
-        }
-
-        function onDurationDrumScrollEnd(type, el) {
-            const scrollTop = el.scrollTop;
-            const itemHeight = 40;
-            const targetIndex = Math.round(scrollTop / itemHeight);
-            const listId = type === 'hour' ? 'drum-duration-hour-list' : 'drum-duration-minute-list';
-            const list = document.getElementById(listId);
-            if (!list) return;
-
-            const items = list.querySelectorAll('.drum-picker-item');
-            if (targetIndex >= 0 && targetIndex < items.length) {
-                el.scrollTo({
-                    top: targetIndex * itemHeight,
-                    behavior: 'smooth'
-                });
-                items.forEach(item => item.classList.remove('selected'));
-                items[targetIndex].classList.add('selected');
-                const val = items[targetIndex].dataset.value;
-                if (type === 'hour') {
-                    selectedDurationHour = parseInt(val);
-                } else {
-                    selectedDurationMinute = parseInt(val);
-                }
-                updateCustomDurationText();
-            }
-        }
-
-        function scrollDurationDrumToValue(type, val, behavior = 'smooth') {
-            const scrollId = type === 'hour' ? 'drum-duration-hour-scroll' : 'drum-duration-minute-scroll';
-            const listId = type === 'hour' ? 'drum-duration-hour-list' : 'drum-duration-minute-list';
-            const el = document.getElementById(scrollId);
-            const list = document.getElementById(listId);
-            if (!el || !list) return;
-
-            const items = list.querySelectorAll('.drum-picker-item');
-            let targetIndex = -1;
-            items.forEach((item, idx) => {
-                if (parseInt(item.dataset.value) === parseInt(val)) {
-                    targetIndex = idx;
-                }
-            });
-
-            if (targetIndex !== -1) {
-                const itemHeight = 40;
-                el.scrollTo({
-                    top: targetIndex * itemHeight,
-                    behavior: behavior
-                });
-                items.forEach(item => item.classList.remove('selected'));
-                items[targetIndex].classList.add('selected');
-                if (type === 'hour') {
-                    selectedDurationHour = parseInt(val);
-                } else {
-                    selectedDurationMinute = parseInt(val);
-                }
-                updateCustomDurationText();
-            }
-        }
 
         function updateCustomDurationText() {
             const textEl = document.getElementById('custom-duration-text');
@@ -1220,16 +919,16 @@
                     const wrapper = document.getElementById('custom-duration-picker-wrapper');
                     if (newChip.dataset.minutes === 'custom') {
                         if (wrapper) wrapper.style.display = 'block';
-                        initDurationWheelSelects();
                         const defaultPresets = [5, 15, 30, 60, 90, 120, 180];
                         if (defaultPresets.includes(selectedDuration)) {
                             selectedDurationHour = Math.floor(selectedDuration / 60);
                             selectedDurationMinute = selectedDuration % 60;
                         }
-                        setTimeout(() => {
-                            scrollDurationDrumToValue('hour', String(selectedDurationHour), 'auto');
-                            scrollDurationDrumToValue('minute', String(selectedDurationMinute).padStart(2, '0'), 'auto');
-                        }, 50);
+                        const hInput = document.getElementById('custom-duration-hours-input');
+                        const mInput = document.getElementById('custom-duration-minutes-input');
+                        if (hInput) hInput.value = selectedDurationHour;
+                        if (mInput) mInput.value = selectedDurationMinute;
+                        updateCustomDurationText();
                     } else {
                         if (wrapper) wrapper.style.display = 'none';
                         selectedDuration = parseInt(newChip.dataset.minutes);
@@ -1305,15 +1004,14 @@
                     backBtn.style.visibility = 'visible';
                 }
                 nextBtn.textContent = '次へ';
-                setTimeout(() => {
-                    scrollDrumToValue('hour', selectedHour, 'auto');
-                    scrollDrumToValue('minute', selectedMinute, 'auto');
-                    const wrapper = document.getElementById('custom-duration-picker-wrapper');
-                    if (wrapper && wrapper.style.display !== 'none') {
-                        scrollDurationDrumToValue('hour', String(selectedDurationHour), 'auto');
-                        scrollDurationDrumToValue('minute', String(selectedDurationMinute).padStart(2, '0'), 'auto');
-                    }
-                }, 50);
+                const wrapper = document.getElementById('custom-duration-picker-wrapper');
+                if (wrapper && wrapper.style.display !== 'none') {
+                    const hInput = document.getElementById('custom-duration-hours-input');
+                    const mInput = document.getElementById('custom-duration-minutes-input');
+                    if (hInput) hInput.value = selectedDurationHour;
+                    if (mInput) mInput.value = selectedDurationMinute;
+                    updateCustomDurationText();
+                }
             } else if (step === 3) {
                 backBtn.style.visibility = 'visible';
                 nextBtn.textContent = currentEditingId ? '保存' : '作成';
@@ -1372,36 +1070,18 @@
 
             // 締め切り日付の設定
             let dVal = "";
-            let startTimeStr = '12:00';
             if (task.deadline) {
-                const parts = task.deadline.split('T');
-                dVal = parts[0];
-                if (parts.length >= 2) startTimeStr = parts[1];
+                if (task.deadline.includes('T')) {
+                    dVal = task.deadline.substring(0, 16); // 秒等を取り除き YYYY-MM-DDTHH:MM にする
+                } else {
+                    dVal = `${task.deadline}T12:00`;
+                }
             } else {
                 const today = new Date();
                 const pad = (n) => String(n).padStart(2, '0');
-                dVal = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+                dVal = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}T12:00`;
             }
             document.getElementById('schedule-startdate').value = dVal;
-
-            // 時間ドラムピッカー値の設定
-            initTimeWheelSelects();
-            let sh = '12';
-            let sm = '00';
-            if (startTimeStr) {
-                const parts = startTimeStr.split(':');
-                if (parts.length >= 2) {
-                    sh = parts[0];
-                    sm = parts[1];
-                }
-            }
-            const mVal = String(Math.round(parseInt(sm) / 5) * 5 % 60).padStart(2, '0');
-            selectedHour = sh;
-            selectedMinute = mVal;
-            setTimeout(() => {
-                scrollDrumToValue('hour', sh, 'auto');
-                scrollDrumToValue('minute', mVal, 'auto');
-            }, 150);
 
             // 期間の計算
             initDurationChips();
@@ -1426,11 +1106,11 @@
                 if (wrapper) wrapper.style.display = 'block';
                 selectedDurationHour = Math.floor(selectedDuration / 60);
                 selectedDurationMinute = selectedDuration % 60;
-                initDurationWheelSelects();
-                setTimeout(() => {
-                    scrollDurationDrumToValue('hour', String(selectedDurationHour), 'auto');
-                    scrollDurationDrumToValue('minute', String(selectedDurationMinute).padStart(2, '0'), 'auto');
-                }, 150);
+                const hInput = document.getElementById('custom-duration-hours-input');
+                const mInput = document.getElementById('custom-duration-minutes-input');
+                if (hInput) hInput.value = selectedDurationHour;
+                if (mInput) mInput.value = selectedDurationMinute;
+                updateCustomDurationText();
             } else {
                 if (wrapper) wrapper.style.display = 'none';
             }
@@ -1466,19 +1146,11 @@
             if (energyInput) energyInput.checked = true;
             updateEnergyLabel(2);
 
-            // 今日をデフォルト日付にする
+            // 今日をデフォルト日時にする
             const today = new Date();
             const pad = (n) => String(n).padStart(2, '0');
-            const dVal = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+            const dVal = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}T${pad(today.getHours())}:${pad(today.getMinutes())}`;
             document.getElementById('schedule-startdate').value = dVal;
-
-            initTimeWheelSelects();
-            selectedHour = '12';
-            selectedMinute = '00';
-            setTimeout(() => {
-                scrollDrumToValue('hour', '12', 'auto');
-                scrollDrumToValue('minute', '00', 'auto');
-            }, 150);
 
             initDurationChips();
             const container = document.getElementById('duration-chips-container');
@@ -1535,20 +1207,22 @@
             const energy = normalizeEnergyValue(document.querySelector('input[name="energy"]:checked').value);
             const recurrence = document.getElementById('task-recurrence').value;
 
-            // 時間合成
-            const startTimeStr = `${selectedHour}:${selectedMinute}`;
-            const deadlineVal = dateVal ? `${dateVal}T${startTimeStr}` : "";
+            const deadlineVal = dateVal || "";
 
             let tasks = getSavedTasks();
 
             // カレンダー連携用
-            let startDate = dateVal || "";
-            let startTime = startTimeStr;
-            let endDate = dateVal || "";
+            let startDate = "";
+            let startTime = "";
+            let endDate = "";
             let endTime = "";
 
             if (dateVal) {
-                const startDateTime = new Date(`${dateVal}T${startTimeStr}`);
+                const parts = dateVal.split('T');
+                startDate = parts[0];
+                startTime = parts[1] || "12:00";
+
+                const startDateTime = new Date(dateVal);
                 if (!isNaN(startDateTime.getTime())) {
                     const endDateTime = new Date(startDateTime.getTime() + totalMinutes * 60 * 1000);
                     const pad = (n) => String(n).padStart(2, '0');
@@ -1680,19 +1354,10 @@
             }
 
             // --- クイック追加カード制御ロジック ---
-            const quickDateBtn = document.getElementById('quick-date-btn');
             const quickTaskDate = document.getElementById('quick-task-date');
             const quickDateLabel = document.getElementById('quick-date-label');
 
-            if (quickDateBtn && quickTaskDate) {
-                quickDateBtn.addEventListener('click', () => {
-                    if (typeof quickTaskDate.showPicker === 'function') {
-                        quickTaskDate.showPicker();
-                    } else {
-                        quickTaskDate.click();
-                    }
-                });
-
+            if (quickTaskDate) {
                 quickTaskDate.addEventListener('change', () => {
                     const val = quickTaskDate.value;
                     if (val) {
@@ -1708,6 +1373,25 @@
                         quickDateLabel.textContent = '期限を設定';
                     }
                 });
+            }
+
+            // カスタム所要時間インプット（number）の変更リスナー
+            const durationHoursInput = document.getElementById('custom-duration-hours-input');
+            const durationMinutesInput = document.getElementById('custom-duration-minutes-input');
+            if (durationHoursInput && durationMinutesInput) {
+                const onDurationChange = () => {
+                    let h = parseInt(durationHoursInput.value, 10) || 0;
+                    let m = parseInt(durationMinutesInput.value, 10) || 0;
+                    h = Math.min(23, Math.max(0, h));
+                    m = Math.min(59, Math.max(0, m));
+                    durationHoursInput.value = h;
+                    durationMinutesInput.value = m;
+                    selectedDurationHour = h;
+                    selectedDurationMinute = m;
+                    updateCustomDurationText();
+                };
+                durationHoursInput.addEventListener('input', onDurationChange);
+                durationMinutesInput.addEventListener('input', onDurationChange);
             }
 
             // タスク追加処理（LocalStorage 保存）
@@ -1744,7 +1428,7 @@
                         }
                     }
 
-                    const memoVal = quickTaskMemo ? quickTaskMemo.value.trim() : "";
+                    const memoVal = "";
                     const energyInput = document.querySelector('input[name="quick-energy"]:checked');
                     const energy = energyInput ? parseInt(energyInput.value, 10) : 2;
 
@@ -1765,7 +1449,7 @@
                         endTime: endTime,
                         icon: getTaskIcon(title),
                         type: "study",
-                        color: quickSelectedColor,
+                        color: "pink",
                         energy: energy
                     };
 
@@ -1779,30 +1463,8 @@
                     quickDateLabel.textContent = '期限を設定';
                     document.getElementById('quick-task-hours').value = '0';
                     document.getElementById('quick-task-minutes').value = '30';
-                    selectQuickColor('pink');
                     const defaultQuickEnergy = document.getElementById('qe-2');
                     if (defaultQuickEnergy) defaultQuickEnergy.checked = true;
-                    if (quickTaskMemo) quickTaskMemo.value = '';
-                    if (quickMemoRow) quickMemoRow.style.display = 'none';
-                    if (quickMemoBtn) quickMemoBtn.classList.remove('active');
-                });
-            }
-
-            // --- クイック追加カード メモボタン制御ロジック ---
-            const quickMemoBtn = document.getElementById('quick-memo-btn');
-            const quickMemoRow = document.getElementById('quick-memo-row');
-            const quickTaskMemo = document.getElementById('quick-task-memo');
-
-            if (quickMemoBtn && quickMemoRow) {
-                quickMemoBtn.addEventListener('click', () => {
-                    if (quickMemoRow.style.display === 'none') {
-                        quickMemoRow.style.display = 'block';
-                        quickMemoBtn.classList.add('active');
-                        if (quickTaskMemo) quickTaskMemo.focus();
-                    } else {
-                        quickMemoRow.style.display = 'none';
-                        quickMemoBtn.classList.remove('active');
-                    }
                 });
             }
 
