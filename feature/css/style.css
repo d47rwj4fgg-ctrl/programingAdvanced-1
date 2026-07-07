@@ -246,6 +246,7 @@ body.daily-main-page {
             font-weight: 700;
             color: #64748b;
             margin-bottom: 3px;
+            white-space: nowrap;
         }
 
         .day-num {
@@ -259,6 +260,7 @@ body.daily-main-page {
             justify-content: center;
             border-radius: 50%;
             transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
         &:hover .day-num {
@@ -2389,9 +2391,9 @@ body.monthly-main-page:not(.daily-main-page) {
 }
 
 .selection-toolbar-btn.primary {
-    background: linear-gradient(135deg, #ffb1b6, #ffa2b2);
+    background: linear-gradient(135deg, #ff758c, #ff4f6e);
     color: #ffffff;
-    box-shadow: 0 6px 14px rgba(255, 112, 130, 0.18);
+    box-shadow: 0 6px 14px rgba(255, 79, 110, 0.25);
 }
 
 .icon-btn.active {
@@ -3730,6 +3732,46 @@ body.register-page:not(.daily-main-page) {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     cursor: default;
     transition: none;
+}
+
+/* スマートフォン実機向けのレスポンシブオーバーライド */
+@media (max-width: 480px) {
+    body.daily-main-page, body.register-page {
+        background-color: #f8fafc !important;
+        background-image: none !important;
+    }
+    
+    .pc-info {
+        display: none !important;
+    }
+    
+    .phone-frame {
+        border: none !important;
+        border-radius: 0 !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        height: 100vh !important;
+        max-height: 100% !important;
+        box-shadow: none !important;
+    }
+    
+    .phone-notch {
+        display: none !important; /* 実機には物理ノッチがあるので仮想ノッチは非表示 */
+    }
+    
+    .status-bar {
+        padding-top: env(safe-area-inset-top, 20px) !important;
+        height: calc(44px + env(safe-area-inset-top, 0px)) !important;
+    }
+    
+    .modal-overlay {
+        align-items: flex-start !important;
+        padding-top: 44px !important;
+    }
+    
+    .modal-box {
+        max-height: 90vh !important;
+    }
 }
 
 
