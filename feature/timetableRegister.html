@@ -180,6 +180,17 @@
                         </label>
                     </div>
                 </div>
+
+                <div class="config-form-group" style="margin-top: 14px;">
+                    <label class="config-label">学期期間（開始日 〜 終了日）</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="date" id="term-start-date" class="config-select" style="flex: 1; padding: 8px 10px; font-size: 13px; font-family: inherit;">
+                        <span style="font-size: 13px; color: #64748b;">〜</span>
+                        <input type="date" id="term-end-date" class="config-select" style="flex: 1; padding: 8px 10px; font-size: 13px; font-family: inherit;">
+                    </div>
+                    <span style="font-size: 11px; color: #94a3b8; margin-top: 4px; display: block;">※期間を設定すると、デイリー画面のその期間内のみ時間割が自動反映されます。</span>
+                </div>
+
             </div>
             <div class="config-modal-footer-fixed">
                 <button class="btn-primary-blue" onclick="saveTermConfig()">変更する</button>
@@ -195,7 +206,7 @@
                 <div class="config-modal-title">時限・曜日・授業時間</div>
             </div>
             <div class="config-modal-body">
-                <div class="config-form-row">
+                <div class="config-form-row" style="margin-bottom: 12px;">
                     <div class="config-form-group">
                         <label class="config-label">時限数</label>
                         <select id="config-periods-select" class="config-select" onchange="onPeriodsChange(this.value)">
@@ -214,6 +225,15 @@
                             <option value="everyday">毎日</option>
                         </select>
                     </div>
+                </div>
+
+                <div class="config-form-group" style="margin-bottom: 14px;">
+                    <label class="config-label">カレンダーへの自動反映設定</label>
+                    <select id="config-reflect-select" class="config-select">
+                        <option value="auto">期間内のみ自動で反映する</option>
+                        <option value="always">常に反映する (期間を無視)</option>
+                        <option value="off">反映しない</option>
+                    </select>
                 </div>
 
                 <div class="config-form-group" style="margin-top: 10px;">
@@ -269,6 +289,7 @@
         const DEFAULT_CONFIG = {
             periods: 5,
             daysType: "week-sat",
+            reflectMode: "auto", // デフォルトは期間内のみ自動反映
             periodTimes: {
                 "1": { "start": "08:50", "end": "10:20" },
                 "2": { "start": "10:30", "end": "12:00" },
@@ -285,6 +306,92 @@
             "week-sat": { count: 6, labels: ["月", "火", "水", "木", "金", "土"], indices: [0, 1, 2, 3, 4, 5] },
             "everyday": { count: 7, labels: ["月", "火", "水", "木", "金", "土", "日"], indices: [0, 1, 2, 3, 4, 5, 6] }
         };
+
+        // --- データ管理ヘルパー ---
+
+        // 学期ごとの時間割リストを取得 (マイグレーション対応)
+        function getTimetableList() {
+            let list = localStorage.getItem('savedTimetableList');
+            if (!list) {
+                // 古い savedTimetable がある場合は移行する
+                const oldTimetable = localStorage.getItem('savedTimetable');
+                if (oldTimetable) {
+                    try {
+                        const parsed = JSON.parse(oldTimetable);
+                        const termParts = parsed.term ? parsed.term.split('年 ') : ["2026", "1学期 / 前期 / 春学期"];
+                        const year = termParts[0] || "2026";
+                        const semester = termParts[1] || "1学期 / 前期 / 春学期";
+                        const defaultTermObj = {
+                            termId: `${year}-${semester}`,
+                            year: year,
+                            semester: semester,
+                            startDate: "",
+                            endDate: "",
+                            selectedSlots: parsed.selectedSlots || { "0": [], "1": [], "2": [], "3": [], "4": [], "5": [], "6": [] }
+                        };
+                        list = [defaultTermObj];
+                        localStorage.setItem('savedTimetableList', JSON.stringify(list));
+                        localStorage.setItem('currentTermId', defaultTermObj.termId);
+                    } catch(e) {
+                        list = [];
+                    }
+                } else {
+                    list = [];
+                }
+            } else {
+                list = JSON.parse(list);
+            }
+            return list;
+        }
+
+        // 現在編集中の学期IDを取得
+        function getCurrentTermId() {
+            let termId = localStorage.getItem('currentTermId');
+            if (!termId) {
+                const list = getTimetableList();
+                if (list.length > 0) {
+                    termId = list[0].termId;
+                } else {
+                    termId = "2026-1学期 / 前期 / 春学期";
+                }
+                localStorage.setItem('currentTermId', termId);
+            }
+            return termId;
+        }
+
+        // 指定の学期オブジェクトを取得
+        function getTermObj(termId) {
+            const list = getTimetableList();
+            let obj = list.find(t => t.termId === termId);
+            if (!obj) {
+                const parts = termId.split('-');
+                const year = parts[0] || "2026";
+                const semester = parts[1] || "1学期 / 前期 / 春学期";
+                obj = {
+                    termId: termId,
+                    year: year,
+                    semester: semester,
+                    startDate: "",
+                    endDate: "",
+                    selectedSlots: { "0": [], "1": [], "2": [], "3": [], "4": [], "5": [], "6": [] }
+                };
+                list.push(obj);
+                localStorage.setItem('savedTimetableList', JSON.stringify(list));
+            }
+            return obj;
+        }
+
+        // 学期オブジェクトを保存
+        function saveTermObj(obj) {
+            const list = getTimetableList();
+            const idx = list.findIndex(t => t.termId === obj.termId);
+            if (idx !== -1) {
+                list[idx] = obj;
+            } else {
+                list.push(obj);
+            }
+            localStorage.setItem('savedTimetableList', JSON.stringify(list));
+        }
 
         // 時間オプションHTMLの生成（08:00〜22:00まで5分刻み）
         function generateTimeOptions(selectedVal) {
@@ -305,12 +412,9 @@
             const container = document.getElementById('timetable-grid-container');
             if (!container) return;
 
-            // データ読み込み
             const config = JSON.parse(localStorage.getItem('timetableConfig')) || DEFAULT_CONFIG;
-            const timetable = JSON.parse(localStorage.getItem('savedTimetable')) || {
-                term: "2026年 1学期",
-                selectedSlots: { "0": [], "1": [], "2": [], "3": [], "4": [], "5": [], "6": [] }
-            };
+            const termId = getCurrentTermId();
+            const termObj = getTermObj(termId);
 
             const dayInfo = dayConfigMap[config.daysType] || dayConfigMap["week-sat"];
             const periodCount = parseInt(config.periods);
@@ -328,7 +432,6 @@
             // 2. 時限ごとの行
             for (let p = 1; p <= periodCount; p++) {
                 const times = config.periodTimes[p] || { start: "08:00", end: "09:30" };
-                // 開始・終了時間の表示テキスト成形 (08:50 -> 08:50)
                 const startStr = times.start;
                 const endStr = times.end;
 
@@ -356,12 +459,12 @@
                 const day = cell.dataset.day;
                 const period = parseInt(cell.dataset.period);
 
-                if (timetable.selectedSlots[day] && timetable.selectedSlots[day].includes(period)) {
+                if (termObj.selectedSlots[day] && termObj.selectedSlots[day].includes(period)) {
                     cell.classList.add('selected');
                 }
 
                 cell.addEventListener('click', () => {
-                    const dayList = timetable.selectedSlots[day] || [];
+                    const dayList = termObj.selectedSlots[day] || [];
                     const index = dayList.indexOf(period);
                     
                     if (index === -1) {
@@ -372,8 +475,15 @@
                         cell.classList.remove('selected');
                     }
                     
-                    timetable.selectedSlots[day] = dayList;
-                    localStorage.setItem('savedTimetable', JSON.stringify(timetable));
+                    termObj.selectedSlots[day] = dayList;
+                    saveTermObj(termObj);
+
+                    // レガシーデータ互換のため savedTimetable も更新しておく
+                    const legacyData = {
+                        term: `${termObj.year}年 ${termObj.semester}`,
+                        selectedSlots: termObj.selectedSlots
+                    };
+                    localStorage.setItem('savedTimetable', JSON.stringify(legacyData));
                 });
             });
 
@@ -396,19 +506,17 @@
 
         // 1. 年度・学期切替モーダル
         function openTermModal() {
-            const timetable = JSON.parse(localStorage.getItem('savedTimetable')) || { term: "2026年 1学期" };
-            const parts = timetable.term.split('年 ');
-            let year = "2026";
-            let semester = "1学期 / 前期 / 春学期";
-            if (parts.length >= 2) {
-                year = parts[0];
-                semester = parts[1];
-            }
+            const termId = getCurrentTermId();
+            const termObj = getTermObj(termId);
 
-            document.getElementById('term-year-select').value = year;
+            document.getElementById('term-year-select').value = termObj.year;
             
-            const radio = document.querySelector(`input[name="term-semester"][value="${semester}"]`);
+            const radio = document.querySelector(`input[name="term-semester"][value="${termObj.semester}"]`);
             if (radio) radio.checked = true;
+
+            // 期間もセット
+            document.getElementById('term-start-date').value = termObj.startDate || '';
+            document.getElementById('term-end-date').value = termObj.endDate || '';
 
             document.getElementById('term-modal').classList.add('active');
         }
@@ -420,16 +528,39 @@
         function saveTermConfig() {
             const year = document.getElementById('term-year-select').value;
             const semester = document.querySelector('input[name="term-semester"]:checked').value;
-            const newTerm = `${year}年 ${semester}`;
+            const startDate = document.getElementById('term-start-date').value;
+            const endDate = document.getElementById('term-end-date').value;
+            const newTermId = `${year}-${semester}`;
 
-            let timetable = JSON.parse(localStorage.getItem('savedTimetable')) || {
-                selectedSlots: { "0": [], "1": [], "2": [], "3": [], "4": [], "5": [], "6": [] }
-            };
-            timetable.term = newTerm;
-            localStorage.setItem('savedTimetable', JSON.stringify(timetable));
+            // 新学期オブジェクトを取得（既存データがあればそのまま保持、無ければ新規）
+            const termObj = getTermObj(newTermId);
+            termObj.startDate = startDate;
+            termObj.endDate = endDate;
+            saveTermObj(termObj);
 
-            document.getElementById('term-title').textContent = newTerm;
+            // 現在編集中の学期IDを更新
+            localStorage.setItem('currentTermId', newTermId);
+
+            // 画面タイトルの更新
+            updateTermTitleDisplay(termObj);
+
+            renderTimetableGrid();
             closeTermModal();
+        }
+
+        // ヘッダーの学期タイトル表示を更新
+        function updateTermTitleDisplay(termObj) {
+            const el = document.getElementById('term-title');
+            if (!el) return;
+
+            let dateRangeStr = '';
+            if (termObj.startDate && termObj.endDate) {
+                const start = termObj.startDate.replace(/^\d{4}-/, '').replace('-', '/');
+                const end = termObj.endDate.replace(/^\d{4}-/, '').replace('-', '/');
+                dateRangeStr = ` (${start}〜${end})`;
+            }
+
+            el.textContent = `${termObj.year}年 ${termObj.semester}${dateRangeStr}`;
         }
 
         // 2. 設定（時限・曜日・時間）モーダル
@@ -438,6 +569,7 @@
 
             document.getElementById('config-periods-select').value = config.periods;
             document.getElementById('config-days-select').value = config.daysType;
+            document.getElementById('config-reflect-select').value = config.reflectMode || "auto";
 
             buildClassTimeSettings(config.periods, config.periodTimes);
 
@@ -461,7 +593,6 @@
 
             let html = '';
             for (let p = 1; p <= periodsCount; p++) {
-                // デフォルト時間フォールバック定義
                 const defaultTimes = DEFAULT_CONFIG.periodTimes[p] || { start: "18:00", end: "19:30" };
                 const times = savedTimes[p] || defaultTimes;
 
@@ -485,6 +616,7 @@
         function saveTimetableConfig() {
             const periods = parseInt(document.getElementById('config-periods-select').value);
             const daysType = document.getElementById('config-days-select').value;
+            const reflectMode = document.getElementById('config-reflect-select').value;
             
             const rows = document.querySelectorAll('.class-time-row');
             const periodTimes = {};
@@ -498,6 +630,7 @@
             const newConfig = {
                 periods: periods,
                 daysType: daysType,
+                reflectMode: reflectMode,
                 periodTimes: periodTimes
             };
 
@@ -518,9 +651,13 @@
             setInterval(updateStatusBarTime, 1000);
             initSidebar();
 
-            // 時間割タイトルの初期設定
-            const timetable = JSON.parse(localStorage.getItem('savedTimetable')) || { term: "2026年 1学期" };
-            document.getElementById('term-title').textContent = timetable.term;
+            // 学期リストの初期化と現在のアクティブ学期の読み込み
+            const list = getTimetableList();
+            const currentTermId = getCurrentTermId();
+            const termObj = getTermObj(currentTermId);
+
+            // タイトルの初期設定
+            updateTermTitleDisplay(termObj);
 
             // 初期描画
             renderTimetableGrid();

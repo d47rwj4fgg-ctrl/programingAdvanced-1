@@ -110,16 +110,27 @@
             <div class="task-container" id="scroll-container" style="overflow-y: auto; flex: 1; padding: 16px 20px;">
                 <div class="card">
                     <h2 style="font-size: 16px; font-weight: 800; color: #1c1c1e; margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
-                        <span>⚡️</span> エネルギー目標設定
+                        <span>⚡️</span> エネルギー総量設定
                     </h2>
                     <p style="font-size: 13px; color: #64748b; margin-top: 0; margin-bottom: 16px; line-height: 1.5;">
-                        1日のデフォルト目標エネルギー量を設定します。この値は各日付の初期値として表示されますが、デイリーカレンダー画面から個別の日付ごとに一時的な変更を行うことも可能です。
+                        1日のデフォルト総エネルギー量を設定します。この値は各日付の初期値として表示されますが、デイリーカレンダー画面から個別の日付ごとに一時的な変更を行うことも可能です。
                     </p>
                     
                     <div class="form-group" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px;">
-                        <label style="font-size: 12px; font-weight: 700; color: #64748b;">デフォルト目標エネルギー量</label>
-                        <input type="number" id="default-max-energy" min="1" max="99" value="10" 
-                            style="width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; background-color: #f8fafc; outline: none; font-size: 15px; font-weight: 600;">
+                        <label style="font-size: 12px; font-weight: 700; color: #64748b;">デフォルト総エネルギー量</label>
+                        <div class="drum-picker-container" style="height: 120px; width: 140px; margin: 8px auto; justify-content: center; position: relative;">
+                            <div class="drum-picker" id="drum-energy" style="height: 100%; width: 100%;">
+                                <div class="drum-picker-scroll" id="drum-energy-scroll" style="height: 100%; overflow-y: auto; scroll-snap-type: y mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; &::-webkit-scrollbar { display: none; }">
+                                    <div class="drum-picker-padding-top" style="height: 45px;"></div>
+                                    <div class="drum-picker-list" id="drum-energy-list" style="display: flex; flex-direction: column; align-items: center;">
+                                        <!-- JSで1〜50の数値を動的生成 -->
+                                    </div>
+                                    <div class="drum-picker-padding-bottom" style="height: 45px;"></div>
+                                </div>
+                            </div>
+                            <!-- 選択位置のハイライトバー -->
+                            <div class="drum-picker-overlay" style="position: absolute; top: 45px; left: 0; right: 0; height: 30px; border-top: 1.5px solid #FF7082; border-bottom: 1.5px solid #FF7082; background: rgba(255, 112, 130, 0.05); pointer-events: none;"></div>
+                        </div>
                     </div>
                     
                     <button type="button" class="action-btn-primary" onclick="saveSettings()" style="width: 100%; padding: 12px; border-radius: 12px; font-weight: bold; background: linear-gradient(135deg, #FFB1B6, #FFA2B2); color: white; border: none; cursor: pointer;">設定を保存</button>
@@ -189,29 +200,82 @@
             });
         }
 
+        // --- 総エネルギー量のドラムロール制御 ---
+        let selectedMaxEnergy = 10;
+        let energyDrumScrollTimer = null;
+
+        function initEnergyDrumPicker() {
+            const list = document.getElementById('drum-energy-list');
+            if (!list) return;
+            list.innerHTML = '';
+
+            // 1〜50までの数値を生成
+            for (let i = 1; i <= 50; i++) {
+                const item = document.createElement('div');
+                item.className = 'drum-picker-item';
+                item.dataset.value = i;
+                item.textContent = i;
+                item.style.height = '30px';
+                item.style.lineHeight = '30px';
+                item.style.fontSize = '15px';
+                item.style.fontWeight = 'bold';
+                item.style.color = '#1e293b';
+                item.style.scrollSnapAlign = 'center';
+                list.appendChild(item);
+            }
+
+            const el = document.getElementById('drum-energy-scroll');
+            if (el) {
+                el.onscroll = null;
+                el.addEventListener('scroll', () => {
+                    window.clearTimeout(energyDrumScrollTimer);
+                    energyDrumScrollTimer = setTimeout(() => {
+                        onEnergyDrumScrollEnd(el);
+                    }, 80);
+                });
+            }
+        }
+
+        function onEnergyDrumScrollEnd(el) {
+            const scrollTop = el.scrollTop;
+            const itemHeight = 30;
+            const index = Math.round(scrollTop / itemHeight);
+            
+            const maxIndex = 49;
+            const finalIndex = Math.max(0, Math.min(maxIndex, index));
+            
+            el.scrollTo({ top: finalIndex * itemHeight, behavior: 'smooth' });
+            selectedMaxEnergy = finalIndex + 1;
+        }
+
+        function scrollEnergyDrumToValue(val, behavior = 'smooth') {
+            const el = document.getElementById('drum-energy-scroll');
+            if (!el) return;
+            const itemHeight = 30;
+            const index = Math.max(1, Math.min(50, parseInt(val, 10) || 10)) - 1;
+            
+            el.scrollTo({ top: index * itemHeight, behavior: behavior });
+            selectedMaxEnergy = index + 1;
+        }
+
         // --- 設定値の読み込み ---
         function loadSettings() {
-            const defaultMaxEnergy = localStorage.getItem('maxEnergyConfig') || 10;
-            document.getElementById('default-max-energy').value = defaultMaxEnergy;
+            const defaultMaxEnergy = parseInt(localStorage.getItem('maxEnergyConfig'), 10) || 10;
+            initEnergyDrumPicker();
+            setTimeout(() => {
+                scrollEnergyDrumToValue(defaultMaxEnergy, 'auto');
+            }, 50);
         }
 
         // --- 設定値の保存 ---
         function saveSettings() {
-            const energyInput = document.getElementById('default-max-energy');
-            const energyVal = parseInt(energyInput.value, 10);
-
-            if (isNaN(energyVal) || energyVal <= 0) {
-                alert('1以上の正しい数値を入力してください。');
-                return;
-            }
-
-            localStorage.setItem('maxEnergyConfig', energyVal);
+            localStorage.setItem('maxEnergyConfig', selectedMaxEnergy);
             alert('設定を保存しました！');
         }
 
         // --- 設定のリセット ---
         function resetSettings() {
-            if (!confirm('目標エネルギーのデフォルト設定を10に戻し、日付別の個別設定もすべてクリアします。よろしいですか？')) return;
+            if (!confirm('総エネルギーのデフォルト設定を10に戻し、日付別の個別設定もすべてクリアします。よろしいですか？')) return;
             
             localStorage.setItem('maxEnergyConfig', '10');
             
