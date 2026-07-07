@@ -109,17 +109,26 @@
             <!-- スクロール可能なメインコンテンツ -->
             <div class="task-container" id="scroll-container" style="overflow-y: auto; flex: 1; padding: 16px 20px;">
                 
-                <!-- テンプレート選択・作成モード -->
-                <div class="card" style="margin-bottom: 16px;">
-                    <div class="form-group" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px;">
-                        <label style="font-size: 12px; font-weight: 700; color: #64748b;">操作モード</label>
+                <!-- iOS風セグメントコントロール (タブ) -->
+                <div class="segmented-control" style="margin-bottom: 16px;">
+                    <button type="button" class="segment-btn active" data-tab="register" onclick="switchTab('register')">📝 新規登録</button>
+                    <button type="button" class="segment-btn" data-tab="edit" onclick="switchTab('edit')">✏️ 編集・削除</button>
+                </div>
+
+                <!-- テンプレート選択ドロップダウン（編集モードのみ表示） -->
+                <div id="edit-select-container" class="card" style="display: none; margin-bottom: 16px;">
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 12px; font-weight: 700; color: #64748b;">編集するテンプレートを選択</label>
                         <select id="template-select" style="width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; background-color: #f8fafc; outline: none; font-size: 14px; font-weight: 600; color: #1e293b;">
-                            <option value="new">-- 新規テンプレートを作成 --</option>
+                            <!-- 動的に追加 -->
                         </select>
                     </div>
+                </div>
 
+                <!-- テンプレート名カード（共通） -->
+                <div class="card" style="margin-bottom: 16px;">
                     <div class="form-group" style="display: flex; flex-direction: column; gap: 6px;">
-                        <label style="font-size: 12px; font-weight: 700; color: #64748b;">テンプレート名</label>
+                        <label id="template-name-label" style="font-size: 12px; font-weight: 700; color: #64748b;">テンプレート名</label>
                         <input type="text" id="templateMasterName" placeholder="例: 朝の用意" style="width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; background-color: #f8fafc; outline: none; font-size: 14px; font-weight: 600;">
                     </div>
                 </div>
@@ -134,7 +143,7 @@
                     <!-- 動的生成 -->
                 </div>
 
-                <!-- 削除ボタン（既存テンプレート選択時のみ表示） -->
+                <!-- 削除ボタン（編集モードのみ表示） -->
                 <button type="button" id="deleteTemplateBtn" style="display: none; width: 100%; padding: 12px; border-radius: 12px; font-weight: bold; background-color: #fee2e2; color: #ef4444; border: 1.5px solid #fca5a5; cursor: pointer; margin-top: 12px;">このテンプレートを削除</button>
 
             </div>

@@ -8,6 +8,7 @@ const saveBtn = document.getElementById('saveTemplateBtn');
 const deleteBtn = document.getElementById('deleteTemplateBtn');
 const templateSelect = document.getElementById('template-select');
 const masterNameInput = document.getElementById('templateMasterName');
+let currentMode = 'register'; // 'register' または 'edit'
 
 // 最初から1個だけ入力欄を出しておく
 window.addEventListener('DOMContentLoaded', () => {
@@ -18,8 +19,8 @@ window.addEventListener('DOMContentLoaded', () => {
     // 既存テンプレートのプルダウン構築
     loadTemplateSelectOptions();
     
-    // 初期状態は新規作成
-    resetToNewMode();
+    // 初期状態は新規作成タブ
+    switchTab('register');
     
     // イベント設定
     templateSelect.addEventListener('change', handleTemplateSelectChange);
@@ -62,10 +63,52 @@ function updateStatusBarTime() {
     }
 }
 
+// --- タブ切り替え ---
+function switchTab(tabId) {
+    currentMode = tabId;
+    
+    // タブボタンのアクティブ切り替え
+    document.querySelectorAll('.segment-btn').forEach(btn => {
+        if (btn.dataset.tab === tabId) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    const editSelectContainer = document.getElementById('edit-select-container');
+    const nameLabel = document.getElementById('template-name-label');
+
+    if (tabId === 'register') {
+        if (editSelectContainer) editSelectContainer.style.display = 'none';
+        if (nameLabel) nameLabel.textContent = 'テンプレート名';
+        deleteBtn.style.display = 'none';
+        resetToNewMode();
+    } else {
+        if (editSelectContainer) editSelectContainer.style.display = 'block';
+        if (nameLabel) nameLabel.textContent = 'テンプレート名（編集）';
+        
+        loadTemplateSelectOptions();
+        
+        if (templateSelect.options.length > 0) {
+            // 最初の既存テンプレートを選択
+            templateSelect.selectedIndex = 0;
+            handleTemplateSelectChange();
+            deleteBtn.style.display = 'block';
+        } else {
+            // 既存テンプレートがない場合
+            masterNameInput.value = '';
+            container.innerHTML = '';
+            deleteBtn.style.display = 'none';
+            alert('編集可能なテンプレートが登録されていません。まずは新規登録を行ってください。');
+            switchTab('register');
+        }
+    }
+}
+
 // 既存テンプレート一覧をロードしてプルダウンに追加
 function loadTemplateSelectOptions() {
-    // 既存のオプションをクリア（最初の新規オプションは残す）
-    templateSelect.innerHTML = '<option value="new">-- 新規テンプレートを作成 --</option>';
+    templateSelect.innerHTML = '';
     
     const templates = JSON.parse(localStorage.getItem('savedTemplates')) || {};
     Object.keys(templates).forEach(key => {
@@ -90,23 +133,20 @@ function resetToNewMode() {
 // プルダウンの選択が変わったときのハンドラ
 function handleTemplateSelectChange() {
     const val = templateSelect.value;
-    if (val === 'new') {
-        resetToNewMode();
-    } else {
-        // 既存テンプレートの編集
-        const templates = JSON.parse(localStorage.getItem('savedTemplates')) || {};
-        const templateData = templates[val];
+    if (!val) return;
+
+    const templates = JSON.parse(localStorage.getItem('savedTemplates')) || {};
+    const templateData = templates[val];
+    
+    if (templateData) {
+        masterNameInput.value = val;
+        container.innerHTML = '';
+        deleteBtn.style.display = 'block';
         
-        if (templateData) {
-            masterNameInput.value = val;
-            container.innerHTML = '';
-            deleteBtn.style.display = 'block';
-            
-            // 既存のタスクを展開
-            templateData.forEach(subTask => {
-                addSubTaskRow(subTask.title, subTask.duration);
-            });
-        }
+        // 既存のタスクを展開
+        templateData.forEach(subTask => {
+            addSubTaskRow(subTask.title, subTask.duration);
+        });
     }
 }
 
@@ -198,7 +238,7 @@ saveBtn.addEventListener('click', () => {
     let currentTemplates = JSON.parse(localStorage.getItem('savedTemplates')) || {};
 
     // 重複チェック
-    const isNew = templateSelect.value === 'new';
+    const isNew = currentMode === 'register';
     if (isNew && currentTemplates[masterName]) {
         if (!confirm(`テンプレート「${masterName}」は既に存在します。上書きしますか？`)) {
             return;
@@ -207,7 +247,7 @@ saveBtn.addEventListener('click', () => {
 
     // 元の名前から変更されて上書きする場合の処理（元のキーを消す）
     const originalVal = templateSelect.value;
-    if (originalVal !== 'new' && originalVal !== masterName) {
+    if (!isNew && originalVal && originalVal !== masterName) {
         delete currentTemplates[originalVal];
     }
 
@@ -221,7 +261,7 @@ saveBtn.addEventListener('click', () => {
 // 現在選択されているテンプレートを削除
 function deleteCurrentTemplate() {
     const val = templateSelect.value;
-    if (val === 'new') return;
+    if (!val) return;
     
     if (confirm(`本当にテンプレート「${val}」を削除しますか？`)) {
         let currentTemplates = JSON.parse(localStorage.getItem('savedTemplates')) || {};
@@ -229,7 +269,6 @@ function deleteCurrentTemplate() {
         localStorage.setItem('savedTemplates', JSON.stringify(currentTemplates));
         
         alert('テンプレートを削除しました。');
-        loadTemplateSelectOptions();
-        resetToNewMode();
+        switchTab('register');
     }
 }

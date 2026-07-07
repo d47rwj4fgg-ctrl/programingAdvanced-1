@@ -304,10 +304,7 @@
             </header>
 
             <div class="task-container" id="scroll-container">
-                <div class="control-bar">
-                    <div class="sort-tag-wrapper">
-                        <span class="sort-tag">期限順に並べ替え済み ▴</span>
-                    </div>
+                <div class="control-bar" style="justify-content: flex-end;">
                     <select class="sort-select" onchange="sortTasks(this.value)">
                         <option value="deadline">締め切り順</option>
                         <option value="time-asc">時間（短い順）</option>
