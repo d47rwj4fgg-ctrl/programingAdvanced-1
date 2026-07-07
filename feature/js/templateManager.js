@@ -111,7 +111,7 @@ function applyTemplateToSchedule(templateName) {
             icon: subTask.icon || getScheduleTemplateIcon(subTask.title),
             type: subTask.type || 'routine',
             notes: subTask.desc || '',
-            energy: 2,
+            energy: 0,
             color: 'pink',
             subtasks: []
         };

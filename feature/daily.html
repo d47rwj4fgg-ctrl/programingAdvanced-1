@@ -84,6 +84,10 @@
                     <span class="nav-icon">📍</span>
                     <span class="nav-text">拠点・移動設定</span>
                 </a>
+                <a href="settings.html" class="nav-item">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-text">設定</span>
+                </a>
 
 
             </nav>
@@ -108,9 +112,7 @@
                     <div class="header-center-title"
                         style="flex: 1; text-align: center; display: flex; justify-content: center; align-items: center; gap: 6px;">
                         <span id="header-date-title"
-                            style="font-weight: 800; font-size: 16px; color: var(--text-main);">6月2日（火）</span>
-                        <span id="header-date-badge" class="day-badge"
-                            style="font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 8px; background-color: #FFE4E6; color: #FF7082; display: none;">今日</span>
+                            style="font-weight: 800; font-size: 16px; color: var(--text-main); white-space: nowrap;">6月2日</span>
                     </div>
 <div class="header-icons" style="display: flex; align-items: center; gap: 8px;">
                         <!-- ⚡️ バッテリー風エネルギー残量インジケータ -->
@@ -155,6 +157,18 @@
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
                 </button>
+            </div>
+
+            <!-- 複数選択アクション用の下部フローティングツールバー -->
+            <div id="selection-toolbar" class="selection-toolbar" style="display: none; position: absolute; bottom: 30px; left: 16px; right: 16px; z-index: 100;">
+                <div class="selection-toolbar-inner">
+                    <span id="selection-toolbar-count" class="selection-toolbar-count">0件選択中</span>
+                    <div class="selection-toolbar-actions">
+                        <button type="button" class="selection-toolbar-btn danger" style="background-color: #ef4444; color: white;" onclick="deleteSelectedTasks()">削除</button>
+                        <button type="button" class="selection-toolbar-btn secondary" onclick="clearSelectedTimelineTasks()">解除</button>
+                        <button type="button" class="selection-toolbar-btn primary" onclick="openGroupTemplateModal()">グループ化</button>
+                    </div>
+                </div>
             </div>
 
             <!-- iOS風ホームインジケータ -->
@@ -317,6 +331,10 @@
                             <span class="modal-card-label">⚡️ 必要なエネルギー</span>
                             <div class="energy-radio-group">
                                 <label class="energy-radio-label">
+                                    <input type="radio" name="energy" value="0" onclick="updateEnergyLabel(0)">
+                                    <span class="energy-radio-btn">0なし</span>
+                                </label>
+                                <label class="energy-radio-label">
                                     <input type="radio" name="energy" value="1" onclick="updateEnergyLabel(1)">
                                     <span class="energy-radio-btn">1低い</span>
                                 </label>
@@ -331,6 +349,16 @@
                             </div>
                             <div style="text-align: center; font-size: 13px; font-weight: 600; color: #8e8e93;"
                                 id="energy-value-label">ふつう</div>
+                        </div>
+
+                        <!-- 繰り返し設定カード -->
+                        <div class="modal-card">
+                            <span class="modal-card-label">🔄 繰り返し</span>
+                            <select id="schedule-recurrence" style="width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; background-color: #f8fafc; outline: none; font-size: 14px; font-weight: 600; color: #1e293b;">
+                                <option value="none">なし</option>
+                                <option value="daily">毎日</option>
+                                <option value="weekly">毎週</option>
+                            </select>
                         </div>
 
                         <!-- ノートカード -->
@@ -401,7 +429,7 @@
                     date: `${month}/${dateNum}`,
                     name: dayNames[i],
                     num: dateNum,
-                    fullName: `${month}月${dateNum}日（${dayNames[i]}）`,
+                    fullName: `${month}月${dateNum}日`,
                     label: label,
                     isoDate: isoDate
                 });
@@ -458,14 +486,14 @@
 
         // localStorageに初期データが無い場合は、schedules初期データをインポートする
         function initLocalStorageData() {
-            if (!localStorage.getItem('savedTasks')) {
-                const initialTasks = [];
+            if (!localStorage.getItem('savedSchedules') && !localStorage.getItem('dataMigrated_v2')) {
+                const initialSchedules = [];
                 for (const dayId in schedules) {
                     const dayInfo = weekDays.find(d => d.id === parseInt(dayId));
                     if (!dayInfo) continue;
                     const isoDate = dayInfo.isoDate;
                     schedules[dayId].forEach((item, index) => {
-                        initialTasks.push({
+                        initialSchedules.push({
                             id: `init-${dayId}-${index}-${Date.now()}`,
                             title: item.title,
                             location: item.desc || "",
@@ -475,11 +503,49 @@
                             endDate: isoDate,
                             endTime: item.end,
                             icon: item.icon || "📅",
-                            type: item.type || "routine"
+                            type: item.type || "routine",
+                            energy: 0
                         });
                     });
                 }
-                localStorage.setItem('savedTasks', JSON.stringify(initialTasks));
+                localStorage.setItem('savedSchedules', JSON.stringify(initialSchedules));
+            }
+            migrateData();
+        }
+
+        // データマイグレーション：タスク（savedTasks）と予定（savedSchedules）の分離
+        function migrateData() {
+            if (!localStorage.getItem('dataMigrated_v2')) {
+                let allItems = [];
+                try {
+                    allItems = JSON.parse(localStorage.getItem('savedTasks')) || [];
+                } catch(e) {
+                    allItems = [];
+                }
+                
+                const schedulesList = [];
+                const tasksList = [];
+                
+                let existingSchedules = [];
+                try {
+                    existingSchedules = JSON.parse(localStorage.getItem('savedSchedules')) || [];
+                } catch(e) {
+                    existingSchedules = [];
+                }
+
+                allItems.forEach(item => {
+                    if (!item) return;
+                    if (item.startTime !== undefined || item.endTime !== undefined || item.groupId || item.startDate) {
+                        schedulesList.push(item);
+                    } else {
+                        tasksList.push(item);
+                    }
+                });
+
+                const mergedSchedules = [...existingSchedules, ...schedulesList];
+                localStorage.setItem('savedSchedules', JSON.stringify(mergedSchedules));
+                localStorage.setItem('savedTasks', JSON.stringify(tasksList));
+                localStorage.setItem('dataMigrated_v2', 'true');
             }
         }
 
@@ -546,11 +612,7 @@
             document.getElementById('header-date-title').textContent = dayInfo.fullName;
 
             const badge = document.getElementById('header-date-badge');
-            if (dayInfo.label === '今日' || dayInfo.label === '明日') {
-                badge.textContent = dayInfo.label;
-                badge.className = `day-badge ${dayInfo.label === '明日' ? 'tomorrow' : ''}`;
-                badge.style.display = 'inline-block';
-            } else {
+            if (badge) {
                 badge.style.display = 'none';
             }
 
@@ -565,16 +627,28 @@
             if (!activeDayInfo) return;
             const isoDate = activeDayInfo.isoDate;
 
-            // 1日の総エネルギー設定値を取得（未設定なら初期値10）
-            const maxEnergy = parseInt(localStorage.getItem('maxEnergyConfig')) || 10;
+            // 日付別の個別設定値があればそれを使い、無ければ全体デフォルト値を使う
+            const dailyMax = localStorage.getItem(`maxEnergyConfig_${isoDate}`);
+            const maxEnergy = dailyMax ? parseInt(dailyMax) : (parseInt(localStorage.getItem('maxEnergyConfig')) || 10);
             
             // 現在の曜日に登録されている全タスクの合計消費エネルギーを計算
-            const allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
-            const tasksForDay = allTasks.filter(t => t.startDate === isoDate);
+            const allTasks = JSON.parse(localStorage.getItem('savedSchedules')) || [];
+            const tasksForDay = allTasks.filter(t => {
+                if (t.startDate === isoDate) return true;
+                if (!t.recurrence || t.recurrence === 'none') return false;
+                if (t.startDate > isoDate) return false;
+                if (t.recurrence === 'daily') return true;
+                if (t.recurrence === 'weekly') {
+                    const startD = new Date(t.startDate);
+                    const targetDate = new Date(isoDate);
+                    return startD.getDay() === targetDate.getDay();
+                }
+                return false;
+            });
             
-            // 各タスクのエネルギー値を合計（デフォルトはふつうの「2」として計算）
+            // 各タスクのエネルギー値を合計（予定ごとのエネルギーが設定されていればそれを使い、設定されていなければ0とする）
             const usedEnergy = tasksForDay.reduce((sum, task) => {
-                const energyVal = task.energy !== undefined ? parseInt(task.energy) : 2;
+                const energyVal = task.energy !== undefined ? parseInt(task.energy) : 0;
                 return sum + energyVal;
             }, 0);
 
@@ -601,7 +675,12 @@
 
         // ⚡️ 総エネルギー変更ポップアップの制御ロジック
         function openMaxEnergyPrompt() {
-            const currentMax = localStorage.getItem('maxEnergyConfig') || 10;
+            const activeDayInfo = weekDays.find(d => d.id === currentActiveDay);
+            if (!activeDayInfo) return;
+            const isoDate = activeDayInfo.isoDate;
+            const dailyMax = localStorage.getItem(`maxEnergyConfig_${isoDate}`);
+            const currentMax = dailyMax ? parseInt(dailyMax) : (localStorage.getItem('maxEnergyConfig') || 10);
+            
             document.getElementById('max-energy-input').value = currentMax;
             document.getElementById('energy-prompt-modal').style.display = 'flex';
         }
@@ -616,7 +695,10 @@
                 alert('1以上の正しい数値を入力してください。');
                 return;
             }
-            localStorage.setItem('maxEnergyConfig', inputVal);
+            const activeDayInfo = weekDays.find(d => d.id === currentActiveDay);
+            if (activeDayInfo) {
+                localStorage.setItem(`maxEnergyConfig_${activeDayInfo.isoDate}`, inputVal);
+            }
             closeMaxEnergyPrompt();
             calculateAndRenderEnergy(); // バッテリー表示を即座に更新
         }
@@ -747,7 +829,7 @@
 
             const allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
             const availableTasks = allTasks
-                .filter(task => task.deadline && !task.completed)
+                .filter(task => !task.completed)
                 .map(task => ({
                     ...task,
                     durationMinutes: getTaskDurationMinutes(task)
@@ -830,8 +912,9 @@
                 sourceTaskId: sourceTask.id
             };
 
-            allTasks.push(newSchedule);
-            localStorage.setItem('savedTasks', JSON.stringify(allTasks));
+            let allSchedules = JSON.parse(localStorage.getItem('savedSchedules')) || [];
+            allSchedules.push(newSchedule);
+            localStorage.setItem('savedSchedules', JSON.stringify(allSchedules));
 
             closeTaskPickerModal();
             switchDay(currentActiveDay);
@@ -913,7 +996,7 @@
                 return;
             }
 
-            const allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+            const allTasks = JSON.parse(localStorage.getItem('savedSchedules')) || [];
             const selectedTasks = allTasks
                 .filter(task => selectedTimelineTaskIds.includes(String(task.id)))
                 .sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
@@ -948,7 +1031,7 @@
                 }
                 return task;
             });
-            localStorage.setItem('savedTasks', JSON.stringify(updatedTasks));
+            localStorage.setItem('savedSchedules', JSON.stringify(updatedTasks));
 
             closeGroupTemplateModal();
             clearSelectedTimelineTasks();
@@ -964,11 +1047,11 @@
                 return;
             }
 
-            let allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+            let allTasks = JSON.parse(localStorage.getItem('savedSchedules')) || [];
             const idsToDelete = selectedTimelineTaskIds.map(id => String(id));
             allTasks = allTasks.filter(task => !idsToDelete.includes(String(task.id)));
 
-            localStorage.setItem('savedTasks', JSON.stringify(allTasks));
+            localStorage.setItem('savedSchedules', JSON.stringify(allTasks));
 
             clearSelectedTimelineTasks();
             toggleSelectionMode(false);
@@ -977,8 +1060,157 @@
             alert('選択された予定を削除しました。');
         }
 
+        let activeTouchDrag = null;
+
+        // --- モバイル用タッチドラッグ制御 ---
+        function setupTouchDrag(handleEl, itemContainerEl) {
+            handleEl.addEventListener('touchstart', (e) => {
+                const dragId = handleEl.dataset.dragId;
+                if (!dragId) return;
+
+                // スクロールを防止するためにタッチイベントのアクティブ状態を管理
+                activeTouchDrag = {
+                    dragId: dragId,
+                    container: itemContainerEl,
+                    lastTargetTime: null
+                };
+
+                // ビジュアルフィードバック
+                if (dragId.startsWith('group:')) {
+                    const gId = dragId.substring(6);
+                    document.querySelectorAll(`.timeline-item[data-group-id="${gId}"] .task-card, .item-card-col[data-group-id="${gId}"] .task-card`).forEach(c => {
+                        c.classList.add('group-dragging');
+                    });
+                } else {
+                    const card = itemContainerEl.querySelector('.task-card') || itemContainerEl;
+                    card.classList.add('group-dragging');
+                }
+
+                // ツールチップ初期化
+                const tooltip = document.getElementById('drag-time-tooltip');
+                if (tooltip) {
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = `${e.touches[0].clientX + 15}px`;
+                    tooltip.style.top = `${e.touches[0].clientY + 15}px`;
+                    tooltip.textContent = `⏰ --:--`;
+                }
+            }, { passive: true });
+
+            handleEl.addEventListener('touchmove', (e) => {
+                if (!activeTouchDrag) return;
+                
+                // スクロールを完全に防止する
+                if (e.cancelable) {
+                    e.preventDefault();
+                }
+
+                const touchY = e.touches[0].clientY;
+                const touchX = e.touches[0].clientX;
+
+                const timelineEl = document.getElementById('structured-timeline');
+                if (timelineEl) {
+                    const rect = timelineEl.getBoundingClientRect();
+                    const relativeY = touchY - rect.top + timelineEl.scrollTop;
+                    const totalHeight = timelineEl.scrollHeight;
+
+                    const dayStart = 5 * 60;
+                    const dayEnd = 23 * 60;
+                    const totalMinutes = dayEnd - dayStart;
+
+                    if (totalHeight > 0) {
+                        const ratio = Math.max(0, Math.min(1, relativeY / totalHeight));
+                        const minutesFromStart = totalMinutes * ratio;
+                        const roundedMinutes = Math.round(minutesFromStart / 5) * 5;
+                        const targetMinutes = dayStart + roundedMinutes;
+                        const targetTimeStr = minutesToTime(targetMinutes);
+
+                        activeTouchDrag.lastTargetTime = targetTimeStr;
+
+                        // ツールチップ表示の更新
+                        const tooltip = document.getElementById('drag-time-tooltip');
+                        if (tooltip) {
+                            tooltip.style.left = `${touchX + 15}px`;
+                            tooltip.style.top = `${touchY + 15}px`;
+                            tooltip.textContent = `⏰ ${targetTimeStr}`;
+                        }
+
+                        // 各 Gap の上に重なっているか判定して hover クラスを切り替える
+                        document.querySelectorAll('.timeline-viewport .timeline-item.gap-item').forEach(gap => {
+                            const gapRect = gap.getBoundingClientRect();
+                            if (touchY >= gapRect.top && touchY <= gapRect.bottom) {
+                                gap.classList.add('drag-over');
+                                const timeStartEl = gap.querySelector('.time-start');
+                                if (timeStartEl) {
+                                    if (!timeStartEl.dataset.originalText) {
+                                        timeStartEl.dataset.originalText = timeStartEl.textContent;
+                                    }
+                                    timeStartEl.textContent = targetTimeStr;
+                                    timeStartEl.style.color = '#ff7082';
+                                    timeStartEl.style.fontWeight = '900';
+                                }
+                            } else {
+                                gap.classList.remove('drag-over');
+                                const timeStartEl = gap.querySelector('.time-start');
+                                if (timeStartEl && timeStartEl.dataset.originalText) {
+                                    timeStartEl.textContent = timeStartEl.dataset.originalText;
+                                    timeStartEl.dataset.originalText = '';
+                                    timeStartEl.style.color = '';
+                                    timeStartEl.style.fontWeight = '';
+                                }
+                            }
+                        });
+                    }
+                }
+            }, { passive: false });
+
+            handleEl.addEventListener('touchend', (e) => {
+                if (!activeTouchDrag) return;
+
+                const dragId = activeTouchDrag.dragId;
+                const targetTime = activeTouchDrag.lastTargetTime;
+
+                // フィードバッククラスのクリア
+                if (dragId.startsWith('group:')) {
+                    const gId = dragId.substring(6);
+                    document.querySelectorAll(`.timeline-item[data-group-id="${gId}"] .task-card, .item-card-col[data-group-id="${gId}"] .task-card`).forEach(c => {
+                        c.classList.remove('group-dragging');
+                    });
+                } else {
+                    const card = activeTouchDrag.container.querySelector('.task-card') || activeTouchDrag.container;
+                    card.classList.remove('group-dragging');
+                }
+
+                // すべての Gap の hover を解除
+                document.querySelectorAll('.timeline-viewport .timeline-item.gap-item').forEach(gap => {
+                    gap.classList.remove('drag-over');
+                    const timeStartEl = gap.querySelector('.time-start');
+                    if (timeStartEl && timeStartEl.dataset.originalText) {
+                        timeStartEl.textContent = timeStartEl.dataset.originalText;
+                        timeStartEl.dataset.originalText = '';
+                        timeStartEl.style.color = '';
+                        timeStartEl.style.fontWeight = '';
+                    }
+                });
+
+                const tooltip = document.getElementById('drag-time-tooltip');
+                if (tooltip) tooltip.style.display = 'none';
+
+                if (dragId && targetTime) {
+                    if (dragId.startsWith('group:')) {
+                        const groupId = dragId.substring(6);
+                        moveGroupToStartTime(groupId, targetTime);
+                    } else if (dragId.startsWith('single:')) {
+                        const taskId = dragId.substring(7);
+                        moveSingleTaskToStartTime(taskId, targetTime);
+                    }
+                }
+
+                activeTouchDrag = null;
+            });
+        }
+
         function moveGroupToStartTime(groupId, newStartStr) {
-            let allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+            let allTasks = JSON.parse(localStorage.getItem('savedSchedules')) || [];
             const groupTasks = allTasks
                 .filter(t => t.groupId === groupId)
                 .sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
@@ -1012,7 +1244,34 @@
                 return task;
             });
 
-            localStorage.setItem('savedTasks', JSON.stringify(allTasks));
+            localStorage.setItem('savedSchedules', JSON.stringify(allTasks));
+            switchDay(currentActiveDay);
+        }
+
+        function moveSingleTaskToStartTime(taskId, newStartStr) {
+            let allTasks = JSON.parse(localStorage.getItem('savedSchedules')) || [];
+            const task = allTasks.find(t => String(t.id) === String(taskId));
+            if (!task) return;
+
+            const originalStart = timeToMinutes(task.startTime);
+            const originalEnd = timeToMinutes(task.endTime);
+            const duration = originalEnd - originalStart;
+
+            const newStart = timeToMinutes(newStartStr);
+            const newEnd = newStart + duration;
+
+            allTasks = allTasks.map(t => {
+                if (String(t.id) === String(taskId)) {
+                    return {
+                        ...t,
+                        startTime: minutesToTime(newStart),
+                        endTime: minutesToTime(newEnd)
+                    };
+                }
+                return t;
+            });
+
+            localStorage.setItem('savedSchedules', JSON.stringify(allTasks));
             switchDay(currentActiveDay);
         }
 
@@ -1026,7 +1285,7 @@
             const isoDate = dayInfo.isoDate;
 
             // localStorage からデータを読み込む
-            const allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+            const allTasks = JSON.parse(localStorage.getItem('savedSchedules')) || [];
             const tasksForDay = allTasks.filter(t => t.startDate === isoDate);
 
             // 時間割データの自動マージ
@@ -1240,10 +1499,16 @@
                         const tooltip = document.getElementById('drag-time-tooltip');
                         if (tooltip) tooltip.style.display = 'none';
 
-                        const dragGroupId = e.dataTransfer.getData('text/plain');
-                        if (!dragGroupId || !currentDragTargetTime) return;
+                        const dragData = e.dataTransfer.getData('text/plain');
+                        if (!dragData || !currentDragTargetTime) return;
 
-                        moveGroupToStartTime(dragGroupId, currentDragTargetTime);
+                        if (dragData.startsWith('group:')) {
+                            const groupId = dragData.substring(6);
+                            moveGroupToStartTime(groupId, currentDragTargetTime);
+                        } else if (dragData.startsWith('single:')) {
+                            const taskId = dragData.substring(7);
+                            moveSingleTaskToStartTime(taskId, currentDragTargetTime);
+                        }
                     });
 
                     container.appendChild(itemDiv);
@@ -1344,13 +1609,13 @@
 
                         const taskColor = colorMap[task.color] || colorMap.pink;
                         card.innerHTML = `
-                            <div class="task-card" style="min-height: ${calculatedHeight}px; display: flex; flex-direction: column; justify-content: center; border-left: 4px solid ${taskColor.main}; background-color: ${taskColor.bg}; position: relative;">
-                                <div class="task-info">
-                                    <h3 class="task-title" style="color: #1e293b;">${task.icon} ${task.title}</h3>
-                                    <span class="task-desc" style="color: #64748b;">${task.start}〜${task.end}<br>${task.desc}</span>
-                                </div>
-                                <div class="task-meta" style="position: absolute; right: 8px; bottom: 8px; display: flex; align-items: center; gap: 8px; z-index: 20;">
-                                    ${isGroupFirst ? `<div class="group-drag-handle" draggable="true" data-group-id="${task.groupId}" style="cursor: grab; padding: 4px 6px; font-size: 13px; color: ${taskColor.main}; font-weight: bold; background: rgba(255,255,255,0.7); border: 1px solid ${taskColor.main}; border-radius: 6px; display: flex; align-items: center; justify-content: center; user-select: none;">☰</div>` : ''}
+                            <div class="task-card" style="min-height: ${calculatedHeight}px; display: flex; align-items: center; justify-content: space-between; border-left: 4px solid ${taskColor.main}; background-color: ${taskColor.bg}; position: relative; padding: 10px 14px 10px 48px; gap: 8px;">
+                                ${(!task.groupId || isGroupFirst) ? `
+                                <div class="group-drag-handle" draggable="true" data-drag-id="${task.groupId ? 'group:' + task.groupId : 'single:' + task.id}" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); cursor: grab; padding: 4px 6px; font-size: 12px; color: ${taskColor.main}; font-weight: bold; background: rgba(255,255,255,0.7); border: 1px solid ${taskColor.main}; border-radius: 6px; display: flex; align-items: center; justify-content: center; user-select: none; z-index: 20;">☰</div>
+                                ` : ''}
+                                <div class="task-info" style="flex: 1; min-width: 0;">
+                                    <h3 class="task-title" style="color: #1e293b; margin: 0; font-size: 13px;">${task.title}</h3>
+                                    <span class="task-desc" style="color: #64748b; font-size: 10px; line-height: 1.2;">${task.start}〜${task.end}<br>${task.desc}</span>
                                 </div>
                             </div>
                         `;
@@ -1373,23 +1638,34 @@
                         const handle = card.querySelector('.group-drag-handle');
                         if (handle) {
                             handle.addEventListener('dragstart', (e) => {
-                                e.dataTransfer.setData('text/plain', task.groupId);
+                                const dragId = handle.dataset.dragId;
+                                e.dataTransfer.setData('text/plain', dragId);
                                 e.dataTransfer.effectAllowed = 'move';
                                 
-                                // グループ全体の全カードに半透明スタイルを付与
-                                document.querySelectorAll(`.timeline-item[data-group-id="${task.groupId}"] .task-card, .item-card-col[data-group-id="${task.groupId}"] .task-card`).forEach(c => {
-                                    c.classList.add('group-dragging');
-                                });
-                                
-                                createGroupDragImage(e, task.groupId);
+                                if (dragId.startsWith('group:')) {
+                                    const gId = dragId.substring(6);
+                                    document.querySelectorAll(`.timeline-item[data-group-id="${gId}"] .task-card, .item-card-col[data-group-id="${gId}"] .task-card`).forEach(c => {
+                                        c.classList.add('group-dragging');
+                                    });
+                                    createGroupDragImage(e, gId);
+                                } else {
+                                    card.querySelector('.task-card').classList.add('group-dragging');
+                                }
                             });
                             handle.addEventListener('dragend', () => {
-                                document.querySelectorAll(`.timeline-item[data-group-id="${task.groupId}"] .task-card, .item-card-col[data-group-id="${task.groupId}"] .task-card`).forEach(c => {
-                                    c.classList.remove('group-dragging');
-                                });
+                                const dragId = handle.dataset.dragId;
+                                if (dragId.startsWith('group:')) {
+                                    const gId = dragId.substring(6);
+                                    document.querySelectorAll(`.timeline-item[data-group-id="${gId}"] .task-card, .item-card-col[data-group-id="${gId}"] .task-card`).forEach(c => {
+                                        c.classList.remove('group-dragging');
+                                    });
+                                } else {
+                                    card.querySelector('.task-card').classList.remove('group-dragging');
+                                }
                                 const tooltip = document.getElementById('drag-time-tooltip');
                                 if (tooltip) tooltip.style.display = 'none';
                             });
+                            setupTouchDrag(handle, card);
                         }
 
                         targetCol.appendChild(card);
@@ -1471,10 +1747,16 @@
                         const tooltip = document.getElementById('drag-time-tooltip');
                         if (tooltip) tooltip.style.display = 'none';
 
-                        const dragGroupId = e.dataTransfer.getData('text/plain');
-                        if (!dragGroupId || !currentDragTargetTime) return;
+                        const dragData = e.dataTransfer.getData('text/plain');
+                        if (!dragData || !currentDragTargetTime) return;
 
-                        moveGroupToStartTime(dragGroupId, currentDragTargetTime);
+                        if (dragData.startsWith('group:')) {
+                            const groupId = dragData.substring(6);
+                            moveGroupToStartTime(groupId, currentDragTargetTime);
+                        } else if (dragData.startsWith('single:')) {
+                            const taskId = dragData.substring(7);
+                            moveSingleTaskToStartTime(taskId, currentDragTargetTime);
+                        }
                     });
 
                 } else {
@@ -1516,17 +1798,23 @@
                         </div>
                         <div class="item-line-col">
                             <div class="timeline-path"></div>
-                            <div class="icon-circle" style="background-color: ${taskColor.bg}; border-color: ${taskColor.main}; color: ${taskColor.main};">${item.icon}</div>
                         </div>
-                        <div class="item-card-col">
-                            <div class="task-card" style="border-left: 4px solid ${taskColor.main}; background-color: ${taskColor.bg}; position: relative;">
-                                <div class="task-info">
-                                    <h3 class="task-title" style="color: #1e293b;">${item.icon} ${item.title}</h3>
-                                    <span class="task-desc" style="color: #64748b;">${item.desc}</span>
+                        <div class="item-card-col" style="margin-left: -40px; z-index: 10;">
+                            <div class="task-card" style="border-left: 4px solid ${taskColor.main}; background-color: ${taskColor.bg}; display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 12px 78px; gap: 12px; position: relative; min-height: 72px;">
+                                <!-- ぐりぐりボタン（☰）をカードの最左端に絶対配置し、背後のタイムライン縦線と重ねる -->
+                                ${(!item.groupId || isGroupFirst) ? `
+                                <div class="group-drag-handle" draggable="true" data-drag-id="${item.groupId ? 'group:' + item.groupId : 'single:' + item.id}" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); cursor: grab; padding: 4px 6px; font-size: 13px; color: ${taskColor.main}; font-weight: bold; background: rgba(255,255,255,0.8); border: 1px solid ${taskColor.main}; border-radius: 6px; display: flex; align-items: center; justify-content: center; user-select: none; z-index: 20;">☰</div>
+                                ` : ''}
+
+                                <!-- アイコン円をぐりぐりボタンのすぐ右（カード内部）に絶対配置 -->
+                                <div class="icon-circle" style="position: absolute; left: 38px; top: 50%; transform: translateY(-50%); background-color: ${taskColor.bg}; border-color: ${taskColor.main}; color: ${taskColor.main}; width: 32px; height: 32px; z-index: 15; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px;">${item.icon}</div>
+                                
+                                <div class="task-info" style="flex: 1; min-width: 0;">
+                                    <h3 class="task-title" style="color: #1e293b; margin: 0; font-size: 14px; font-weight: 800;">${item.title}</h3>
+                                    <span class="task-desc" style="color: #64748b; font-size: 11px;">${item.desc}</span>
                                 </div>
-                                <div class="task-meta" style="display: flex; align-items: center; gap: 8px;">
-                                    ${isGroupFirst ? `<div class="group-drag-handle" draggable="true" data-group-id="${item.groupId}" style="cursor: grab; padding: 4px 6px; font-size: 13px; color: ${taskColor.main}; font-weight: bold; background: rgba(255,255,255,0.7); border: 1px solid ${taskColor.main}; border-radius: 6px; display: flex; align-items: center; justify-content: center; user-select: none;">☰</div>` : ''}
-                                    <span class="task-duration" style="background-color: ${taskColor.main}; color: #ffffff;">${item.isAllDay ? '終日' : getDurationText(item.start, item.end)}</span>
+                                <div class="task-meta" style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+                                    <span class="task-duration" style="background-color: ${taskColor.main}; color: #ffffff; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 10px;">${item.isAllDay ? '終日' : getDurationText(item.start, item.end)}</span>
                                 </div>
                             </div>
                         </div>
@@ -1551,23 +1839,34 @@
                     const handle = itemDiv.querySelector('.group-drag-handle');
                     if (handle) {
                         handle.addEventListener('dragstart', (e) => {
-                            e.dataTransfer.setData('text/plain', item.groupId);
+                            const dragId = handle.dataset.dragId;
+                            e.dataTransfer.setData('text/plain', dragId);
                             e.dataTransfer.effectAllowed = 'move';
                             
-                            // グループ全体の全カードに半透明スタイルを付与
-                            document.querySelectorAll(`.timeline-item[data-group-id="${item.groupId}"] .task-card, .item-card-col[data-group-id="${item.groupId}"] .task-card`).forEach(c => {
-                                c.classList.add('group-dragging');
-                            });
-                            
-                            createGroupDragImage(e, item.groupId);
+                            if (dragId.startsWith('group:')) {
+                                const gId = dragId.substring(6);
+                                document.querySelectorAll(`.timeline-item[data-group-id="${gId}"] .task-card, .item-card-col[data-group-id="${gId}"] .task-card`).forEach(c => {
+                                    c.classList.add('group-dragging');
+                                });
+                                createGroupDragImage(e, gId);
+                            } else {
+                                itemDiv.querySelector('.task-card').classList.add('group-dragging');
+                            }
                         });
                         handle.addEventListener('dragend', () => {
-                            document.querySelectorAll(`.timeline-item[data-group-id="${item.groupId}"] .task-card, .item-card-col[data-group-id="${item.groupId}"] .task-card`).forEach(c => {
-                                c.classList.remove('group-dragging');
-                            });
+                            const dragId = handle.dataset.dragId;
+                            if (dragId.startsWith('group:')) {
+                                const gId = dragId.substring(6);
+                                document.querySelectorAll(`.timeline-item[data-group-id="${gId}"] .task-card, .item-card-col[data-group-id="${gId}"] .task-card`).forEach(c => {
+                                    c.classList.remove('group-dragging');
+                                });
+                            } else {
+                                itemDiv.querySelector('.task-card').classList.remove('group-dragging');
+                            }
                             const tooltip = document.getElementById('drag-time-tooltip');
                             if (tooltip) tooltip.style.display = 'none';
                         });
+                        setupTouchDrag(handle, itemDiv);
                     }
 
                     // ドラッグオーバー、リーブ、ドロップの紐付け
@@ -1929,7 +2228,7 @@
         let selectedMinute = "00";
         let drumScrollTimers = { hour: null, minute: null };
 
-        // ドラムロール式ピッカーの初期化
+        // ドラムロール式ピッカーの初期化 (無限循環スクロール対応)
         function initTimeWheelSelects() {
             const hourList = document.getElementById('drum-hour-list');
             const minList = document.getElementById('drum-minute-list');
@@ -1938,30 +2237,34 @@
             hourList.innerHTML = '';
             minList.innerHTML = '';
 
-            // 00〜23時のアイテム生成
-            for (let h = 0; h < 24; h++) {
-                const val = String(h).padStart(2, '0');
-                const div = document.createElement('div');
-                div.className = 'drum-picker-item';
-                div.dataset.value = val;
-                div.textContent = val;
-                div.addEventListener('click', () => {
-                    scrollDrumToValue('hour', val);
-                });
-                hourList.appendChild(div);
+            // 00〜23時を3回ループして追加（循環用）
+            for (let loop = 0; loop < 3; loop++) {
+                for (let h = 0; h < 24; h++) {
+                    const val = String(h).padStart(2, '0');
+                    const div = document.createElement('div');
+                    div.className = 'drum-picker-item';
+                    div.dataset.value = val;
+                    div.textContent = val;
+                    div.addEventListener('click', () => {
+                        scrollDrumToValue('hour', val);
+                    });
+                    hourList.appendChild(div);
+                }
             }
 
-            // 00〜55分 (5分刻み) のアイテム生成
-            for (let m = 0; m < 60; m += 5) {
-                const val = String(m).padStart(2, '0');
-                const div = document.createElement('div');
-                div.className = 'drum-picker-item';
-                div.dataset.value = val;
-                div.textContent = val;
-                div.addEventListener('click', () => {
-                    scrollDrumToValue('minute', val);
-                });
-                minList.appendChild(div);
+            // 00〜55分を3回ループして追加（循環用）
+            for (let loop = 0; loop < 3; loop++) {
+                for (let m = 0; m < 60; m += 5) {
+                    const val = String(m).padStart(2, '0');
+                    const div = document.createElement('div');
+                    div.className = 'drum-picker-item';
+                    div.dataset.value = val;
+                    div.textContent = val;
+                    div.addEventListener('click', () => {
+                        scrollDrumToValue('minute', val);
+                    });
+                    minList.appendChild(div);
+                }
             }
 
             // スクロールイベント登録
@@ -1988,17 +2291,34 @@
         function onDrumScrollEnd(type, el) {
             const scrollTop = el.scrollTop;
             const itemHeight = 40; // ドラムアイテムの高さ
-            const index = Math.round(scrollTop / itemHeight);
+            let index = Math.round(scrollTop / itemHeight);
 
             const list = type === 'hour' ? document.getElementById('drum-hour-list') : document.getElementById('drum-minute-list');
             const items = list.querySelectorAll('.drum-picker-item');
 
             if (items[index]) {
-                // スナップ位置へ吸着スクロール
-                el.scrollTo({
-                    top: index * itemHeight,
-                    behavior: 'smooth'
-                });
+                // 無限スクロールの境界判定とワープ処理
+                if (type === 'hour') {
+                    if (index < 24) {
+                        index += 24;
+                        el.scrollTo({ top: index * itemHeight, behavior: 'auto' });
+                    } else if (index >= 48) {
+                        index -= 24;
+                        el.scrollTo({ top: index * itemHeight, behavior: 'auto' });
+                    } else {
+                        el.scrollTo({ top: index * itemHeight, behavior: 'smooth' });
+                    }
+                } else {
+                    if (index < 12) {
+                        index += 12;
+                        el.scrollTo({ top: index * itemHeight, behavior: 'auto' });
+                    } else if (index >= 24) {
+                        index -= 12;
+                        el.scrollTo({ top: index * itemHeight, behavior: 'auto' });
+                    } else {
+                        el.scrollTo({ top: index * itemHeight, behavior: 'smooth' });
+                    }
+                }
 
                 // クラスの付け替え
                 items.forEach(item => item.classList.remove('selected'));
@@ -2013,7 +2333,7 @@
             }
         }
 
-        // 特定の値へスクロール移動させる
+        // 特定の値へスクロール移動させる (無限循環対応：中央の領域を狙う)
         function scrollDrumToValue(type, val, behavior = 'smooth') {
             const scrollId = type === 'hour' ? 'drum-hour-scroll' : 'drum-minute-scroll';
             const listId = type === 'hour' ? 'drum-hour-list' : 'drum-minute-list';
@@ -2022,12 +2342,19 @@
             if (!el || !list) return;
 
             const items = list.querySelectorAll('.drum-picker-item');
+            
+            // 中央メイン領域のインデックスを特定
             let targetIndex = -1;
-            items.forEach((item, idx) => {
-                if (item.dataset.value === val) {
+            const offset = type === 'hour' ? 24 : 12;
+            const itemVal = type === 'hour' ? parseInt(val) : parseInt(val);
+            
+            // offset 番目以降のアイテム群から val が一致するものを探す
+            for (let idx = offset; idx < offset * 2; idx++) {
+                if (items[idx] && parseInt(items[idx].dataset.value) === itemVal) {
                     targetIndex = idx;
+                    break;
                 }
-            });
+            }
 
             if (targetIndex !== -1) {
                 const itemHeight = 40;
@@ -2236,13 +2563,13 @@
 
 
         // エネルギーラベルの更新
-        const energyLabels = { 1: "すくない", 2: "ふつう", 3: "おおい" };
+        const energyLabels = { 0: "なし", 1: "すくない", 2: "ふつう", 3: "おおい" };
         function normalizeEnergyValue(val) {
             const parsed = parseInt(val, 10);
             if (Number.isNaN(parsed)) {
-                return 2;
+                return 0;
             }
-            return Math.min(3, Math.max(1, parsed));
+            return Math.min(3, Math.max(0, parsed));
         }
         function updateEnergyLabel(val) {
             const label = document.getElementById('energy-value-label');
@@ -2362,8 +2689,17 @@
             document.getElementById('structured-delete-btn').style.display = 'none';
             currentScheduleTemplateSuggestion = null;
             renderScheduleTemplateSuggestions();
-            goToStep(1);
+            
+            // 新規作成時はエネルギーを 0 (なし) に初期設定
+            const zeroEnergyInput = document.querySelector('input[name="energy"][value="0"]');
+            if (zeroEnergyInput) zeroEnergyInput.checked = true;
+            updateEnergyLabel(0);
 
+            // 繰り返し設定の初期化
+            const recurrenceSelect = document.getElementById('schedule-recurrence');
+            if (recurrenceSelect) recurrenceSelect.value = 'none';
+
+            goToStep(1);
             document.getElementById('schedule-modal').classList.add('active');
         }
 
@@ -2373,7 +2709,7 @@
                 return;
             }
             currentEditingId = id;
-            const allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+            const allTasks = JSON.parse(localStorage.getItem('savedSchedules')) || [];
             const task = allTasks.find(t => t.id === id);
             if (!task) return;
 
@@ -2384,8 +2720,15 @@
             document.getElementById('schedule-title').value = task.title;
             document.getElementById('schedule-startdate').value = task.startDate;
             document.getElementById('schedule-notes').value = task.notes || '';
-            const energyVal = normalizeEnergyValue(task.energy || 2);
-            document.querySelector(`input[name="energy"][value="${energyVal}"]`).checked = true;
+            
+            // 繰り返しの復元
+            const recSelect = document.getElementById('schedule-recurrence');
+            if (recSelect) recSelect.value = task.recurrence || 'none';
+
+            // 登録・修正時のエネルギー値の読み込み (未定義時は0とする)
+            const energyVal = normalizeEnergyValue(task.energy !== undefined ? task.energy : 0);
+            const targetRadio = document.querySelector(`input[name="energy"][value="${energyVal}"]`);
+            if (targetRadio) targetRadio.checked = true;
             updateEnergyLabel(energyVal);
             document.getElementById('emoji-display').textContent = selectedEmoji;
 
@@ -2472,6 +2815,7 @@
             const isAllDay = false;
             const startDate = document.getElementById('schedule-startdate').value;
             const notes = document.getElementById('schedule-notes').value;
+            const recurrence = document.getElementById('schedule-recurrence').value;
             const energy = normalizeEnergyValue(document.querySelector('input[name="energy"]:checked').value);
 
             let startTime = '09:00';
@@ -2512,7 +2856,7 @@
             else if (title.includes("ジム") || title.includes("ヨガ") || title.includes("トレ") || title.includes("ランニング")) type = "health";
             else if (title.includes("掃除") || title.includes("洗濯") || title.includes("自炊") || title.includes("買い物")) type = "home";
 
-            let allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+            let allTasks = JSON.parse(localStorage.getItem('savedSchedules')) || [];
 
             if (currentEditingId) {
                 // 編集
@@ -2530,6 +2874,7 @@
                             icon,
                             type,
                             notes,
+                            recurrence,
                             energy,
                             color: selectedColor,
                             subtasks: []
@@ -2563,6 +2908,7 @@
                                 icon: subTask.icon || getScheduleTemplateIcon(subTask.title),
                                 type: subTask.type || 'routine',
                                 notes: subTask.desc || '',
+                                recurrence: 'none',
                                 energy: energy,
                                 color: selectedColor,
                                 subtasks: []
@@ -2583,6 +2929,7 @@
                         icon,
                         type,
                         notes,
+                        recurrence,
                         energy,
                         color: selectedColor,
                         subtasks: []
@@ -2591,7 +2938,7 @@
                 }
             }
 
-            localStorage.setItem('savedTasks', JSON.stringify(allTasks));
+            localStorage.setItem('savedSchedules', JSON.stringify(allTasks));
             closeScheduleModal();
 
             // 登録した日付の曜日に合わせて画面を切り替える
@@ -2613,18 +2960,32 @@
 
         function deleteSchedule() {
             if (!currentEditingId) return;
-            if (!confirm('本当にこの予定を削除しますか？')) return;
 
-            let allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
-            allTasks = allTasks.filter(t => t.id !== currentEditingId);
-            localStorage.setItem('savedTasks', JSON.stringify(allTasks));
+            let allTasks = JSON.parse(localStorage.getItem('savedSchedules')) || [];
+            const targetTask = allTasks.find(t => t.id === currentEditingId);
+            if (!targetTask) return;
 
+            if (targetTask.groupId) {
+                const choice = confirm("この予定はテンプレートから一括登録されたグループの一部です。\n\n「OK」を押すとグループの予定をすべて一括削除します。\n「キャンセル」を押すとこの予定だけを削除します。");
+                if (choice) {
+                    // グループ一括削除
+                    allTasks = allTasks.filter(t => t.groupId !== targetTask.groupId);
+                } else {
+                    // 単一削除
+                    allTasks = allTasks.filter(t => t.id !== currentEditingId);
+                }
+            } else {
+                if (!confirm('本当にこの予定を削除しますか？')) return;
+                allTasks = allTasks.filter(t => t.id !== currentEditingId);
+            }
+
+            localStorage.setItem('savedSchedules', JSON.stringify(allTasks));
             closeScheduleModal();
             switchDay(currentActiveDay);
         }
 
         function autoDeleteOldTasks() {
-            let tasks = JSON.parse(localStorage.getItem('savedTasks'));
+            let tasks = JSON.parse(localStorage.getItem('savedSchedules'));
             if (!tasks || tasks.length === 0) return;
 
             const now = new Date().getTime();
@@ -2655,7 +3016,7 @@
             });
 
             if (filteredTasks.length !== tasks.length) {
-                localStorage.setItem('savedTasks', JSON.stringify(filteredTasks));
+                localStorage.setItem('savedSchedules', JSON.stringify(filteredTasks));
             }
         }
 
@@ -2859,18 +3220,6 @@
                 </div>
                 <button type="button" class="btn primary" onclick="saveSelectedTasksAsTemplate()"
                     style="width: 100%; padding: 12px; border-radius: 12px; font-weight: bold; background: linear-gradient(135deg, #FFB1B6, #FFA2B2); color: white; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;">保存する</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 複数選択アクション用の下部フローティングツールバー -->
-    <div id="selection-toolbar" class="selection-toolbar" style="display: none;">
-        <div class="selection-toolbar-inner">
-            <span id="selection-toolbar-count" class="selection-toolbar-count">0件選択中</span>
-            <div class="selection-toolbar-actions">
-                <button type="button" class="selection-toolbar-btn danger" style="background-color: #ef4444; color: white;" onclick="deleteSelectedTasks()">削除</button>
-                <button type="button" class="selection-toolbar-btn secondary" onclick="clearSelectedTimelineTasks()">解除</button>
-                <button type="button" class="selection-toolbar-btn primary" onclick="openGroupTemplateModal()">グループ化</button>
             </div>
         </div>
     </div>
