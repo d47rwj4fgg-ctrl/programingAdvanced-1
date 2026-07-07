@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Timeline - ログイン</title>
+    <title>Salmon - ログイン</title>
     <!-- Google Fonts (丸みのある洗練されたフォント) -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
     <!-- Font Awesome (アイコン用) -->
@@ -21,8 +21,8 @@
         <h1 class="logo-title">Salmon</h1>
         <p class="subtitle">アカウントにログイン</p>
 
-        <!-- フォーム部分 -->
-        <form>
+        <!-- フォーム部分（onsubmit イベントを追加） -->
+        <form onsubmit="handleLogin(event)">
             <!-- メールアドレス -->
             <div class="form-group">
                 <label for="email">メールアドレス</label>
@@ -41,7 +41,8 @@
                 <div class="input-wrapper">
                     <i class="fa-solid fa-lock"></i>
                     <input type="password" id="password" class="form-input password-input" placeholder="••••••••" required>
-                    <i class="fa-regular fa-eye toggle-password"></i>
+                    <!-- 💡 クリックイベントを追加 -->
+                    <i class="fa-regular fa-eye toggle-password" onclick="togglePasswordVisibility()"></i>
                 </div>
             </div>
 
@@ -54,8 +55,8 @@
                 <span class="checkbox-label">ログイン状態を保持する</span>
             </label>
 
-            <!-- ボタン -->
-            <button type="submit" class="submit-btn" a href="daily.html">ログイン</button>
+            <!-- ボタン（不具合のあった記述を修正） -->
+            <button type="submit" class="submit-btn">ログイン</button>
         </form>
 
         <!-- フッター（新規登録への導線） -->
@@ -64,5 +65,32 @@
         </div>
     </div>
 
+    <!-- 💡 スクリプト処理を追加 -->
+    <script>
+        // ログインボタンが押されたときの処理
+        function handleLogin(event) {
+            // フォーム本来のリロード動作を止める
+            event.preventDefault(); 
+            
+            // HTMLの「required」属性によるチェックが通ったら、daily.htmlへ遷移する
+            window.location.href = 'daily.html';
+        }
+
+        // パスワードの表示・非表示切り替え
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.querySelector('.toggle-password');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+    </script>
 </body>
 </html>
