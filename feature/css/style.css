@@ -2391,9 +2391,9 @@ body.monthly-main-page:not(.daily-main-page) {
 }
 
 .selection-toolbar-btn.primary {
-    background: linear-gradient(135deg, #ffb1b6, #ffa2b2);
+    background: linear-gradient(135deg, #ff758c, #ff4f6e);
     color: #ffffff;
-    box-shadow: 0 6px 14px rgba(255, 112, 130, 0.18);
+    box-shadow: 0 6px 14px rgba(255, 79, 110, 0.25);
 }
 
 .icon-btn.active {
