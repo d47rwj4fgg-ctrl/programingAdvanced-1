@@ -490,20 +490,22 @@
                                 <span class="modal-card-label">⚡️ 必要なエネルギー</span>
                                 <div class="energy-radio-group">
                                     <label class="energy-radio-label">
+                                        <input type="radio" name="energy" value="0" onclick="updateEnergyLabel(0)">
+                                        <span class="energy-radio-btn">0</span>
+                                    </label>
+                                    <label class="energy-radio-label">
                                         <input type="radio" name="energy" value="1" onclick="updateEnergyLabel(1)">
-                                        <span class="energy-radio-btn">1低い</span>
+                                        <span class="energy-radio-btn">1</span>
                                     </label>
                                     <label class="energy-radio-label">
                                         <input type="radio" name="energy" value="2" checked onclick="updateEnergyLabel(2)">
-                                        <span class="energy-radio-btn">2ふつう</span>
+                                        <span class="energy-radio-btn">2</span>
                                     </label>
                                     <label class="energy-radio-label">
-                                        <input type="radio" name="energy" value="3" checked onclick="updateEnergyLabel(3)">
+                                        <input type="radio" name="energy" value="3" onclick="updateEnergyLabel(3)">
                                         <span class="energy-radio-btn">3</span>
                                     </label>
-
                                 </div>
-                                    <div style="text-align: center; font-size: 13px; font-weight: 600; color: #8e8e93;" id="energy-value-label">ふつう</div>
                             </div>
 
                             <!-- 繰り返し設定カード -->
