@@ -246,6 +246,7 @@ body.daily-main-page {
             font-weight: 700;
             color: #64748b;
             margin-bottom: 3px;
+            white-space: nowrap;
         }
 
         .day-num {
@@ -259,6 +260,7 @@ body.daily-main-page {
             justify-content: center;
             border-radius: 50%;
             transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
         &:hover .day-num {

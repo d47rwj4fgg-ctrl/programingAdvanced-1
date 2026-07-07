@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>設定</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="daily-main-page">
+
+    <div class="pc-info">
+        <h2>Timeline App</h2>
+        <p>「Structured」アプリにインスパイアされた、クリーンで視覚的なデイリープランナーのプロトタイプです。</p>
+        <ul>
+            <li>「設定」画面では、アプリ全体のデフォルト設定を行うことができます。</li>
+            <li>1日の総エネルギー量の初期値を設定でき、各日付のデフォルトとして利用されます。</li>
+        </ul>
+        <p style="margin-top: 24px; font-size: 12px; color: #64748b;">※スマホ実機やデベロッパーツールで開くと、全画面表示 of スマホUIになります。</p>
+    </div>
+
+    <!-- スマホ本体フレーム -->
+    <div class="phone-frame">
+        <div class="phone-notch"></div>
+
+        <!-- 仮想ステータスバー -->
+        <div class="status-bar">
+            <span id="status-bar-time">9:41</span>
+            <div class="right-icons">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                </svg>
+            </div>
+        </div>
+
+        <!-- サイドバー (TimeTree風ドロワー) -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+        <div class="sidebar-drawer" id="sidebar-drawer">
+            <div class="sidebar-header">
+                <span class="sidebar-logo">Timeline</span>
+                <button class="sidebar-close-btn" id="sidebar-close-btn" aria-label="閉じる">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="sidebar-profile">
+                <div class="profile-avatar">KH</div>
+                <div class="profile-info">
+                    <span class="profile-name">肥後 佳苗</span>
+                    <span class="profile-role">大学開発メンバー</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="daily.html" class="nav-item">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-text">デイリーカレンダー</span>
+                </a>
+                <a href="tasks.html" class="nav-item">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-text">タスクリスト</span>
+                </a>
+                <a href="templateRegister.html" class="nav-item">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-text">テンプレートの登録</span>
+                </a>
+                <a href="timetableRegister.html" class="nav-item">
+                    <span class="nav-icon">🏫</span>
+                    <span class="nav-text">時間割の登録</span>
+                </a>
+                <a href="locationSettings.html" class="nav-item">
+                    <span class="nav-icon">📍</span>
+                    <span class="nav-text">拠点・移動設定</span>
+                </a>
+                <a href="settings.html" class="nav-item active">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-text">設定</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <span>Timeline App v1.0.0</span>
+            </div>
+        </div>
+
+        <div class="app-container">
+            <!-- アプリヘッダー -->
+            <header class="app-header">
+                <div class="header-top">
+                    <button class="icon-btn" id="menu-toggle-btn" aria-label="メニュー" style="margin-right: 8px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                    <div class="header-center-title" style="flex: 1; text-align: center; font-weight: 800; font-size: 18px; color: var(--text-main);">
+                        設定
+                    </div>
+                    <div style="width: 28px;"></div> <!-- バランス用の余白 -->
+                </div>
+            </header>
+
+            <!-- スクロール可能なメインコンテンツ -->
+            <div class="task-container" id="scroll-container" style="overflow-y: auto; flex: 1; padding: 16px 20px;">
+                <div class="card">
+                    <h2 style="font-size: 16px; font-weight: 800; color: #1c1c1e; margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                        <span>⚡️</span> エネルギー目標設定
+                    </h2>
+                    <p style="font-size: 13px; color: #64748b; margin-top: 0; margin-bottom: 16px; line-height: 1.5;">
+                        1日のデフォルト目標エネルギー量を設定します。この値は各日付の初期値として表示されますが、デイリーカレンダー画面から個別の日付ごとに一時的な変更を行うことも可能です。
+                    </p>
+                    
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px;">
+                        <label style="font-size: 12px; font-weight: 700; color: #64748b;">デフォルト目標エネルギー量</label>
+                        <input type="number" id="default-max-energy" min="1" max="99" value="10" 
+                            style="width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; background-color: #f8fafc; outline: none; font-size: 15px; font-weight: 600;">
+                    </div>
+                    
+                    <button type="button" class="action-btn-primary" onclick="saveSettings()" style="width: 100%; padding: 12px; border-radius: 12px; font-weight: bold; background: linear-gradient(135deg, #FFB1B6, #FFA2B2); color: white; border: none; cursor: pointer;">設定を保存</button>
+                    
+                    <div style="margin-top: 24px; border-top: 1.5px dashed #e2e8f0; padding-top: 20px;">
+                        <h2 style="font-size: 15px; font-weight: 800; color: #ef4444; margin-top: 0; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                            <span>⚠️</span> データの初期化・リセット
+                        </h2>
+                        <p style="font-size: 12px; color: #64748b; margin-top: 0; margin-bottom: 16px; line-height: 1.5;">
+                            エネルギーの目標設定を初期状態に戻すか、アプリ全体のすべてのデータを消去して初期状態に戻します。
+                        </p>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <button type="button" onclick="resetSettings()" style="width: 100%; padding: 11px; border-radius: 12px; font-weight: bold; background-color: #f8fafc; color: #64748b; border: 1.5px solid #e2e8f0; cursor: pointer; font-size: 13px; transition: all 0.2s;">設定のみをリセット</button>
+                            <button type="button" onclick="resetAllData()" style="width: 100%; padding: 11px; border-radius: 12px; font-weight: bold; background-color: #fff5f5; color: #ef4444; border: 1.5px solid #fee2e2; cursor: pointer; font-size: 13px; transition: all 0.2s;">すべてのアプリデータを初期化</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- iOS風ホームインジケータ -->
+            <div class="phone-home-indicator"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- 初期化 ---
+        window.addEventListener('DOMContentLoaded', () => {
+            initSidebar();
+            updateStatusBarTime();
+            setInterval(updateStatusBarTime, 1000);
+            loadSettings();
+        });
+
+        // --- ステータスバーの時計 ---
+        function updateStatusBarTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const timeEl = document.getElementById('status-bar-time');
+            if (timeEl) {
+                timeEl.textContent = `${hours}:${minutes}`;
+            }
+        }
+
+        // --- サイドバーの開閉イベント ---
+        function initSidebar() {
+            const drawer = document.getElementById('sidebar-drawer');
+            const overlay = document.getElementById('sidebar-overlay');
+            const openBtn = document.getElementById('menu-toggle-btn');
+            const closeBtn = document.getElementById('sidebar-close-btn');
+
+            if (!drawer || !overlay || !openBtn || !closeBtn) return;
+
+            openBtn.addEventListener('click', () => {
+                drawer.classList.add('active');
+                overlay.classList.add('active');
+            });
+
+            closeBtn.addEventListener('click', () => {
+                drawer.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+
+            overlay.addEventListener('click', () => {
+                drawer.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        }
+
+        // --- 設定値の読み込み ---
+        function loadSettings() {
+            const defaultMaxEnergy = localStorage.getItem('maxEnergyConfig') || 10;
+            document.getElementById('default-max-energy').value = defaultMaxEnergy;
+        }
+
+        // --- 設定値の保存 ---
+        function saveSettings() {
+            const energyInput = document.getElementById('default-max-energy');
+            const energyVal = parseInt(energyInput.value, 10);
+
+            if (isNaN(energyVal) || energyVal <= 0) {
+                alert('1以上の正しい数値を入力してください。');
+                return;
+            }
+
+            localStorage.setItem('maxEnergyConfig', energyVal);
+            alert('設定を保存しました！');
+        }
+
+        // --- 設定のリセット ---
+        function resetSettings() {
+            if (!confirm('目標エネルギーのデフォルト設定を10に戻し、日付別の個別設定もすべてクリアします。よろしいですか？')) return;
+            
+            localStorage.setItem('maxEnergyConfig', '10');
+            
+            // maxEnergyConfig_ で始まる日付別設定をすべて削除
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('maxEnergyConfig_')) {
+                    localStorage.removeItem(key);
+                    i--;
+                }
+            }
+            
+            loadSettings();
+            alert('設定をデフォルトに戻しました！');
+        }
+
+        // --- アプリデータ全体の初期化 ---
+        function resetAllData() {
+            if (!confirm('警告: すべての予定、タスク、テンプレート、設定が削除され、初期状態に戻ります。この操作は取り消せません。本当によろしいですか？')) return;
+            
+            localStorage.clear();
+            alert('すべてのデータを初期化しました。アプリを再読み込みします。');
+            window.location.reload();
+        }
+    </script>
+</body>
+</html>

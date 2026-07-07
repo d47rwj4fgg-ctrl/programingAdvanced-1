@@ -264,6 +264,10 @@
                     <span class="nav-icon">📍</span>
                     <span class="nav-text">拠点・移動設定</span>
                 </a>
+                <a href="settings.html" class="nav-item">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-text">設定</span>
+                </a>
 
 
             </nav>
@@ -352,6 +356,28 @@
                             <button type="button" class="color-palette-btn green" onclick="selectQuickColor('green')" style="width: 24px; height: 24px; border-width: 2px;"></button>
                             <button type="button" class="color-palette-btn orange" onclick="selectQuickColor('orange')" style="width: 24px; height: 24px; border-width: 2px;"></button>
                             <button type="button" class="color-palette-btn purple" onclick="selectQuickColor('purple')" style="width: 24px; height: 24px; border-width: 2px;"></button>
+                        </div>
+                    </div>
+
+                    <div class="quick-energy-row" style="display: flex; align-items: center; gap: 12px; margin-top: 8px; padding: 0 4px;">
+                        <span style="font-size: 12px; font-weight: 600; color: #64748b;">エネルギー:</span>
+                        <div class="energy-radio-group" style="display: flex; gap: 6px; padding: 0; background: none; margin: 0; box-shadow: none;">
+                            <label class="energy-radio-label" style="margin: 0;">
+                                <input type="radio" name="quick-energy" value="0" id="qe-0">
+                                <span class="energy-radio-btn" style="padding: 4px 8px; font-size: 11px; border-radius: 6px;">0なし</span>
+                            </label>
+                            <label class="energy-radio-label" style="margin: 0;">
+                                <input type="radio" name="quick-energy" value="1" id="qe-1">
+                                <span class="energy-radio-btn" style="padding: 4px 8px; font-size: 11px; border-radius: 6px;">1低</span>
+                            </label>
+                            <label class="energy-radio-label" style="margin: 0;">
+                                <input type="radio" name="quick-energy" value="2" id="qe-2" checked>
+                                <span class="energy-radio-btn" style="padding: 4px 8px; font-size: 11px; border-radius: 6px;">2中</span>
+                            </label>
+                            <label class="energy-radio-label" style="margin: 0;">
+                                <input type="radio" name="quick-energy" value="3" id="qe-3">
+                                <span class="energy-radio-btn" style="padding: 4px 8px; font-size: 11px; border-radius: 6px;">3高</span>
+                            </label>
                         </div>
                     </div>
 
@@ -552,6 +578,16 @@
                                     <div style="text-align: center; font-size: 13px; font-weight: 600; color: #8e8e93;" id="energy-value-label">ふつう</div>
                             </div>
 
+                            <!-- 繰り返し設定カード -->
+                            <div class="modal-card">
+                                <span class="modal-card-label">🔄 繰り返し</span>
+                                <select id="task-recurrence" style="width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; background-color: #f8fafc; outline: none; font-size: 14px; font-weight: 600; color: #1e293b;">
+                                    <option value="none">なし</option>
+                                    <option value="daily">毎日</option>
+                                    <option value="weekly">毎週</option>
+                                </select>
+                            </div>
+
                             <!-- ノートカード -->
                             <div class="modal-card">
                                 <span class="modal-card-label">📝 メモ・ノート</span>
@@ -695,28 +731,77 @@
 
         let currentEditingId = null;
 
-        // LocalStorageからタスクを取得
-        function getSavedTasks() {
-            let tasks = JSON.parse(localStorage.getItem('savedTasks'));
-            if (!tasks || tasks.length === 0) {
-                tasks = defaultTasks;
-                localStorage.setItem('savedTasks', JSON.stringify(tasks));
-            } else {
-                let updated = false;
-                tasks = tasks.map(task => {
-                    if (task && (task.deadline || task.durationMinutes !== undefined)) {
-                        const normalizedDuration = normalizeTaskDurationMinutes(task.durationMinutes);
-                        if (normalizedDuration !== task.durationMinutes) {
-                            updated = true;
-                            return { ...task, durationMinutes: normalizedDuration };
-                        }
+        // データマイグレーション：タスク（savedTasks）と予定（savedSchedules）の分離
+        function migrateData() {
+            if (!localStorage.getItem('dataMigrated_v2')) {
+                let allItems = [];
+                try {
+                    allItems = JSON.parse(localStorage.getItem('savedTasks')) || [];
+                } catch(e) {
+                    allItems = [];
+                }
+                
+                const schedulesList = [];
+                const tasksList = [];
+                
+                let existingSchedules = [];
+                try {
+                    existingSchedules = JSON.parse(localStorage.getItem('savedSchedules')) || [];
+                } catch(e) {
+                    existingSchedules = [];
+                }
+
+                allItems.forEach(item => {
+                    if (!item) return;
+                    if (item.startTime !== undefined || item.endTime !== undefined || item.groupId || item.startDate) {
+                        schedulesList.push(item);
+                    } else {
+                        tasksList.push(item);
                     }
-                    return task;
                 });
 
-                if (updated) {
-                    localStorage.setItem('savedTasks', JSON.stringify(tasks));
+                const mergedSchedules = [...existingSchedules, ...schedulesList];
+                localStorage.setItem('savedSchedules', JSON.stringify(mergedSchedules));
+                localStorage.setItem('savedTasks', JSON.stringify(tasksList));
+                localStorage.setItem('dataMigrated_v2', 'true');
+            }
+        }
+
+        // LocalStorageからタスクを取得
+        function getSavedTasks() {
+            migrateData();
+            
+            const initialized = localStorage.getItem('tasksInitialized');
+            let tasks = null;
+            try {
+                tasks = JSON.parse(localStorage.getItem('savedTasks'));
+            } catch(e) {
+                tasks = null;
+            }
+
+            if (!initialized) {
+                tasks = defaultTasks;
+                localStorage.setItem('savedTasks', JSON.stringify(tasks));
+                localStorage.setItem('tasksInitialized', 'true');
+            } else if (!tasks) {
+                tasks = [];
+                localStorage.setItem('savedTasks', JSON.stringify(tasks));
+            }
+
+            let updated = false;
+            tasks = tasks.map(task => {
+                if (task && (task.deadline || task.durationMinutes !== undefined)) {
+                    const normalizedDuration = normalizeTaskDurationMinutes(task.durationMinutes);
+                    if (normalizedDuration !== task.durationMinutes) {
+                        updated = true;
+                        return { ...task, durationMinutes: normalizedDuration };
+                    }
                 }
+                return task;
+            });
+
+            if (updated) {
+                localStorage.setItem('savedTasks', JSON.stringify(tasks));
             }
             return tasks;
         }
@@ -779,6 +864,7 @@
                             <div style="display: flex; gap: 8px; align-items: center; margin-top: 2px;">
                                 <span class="task-deadline-slim">${deadlineText}</span>
                                 <span class="task-duration-slim">⏳ ${formatDuration(task.durationMinutes)}</span>
+                                <span class="task-energy-slim" style="font-size: 11px; font-weight: 700; color: #f59e0b; display: flex; align-items: center;">⚡️${task.energy !== undefined ? task.energy : 2}</span>
                             </div>
                         </div>
                         <button class="todo-star-btn ${task.starred ? 'active' : ''}"
@@ -810,8 +896,34 @@
             let tasks = getSavedTasks();
             const index = tasks.findIndex(t => t.id === taskId);
             if (index !== -1) {
-                tasks[index].completed = checkbox.checked;
-                tasks[index].completedAt = checkbox.checked ? new Date().toISOString() : null;
+                const task = tasks[index];
+                if (checkbox.checked && task.recurrence && task.recurrence !== 'none') {
+                    let currentDeadline = task.deadline ? new Date(task.deadline) : new Date();
+                    if (isNaN(currentDeadline.getTime())) {
+                        currentDeadline = new Date();
+                    }
+                    
+                    if (task.recurrence === 'daily') {
+                        currentDeadline.setDate(currentDeadline.getDate() + 1);
+                    } else if (task.recurrence === 'weekly') {
+                        currentDeadline.setDate(currentDeadline.getDate() + 7);
+                    }
+                    
+                    const pad = (n) => String(n).padStart(2, '0');
+                    const nextDateStr = `${currentDeadline.getFullYear()}-${pad(currentDeadline.getMonth()+1)}-${pad(currentDeadline.getDate())}`;
+                    const timeStr = task.deadline && task.deadline.includes('T') ? task.deadline.split('T')[1] : "12:00";
+                    task.deadline = `${nextDateStr}T${timeStr}`;
+                    task.startDate = nextDateStr;
+                    task.endDate = nextDateStr;
+                    
+                    task.completed = false;
+                    task.completedAt = null;
+                    
+                    alert(`繰り返しタスクの期限を次に進めました: ${nextDateStr}`);
+                } else {
+                    task.completed = checkbox.checked;
+                    task.completedAt = checkbox.checked ? new Date().toISOString() : null;
+                }
                 saveSavedTasks(tasks);
                 renderTasks();
             }
@@ -1253,6 +1365,9 @@
             document.getElementById('emoji-display').textContent = selectedEmoji;
             selectColor(selectedColor);
 
+            const recInput = document.getElementById('task-recurrence');
+            if (recInput) recInput.value = task.recurrence || 'none';
+
             const energyVal = normalizeEnergyValue(task.energy || 2);
             const energyInput = document.querySelector(`input[name="energy"][value="${energyVal}"]`);
             if (energyInput) energyInput.checked = true;
@@ -1347,6 +1462,9 @@
             document.getElementById('emoji-display').textContent = selectedEmoji;
             selectColor(selectedColor);
 
+            const recInput = document.getElementById('task-recurrence');
+            if (recInput) recInput.value = 'none';
+
             const energyInput = document.querySelector('input[name="energy"][value="2"]');
             if (energyInput) energyInput.checked = true;
             updateEnergyLabel(2);
@@ -1418,6 +1536,7 @@
             const totalMinutes = selectedDuration;
             const memo = document.getElementById('schedule-notes').value || '';
             const energy = normalizeEnergyValue(document.querySelector('input[name="energy"]:checked').value);
+            const recurrence = document.getElementById('task-recurrence').value;
 
             // 時間合成
             const startTimeStr = `${selectedHour}:${selectedMinute}`;
@@ -1470,6 +1589,7 @@
                     tasks[index].type = type;
                     tasks[index].color = selectedColor;
                     tasks[index].energy = energy;
+                    tasks[index].recurrence = recurrence;
                 }
             } else {
                 const newTask = {
@@ -1490,6 +1610,7 @@
                     type: type,
                     color: selectedColor,
                     energy: energy,
+                    recurrence: recurrence,
                     subtasks: []
                 };
                 tasks.push(newTask);
@@ -1627,6 +1748,9 @@
                     }
 
                     const memoVal = quickTaskMemo ? quickTaskMemo.value.trim() : "";
+                    const energyInput = document.querySelector('input[name="quick-energy"]:checked');
+                    const energy = energyInput ? parseInt(energyInput.value, 10) : 2;
+
                     const tasks = getSavedTasks();
                     const newTask = {
                         id: Date.now(),
@@ -1644,7 +1768,8 @@
                         endTime: endTime,
                         icon: getTaskIcon(title),
                         type: "study",
-                        color: quickSelectedColor
+                        color: quickSelectedColor,
+                        energy: energy
                     };
 
                     tasks.push(newTask);
@@ -1658,6 +1783,8 @@
                     document.getElementById('quick-task-hours').value = '0';
                     document.getElementById('quick-task-minutes').value = '30';
                     selectQuickColor('pink');
+                    const defaultQuickEnergy = document.getElementById('qe-2');
+                    if (defaultQuickEnergy) defaultQuickEnergy.checked = true;
                     if (quickTaskMemo) quickTaskMemo.value = '';
                     if (quickMemoRow) quickMemoRow.style.display = 'none';
                     if (quickMemoBtn) quickMemoBtn.classList.remove('active');
