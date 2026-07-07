@@ -218,12 +218,29 @@ body.daily-main-page {
 
     .weekly-calendar {
         display: flex;
-        justify-content: space-between;
+        overflow-x: auto;
+        white-space: nowrap;
         background-color: #f1f5f9;
-        padding: 4px;
+        padding: 6px;
         border-radius: 16px;
         margin-top: 8px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        &::-webkit-scrollbar {
+            display: none;
+        }
+        scrollbar-width: none;
+    }
+
+    .calendar-week {
+        flex: 0 0 100%;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
         gap: 4px;
+        scroll-snap-align: start;
+        padding: 2px 4px;
+        box-sizing: border-box;
     }
 
     .calendar-day {
@@ -236,6 +253,7 @@ body.daily-main-page {
         cursor: pointer;
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         user-select: none;
+        box-sizing: border-box;
 
         &:active {
             transform: scale(0.95);
@@ -1838,6 +1856,7 @@ body.monthly-main-page:not(.daily-main-page) {
     transform: scale(0.9) translateY(20px);
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     max-height: 85vh;
+    margin-bottom: 60px; /* ポップアップの位置を少し上へ配置 */
 }
 
 .modal-overlay.active .modal-box {

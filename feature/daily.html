@@ -114,7 +114,7 @@
                         <span id="header-date-title"
                             style="font-weight: 800; font-size: 16px; color: var(--text-main); white-space: nowrap;">6月2日</span>
                     </div>
-<div class="header-icons" style="display: flex; align-items: center; gap: 8px;">
+                    <div class="header-icons" style="display: flex; align-items: center; gap: 8px;">
                         <!-- ⚡️ バッテリー風エネルギー残量インジケータ -->
                         <div class="energy-battery-wrapper" id="energy-battery-trigger" onclick="openMaxEnergyPrompt()">
                             <div class="battery-icon">
@@ -123,15 +123,9 @@
                             <span class="battery-text" id="battery-remain-text">10/10</span>
                         </div>
 
-                        <button class="select-mode-btn" id="group-mode-btn" onclick="toggleSelectionMode()" style="background: rgba(255, 112, 130, 0.1); border: 1.5px solid #FF7082; color: #FF7082; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; height: 26px; transition: all 0.2s ease;">選択</button>
+                        <button class="select-mode-btn" id="group-mode-btn" onclick="toggleSelectionMode()"
+                            style="background: rgba(255, 112, 130, 0.1); border: 1.5px solid #FF7082; color: #FF7082; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; height: 26px; transition: all 0.2s ease;">選択</button>
 
-                        <button class="icon-btn" aria-label="通知">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                            </svg>
-                        </button>
                     </div>
                 </div>
 
@@ -160,13 +154,17 @@
             </div>
 
             <!-- 複数選択アクション用の下部フローティングツールバー -->
-            <div id="selection-toolbar" class="selection-toolbar" style="display: none; position: absolute; bottom: 30px; left: 16px; right: 16px; z-index: 100;">
+            <div id="selection-toolbar" class="selection-toolbar"
+                style="display: none; position: absolute; bottom: 30px; left: 16px; right: 16px; z-index: 100;">
                 <div class="selection-toolbar-inner">
                     <span id="selection-toolbar-count" class="selection-toolbar-count">0件選択中</span>
                     <div class="selection-toolbar-actions">
-                        <button type="button" class="selection-toolbar-btn danger" style="background-color: #ef4444; color: white;" onclick="deleteSelectedTasks()">削除</button>
-                        <button type="button" class="selection-toolbar-btn secondary" onclick="clearSelectedTimelineTasks()">解除</button>
-                        <button type="button" class="selection-toolbar-btn primary" onclick="openGroupTemplateModal()">グループ化</button>
+                        <button type="button" class="selection-toolbar-btn danger"
+                            style="background-color: #ef4444; color: white;" onclick="deleteSelectedTasks()">削除</button>
+                        <button type="button" class="selection-toolbar-btn secondary"
+                            onclick="clearSelectedTimelineTasks()">解除</button>
+                        <button type="button" class="selection-toolbar-btn primary"
+                            onclick="openGroupTemplateModal()">グループ化</button>
                     </div>
                 </div>
             </div>
@@ -205,12 +203,19 @@
                     <div id="modal-step-1" class="modal-step-section active">
                         <div class="modal-card">
                             <span class="modal-card-label">📋 保存済みテンプレートから作成</span>
-                            <div class="template-suggestion-note" style="font-size: 11px; color: #64748b; margin-bottom: 6px;">既存テンプレートを選択すると、タイトルや所要時間の入力を省略してすぐに作成できます。</div>
-                            <div class="template-suggestion-list" id="schedule-template-suggestion-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 110px; overflow-y: auto;">
+                            <div class="template-suggestion-note"
+                                style="font-size: 11px; color: #64748b; margin-bottom: 6px;">
+                                既存テンプレートを選択すると、タイトルや所要時間の入力を省略してすぐに作成できます。</div>
+                            <div class="template-suggestion-list" id="schedule-template-suggestion-list"
+                                style="display: flex; flex-direction: column; gap: 6px; max-height: 110px; overflow-y: auto;">
                                 <!-- JSで動的生成 -->
                             </div>
-                            <div class="template-suggestion-preview" id="schedule-template-suggestion-preview" style="display: none; margin-top: 12px; padding: 10px; background: rgba(255, 112, 130, 0.05); border: 1.5px dashed #FF7082; border-radius: 12px; font-size: 12px; color: #1e293b;"></div>
-                            <button type="button" class="template-suggestion-clear-btn" id="schedule-template-clear-btn" style="display: none; margin-top: 8px; background: #f1f5f9; border: none; color: #64748b; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; align-items: center; justify-content: center; width: 100%;" onclick="clearTemplateSuggestionSelection()">選択を解除</button>
+                            <div class="template-suggestion-preview" id="schedule-template-suggestion-preview"
+                                style="display: none; margin-top: 12px; padding: 10px; background: rgba(255, 112, 130, 0.05); border: 1.5px dashed #FF7082; border-radius: 12px; font-size: 12px; color: #1e293b;">
+                            </div>
+                            <button type="button" class="template-suggestion-clear-btn" id="schedule-template-clear-btn"
+                                style="display: none; margin-top: 8px; background: #f1f5f9; border: none; color: #64748b; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; align-items: center; justify-content: center; width: 100%;"
+                                onclick="clearTemplateSuggestionSelection()">選択を解除</button>
                         </div>
                         <div class="modal-card">
                             <span class="modal-card-label">🎨 カラーを選択</span>
@@ -352,7 +357,8 @@
                         <!-- 繰り返し設定カード -->
                         <div class="modal-card">
                             <span class="modal-card-label">🔄 繰り返し</span>
-                            <select id="schedule-recurrence" style="width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; background-color: #f8fafc; outline: none; font-size: 14px; font-weight: 600; color: #1e293b;">
+                            <select id="schedule-recurrence"
+                                style="width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; background-color: #f8fafc; outline: none; font-size: 14px; font-weight: 600; color: #1e293b;">
                                 <option value="none">なし</option>
                                 <option value="daily">毎日</option>
                                 <option value="weekly">毎週</option>
@@ -383,24 +389,31 @@
     <script>
         // 週間カレンダーデータ (動的生成)
         let weekDays = [];
-        let currentActiveDay = 1; // デフォルトのアクティブ曜日インデックス (0: 月, 1: 火, ..., 6: 日)
+        let currentActiveDay = 7; // デフォルトのアクティブ日付ID (過去7日間分オフセットがあるので「今日」は7になる)
+        let hasInitialScrolledToNow = false;
 
         function setupWeeklyCalendarData() {
             const today = new Date();
-            const dayOfWeek = today.getDay(); // 0: 日, 1: 月, ..., 6: 土
-            // 月曜日を週の始まりとするためのオフセット計算
+            const dayOfWeek = today.getDay();
             const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
 
-            const monday = new Date(today);
-            monday.setDate(today.getDate() + diffToMonday);
+            // 今週の月曜日を取得
+            const thisMonday = new Date(today);
+            thisMonday.setDate(today.getDate() + diffToMonday);
 
-            const dayNames = ['月', '火', '水', '木', '金', '土', '日'];
-            const labels = ['月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日', '日曜日'];
+            // カレンダーの開始日 (2週間前の月曜日)
+            const startDate = new Date(thisMonday);
+            startDate.setDate(thisMonday.getDate() - 14);
+
+            const dayNames = ['月', '火', '水', '木', '金', '土', '日']; // 月曜スタートなので月〜日
 
             weekDays = [];
-            for (let i = 0; i < 7; i++) {
-                const d = new Date(monday);
-                d.setDate(monday.getDate() + i);
+            let todayId = 14; // 初期値
+
+            // 過去2週間〜未来5週間 (計8週間 = 56日間) を生成し、週の切れ目が月曜スタートで固定されるようにする
+            for (let i = 0; i < 56; i++) {
+                const d = new Date(startDate);
+                d.setDate(startDate.getDate() + i);
 
                 const month = d.getMonth() + 1;
                 const dateNum = d.getDate();
@@ -411,10 +424,15 @@
                 tomorrow.setDate(today.getDate() + 1);
                 const isTomorrow = d.toDateString() === tomorrow.toDateString();
 
-                let label = labels[i];
+                // 曜日の判定 (0: 日, 1: 月, ...)
+                const dayOfWeekNum = d.getDay();
+                // 月曜スタート表示のインデックス調整
+                const dayNameIndex = dayOfWeekNum === 0 ? 6 : dayOfWeekNum - 1;
+
+                let label = `${month}月${dateNum}日`;
                 if (isToday) {
                     label = '今日';
-                    currentActiveDay = i;
+                    todayId = i;
                 } else if (isTomorrow) {
                     label = '明日';
                 }
@@ -425,13 +443,15 @@
                 weekDays.push({
                     id: i,
                     date: `${month}/${dateNum}`,
-                    name: dayNames[i],
+                    name: dayNames[dayNameIndex],
                     num: dateNum,
                     fullName: `${month}月${dateNum}日`,
                     label: label,
                     isoDate: isoDate
                 });
             }
+
+            currentActiveDay = todayId;
         }
 
         // 各曜日のスケジュール初期データ
@@ -517,23 +537,24 @@
                 let allItems = [];
                 try {
                     allItems = JSON.parse(localStorage.getItem('savedTasks')) || [];
-                } catch(e) {
+                } catch (e) {
                     allItems = [];
                 }
-                
+
                 const schedulesList = [];
                 const tasksList = [];
-                
+
                 let existingSchedules = [];
                 try {
                     existingSchedules = JSON.parse(localStorage.getItem('savedSchedules')) || [];
-                } catch(e) {
+                } catch (e) {
                     existingSchedules = [];
                 }
 
                 allItems.forEach(item => {
                     if (!item) return;
-                    if (item.startTime !== undefined || item.endTime !== undefined || item.groupId || item.startDate) {
+                    // startTimeが空ではない（またはグループIDがある）もののみ予定とし、期限なしタスクはtasksListのままにする
+                    if ((item.startTime && item.startTime !== "") || item.groupId) {
                         schedulesList.push(item);
                     } else {
                         tasksList.push(item);
@@ -544,6 +565,51 @@
                 localStorage.setItem('savedSchedules', JSON.stringify(mergedSchedules));
                 localStorage.setItem('savedTasks', JSON.stringify(tasksList));
                 localStorage.setItem('dataMigrated_v2', 'true');
+            }
+            // 間違って移行された期限なしタスクを修復
+            repairSchedulesAndTasksData();
+        }
+
+        // 過去の間違ったマイグレーションにより savedSchedules に混入した「期限なしタスク」を savedTasks に救出・復元する
+        function repairSchedulesAndTasksData() {
+            let allSchedules = [];
+            let allTasks = [];
+            try {
+                allSchedules = JSON.parse(localStorage.getItem('savedSchedules')) || [];
+            } catch (e) { }
+            try {
+                allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+            } catch (e) { }
+
+            const schedulesToKeep = [];
+            const tasksToRestore = [];
+            let updated = false;
+
+            allSchedules.forEach(item => {
+                if (!item) return;
+                // startTime が空文字列、null、undefined のものは「予定」ではなく「タスク」である
+                if (!item.startTime || item.startTime === "") {
+                    // かつ、まだタスクリストに同じIDのタスクがなければ移行する
+                    if (!allTasks.some(t => t.id === item.id)) {
+                        tasksToRestore.push({
+                            ...item,
+                            startDate: "",
+                            startTime: "",
+                            endDate: "",
+                            endTime: ""
+                        });
+                    }
+                    updated = true;
+                } else {
+                    schedulesToKeep.push(item);
+                }
+            });
+
+            if (updated) {
+                const mergedTasks = [...allTasks, ...tasksToRestore];
+                localStorage.setItem('savedSchedules', JSON.stringify(schedulesToKeep));
+                localStorage.setItem('savedTasks', JSON.stringify(mergedTasks));
+                console.log(`[Data Repair] Restored ${tasksToRestore.length} tasks back to savedTasks. Remaining schedules: ${schedulesToKeep.length}`);
             }
         }
 
@@ -581,7 +647,16 @@
             const container = document.getElementById('weekly-calendar');
             container.innerHTML = '';
 
-            weekDays.forEach(day => {
+            let currentWeekDiv = null;
+
+            weekDays.forEach((day, index) => {
+                // 7日ごとに新しい週のラッパーを作成
+                if (index % 7 === 0) {
+                    currentWeekDiv = document.createElement('div');
+                    currentWeekDiv.className = 'calendar-week';
+                    container.appendChild(currentWeekDiv);
+                }
+
                 const dayDiv = document.createElement('div');
                 dayDiv.className = `calendar-day ${day.id === currentActiveDay ? 'active' : ''}`;
                 dayDiv.dataset.id = day.id;
@@ -597,13 +672,30 @@
                     switchDay(day.id);
                 });
 
-                container.appendChild(dayDiv);
+                if (currentWeekDiv) {
+                    currentWeekDiv.appendChild(dayDiv);
+                }
             });
+
+            // 今日の日付がある「週」をカレンダーの中央（画面幅）にスナップスクロールさせる
+            const activeDayEl = container.querySelector('.calendar-day.active');
+            if (activeDayEl) {
+                const activeWeekEl = activeDayEl.parentElement;
+                if (activeWeekEl) {
+                    setTimeout(() => {
+                        const containerWidth = container.offsetWidth;
+                        const activeWeekOffsetLeft = activeWeekEl.offsetLeft;
+                        const activeWeekWidth = activeWeekEl.offsetWidth;
+                        container.scrollLeft = activeWeekOffsetLeft - (containerWidth / 2) + (activeWeekWidth / 2);
+                    }, 50);
+                }
+            }
         }
 
         // 曜日の切り替え
         function switchDay(dayId) {
             currentActiveDay = dayId;
+            hasInitialScrolledToNow = false; // 自動スクロールフラグをリセット
             const dayInfo = weekDays.find(d => d.id === dayId);
 
             // ヘッダーテキストの更新 (中央タイトル)
@@ -628,10 +720,11 @@
             // 日付別の個別設定値があればそれを使い、無ければ全体デフォルト値を使う
             const dailyMax = localStorage.getItem(`maxEnergyConfig_${isoDate}`);
             const maxEnergy = dailyMax ? parseInt(dailyMax) : (parseInt(localStorage.getItem('maxEnergyConfig')) || 10);
-            
+
             // 現在の曜日に登録されている全タスクの合計消費エネルギーを計算
             const allTasks = JSON.parse(localStorage.getItem('savedSchedules')) || [];
             const tasksForDay = allTasks.filter(t => {
+                if (t.excludeDates && t.excludeDates.includes(isoDate)) return false;
                 if (t.startDate === isoDate) return true;
                 if (!t.recurrence || t.recurrence === 'none') return false;
                 if (t.startDate > isoDate) return false;
@@ -643,7 +736,7 @@
                 }
                 return false;
             });
-            
+
             // 各タスクのエネルギー値を合計（予定ごとのエネルギーが設定されていればそれを使い、設定されていなければ0とする）
             const usedEnergy = tasksForDay.reduce((sum, task) => {
                 const energyVal = task.energy !== undefined ? parseInt(task.energy) : 0;
@@ -656,7 +749,7 @@
             // 画面のバッテリーUIへ反映
             const textEl = document.getElementById('battery-remain-text');
             const barEl = document.getElementById('battery-level-bar');
-            
+
             if (textEl && barEl) {
                 textEl.textContent = `${remainEnergy}/${maxEnergy}`;
                 const pct = (remainEnergy / maxEnergy) * 100;
@@ -672,15 +765,76 @@
         }
 
         // ⚡️ 総エネルギー変更ポップアップの制御ロジック
+        let selectedMaxEnergy = 10;
+        let energyDrumScrollTimer = null;
+
+        function initEnergyDrumPicker() {
+            const list = document.getElementById('drum-energy-list');
+            if (!list) return;
+            list.innerHTML = '';
+
+            // 1〜50までの数値を生成
+            for (let i = 1; i <= 50; i++) {
+                const item = document.createElement('div');
+                item.className = 'drum-picker-item';
+                item.dataset.value = i;
+                item.textContent = i;
+                item.style.height = '30px';
+                item.style.lineHeight = '30px';
+                item.style.fontSize = '15px';
+                item.style.fontWeight = 'bold';
+                item.style.color = '#1e293b';
+                item.style.scrollSnapAlign = 'center';
+                list.appendChild(item);
+            }
+
+            const el = document.getElementById('drum-energy-scroll');
+            if (el) {
+                el.onscroll = null;
+                el.addEventListener('scroll', () => {
+                    window.clearTimeout(energyDrumScrollTimer);
+                    energyDrumScrollTimer = setTimeout(() => {
+                        onEnergyDrumScrollEnd(el);
+                    }, 80);
+                });
+            }
+        }
+
+        function onEnergyDrumScrollEnd(el) {
+            const scrollTop = el.scrollTop;
+            const itemHeight = 30;
+            const index = Math.round(scrollTop / itemHeight);
+
+            // 範囲制限
+            const maxIndex = 49; // 1〜50
+            const finalIndex = Math.max(0, Math.min(maxIndex, index));
+
+            el.scrollTo({ top: finalIndex * itemHeight, behavior: 'smooth' });
+            selectedMaxEnergy = finalIndex + 1; // 1から始まる数値
+        }
+
+        function scrollEnergyDrumToValue(val, behavior = 'smooth') {
+            const el = document.getElementById('drum-energy-scroll');
+            if (!el) return;
+            const itemHeight = 30;
+            const index = Math.max(1, Math.min(50, parseInt(val, 10) || 10)) - 1;
+
+            el.scrollTo({ top: index * itemHeight, behavior: behavior });
+            selectedMaxEnergy = index + 1;
+        }
+
         function openMaxEnergyPrompt() {
             const activeDayInfo = weekDays.find(d => d.id === currentActiveDay);
             if (!activeDayInfo) return;
             const isoDate = activeDayInfo.isoDate;
             const dailyMax = localStorage.getItem(`maxEnergyConfig_${isoDate}`);
             const currentMax = dailyMax ? parseInt(dailyMax) : (localStorage.getItem('maxEnergyConfig') || 10);
-            
-            document.getElementById('max-energy-input').value = currentMax;
+
             document.getElementById('energy-prompt-modal').style.display = 'flex';
+            initEnergyDrumPicker();
+            setTimeout(() => {
+                scrollEnergyDrumToValue(currentMax, 'auto');
+            }, 50);
         }
 
         function closeMaxEnergyPrompt() {
@@ -688,14 +842,9 @@
         }
 
         function saveMaxEnergyConfig() {
-            const inputVal = parseInt(document.getElementById('max-energy-input').value);
-            if (isNaN(inputVal) || inputVal <= 0) {
-                alert('1以上の正しい数値を入力してください。');
-                return;
-            }
             const activeDayInfo = weekDays.find(d => d.id === currentActiveDay);
             if (activeDayInfo) {
-                localStorage.setItem(`maxEnergyConfig_${activeDayInfo.isoDate}`, inputVal);
+                localStorage.setItem(`maxEnergyConfig_${activeDayInfo.isoDate}`, selectedMaxEnergy);
             }
             closeMaxEnergyPrompt();
             calculateAndRenderEnergy(); // バッテリー表示を即座に更新
@@ -943,12 +1092,12 @@
             } else {
                 selectedTimelineTaskIds.push(id);
             }
-            
+
             // 対象要素の見た目切り替え
             document.querySelectorAll(`[data-task-id="${id}"]`).forEach(el => {
                 el.classList.toggle('selected-for-group', idx === -1);
             });
-            
+
             updateSelectionToolbar();
         }
 
@@ -1096,7 +1245,7 @@
 
             handleEl.addEventListener('touchmove', (e) => {
                 if (!activeTouchDrag) return;
-                
+
                 // スクロールを完全に防止する
                 if (e.cancelable) {
                     e.preventDefault();
@@ -1212,18 +1361,18 @@
             const groupTasks = allTasks
                 .filter(t => t.groupId === groupId)
                 .sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
-                
+
             if (groupTasks.length === 0) return;
 
             let currentMinutes = timeToMinutes(newStartStr);
             const timeUpdates = {};
-            
+
             groupTasks.forEach(task => {
                 const duration = timeToMinutes(task.endTime) - timeToMinutes(task.startTime);
                 const startStr = minutesToTime(currentMinutes);
                 currentMinutes += duration;
                 const endStr = minutesToTime(currentMinutes);
-                
+
                 timeUpdates[task.id] = {
                     startTime: startStr,
                     endTime: endStr
@@ -1284,47 +1433,81 @@
 
             // localStorage からデータを読み込む
             const allTasks = JSON.parse(localStorage.getItem('savedSchedules')) || [];
-            const tasksForDay = allTasks.filter(t => t.startDate === isoDate);
+            const tasksForDay = allTasks.filter(t => {
+                if (t.excludeDates && t.excludeDates.includes(isoDate)) return false;
+                if (t.startDate === isoDate) return true;
+                if (!t.recurrence || t.recurrence === 'none') return false;
+                if (t.startDate > isoDate) return false;
+                if (t.recurrence === 'daily') return true;
+                if (t.recurrence === 'weekly') {
+                    const startD = new Date(t.startDate);
+                    const targetDate = new Date(isoDate);
+                    return startD.getDay() === targetDate.getDay();
+                }
+                return false;
+            });
 
             // 時間割データの自動マージ
-            const timetable = JSON.parse(localStorage.getItem('savedTimetable'));
-            if (timetable && timetable.selectedSlots && timetable.selectedSlots[dayId]) {
-                const periods = timetable.selectedSlots[dayId];
-                const defaultConfig = {
-                    periods: 5,
-                    periodTimes: {
-                        "1": { "start": "08:50", "end": "10:20" },
-                        "2": { "start": "10:30", "end": "12:00" },
-                        "3": { "start": "13:00", "end": "14:30" },
-                        "4": { "start": "14:40", "end": "16:10" },
-                        "5": { "start": "16:20", "end": "17:50" },
-                        "6": { "start": "18:00", "end": "19:30" },
-                        "7": { "start": "19:40", "end": "21:10" }
-                    }
-                };
-                const config = JSON.parse(localStorage.getItem('timetableConfig')) || defaultConfig;
+            const defaultConfig = {
+                periods: 5,
+                daysType: "week-sat",
+                reflectMode: "auto",
+                periodTimes: {
+                    "1": { "start": "08:50", "end": "10:20" },
+                    "2": { "start": "10:30", "end": "12:00" },
+                    "3": { "start": "13:00", "end": "14:30" },
+                    "4": { "start": "14:40", "end": "16:10" },
+                    "5": { "start": "16:20", "end": "17:50" },
+                    "6": { "start": "18:00", "end": "19:30" },
+                    "7": { "start": "19:40", "end": "21:10" }
+                }
+            };
+            const config = JSON.parse(localStorage.getItem('timetableConfig')) || defaultConfig;
+            const reflectMode = config.reflectMode || "auto";
 
-                periods.forEach(p => {
-                    // 設定された時限数を超えるものはマージしない
-                    if (p > parseInt(config.periods)) return;
+            if (reflectMode !== 'off') {
+                let slotsToMerge = null;
+                const savedList = JSON.parse(localStorage.getItem('savedTimetableList')) || [];
 
-                    const timeConfig = config.periodTimes[p];
-                    if (timeConfig) {
-                        tasksForDay.push({
-                            id: `timetable-${dayId}-${p}`,
-                            title: `授業（${p}限）`,
-                            location: `${timeConfig.start}〜${timeConfig.end}`,
-                            isAllDay: false,
-                            startDate: isoDate,
-                            startTime: timeConfig.start,
-                            endDate: isoDate,
-                            endTime: timeConfig.end,
-                            icon: "📚",
-                            type: "study",
-                            color: "blue"
-                        });
+                if (reflectMode === 'always') {
+                    const activeId = localStorage.getItem('currentTermId');
+                    let activeTerm = savedList.find(t => t.termId === activeId);
+                    if (!activeTerm && savedList.length > 0) activeTerm = savedList[0];
+                    if (activeTerm) slotsToMerge = activeTerm.selectedSlots;
+                } else {
+                    // auto (期間内のみ自動)
+                    const matchedTerm = savedList.find(t => {
+                        if (!t.startDate || !t.endDate) return false;
+                        return isoDate >= t.startDate && isoDate <= t.endDate;
+                    });
+                    if (matchedTerm) {
+                        slotsToMerge = matchedTerm.selectedSlots;
                     }
-                });
+                }
+
+                if (slotsToMerge && slotsToMerge[dayId]) {
+                    const periods = slotsToMerge[dayId];
+                    periods.forEach(p => {
+                        if (p > parseInt(config.periods)) return;
+
+                        const timeConfig = config.periodTimes[p];
+                        if (timeConfig) {
+                            tasksForDay.push({
+                                id: `timetable-${dayId}-${p}`,
+                                title: `授業（${p}限）`,
+                                location: `${timeConfig.start}〜${timeConfig.end}`,
+                                isAllDay: false,
+                                startDate: isoDate,
+                                startTime: timeConfig.start,
+                                endDate: isoDate,
+                                endTime: timeConfig.end,
+                                icon: "📚",
+                                type: "study",
+                                color: "blue"
+                            });
+                        }
+                    });
+                }
             }
 
             // 表示用にデータをマップ
@@ -1574,7 +1757,7 @@
 
                         const targetCol = document.getElementById(`overlap-col-${index}-${columnIndex}`);
                         const card = document.createElement('div');
-                        
+
                         // 重複グループ内の連結ブロッククラス判定
                         let groupClass = '';
                         let isGroupFirst = false;
@@ -1583,7 +1766,7 @@
                                 .filter(t => t.groupId === task.groupId)
                                 .sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
                             const groupIdx = groupTasks.findIndex(t => t.id === task.id);
-                            
+
                             if (groupIdx > -1) {
                                 const hasPrev = groupIdx > 0;
                                 const hasNext = groupIdx < groupTasks.length - 1;
@@ -1618,7 +1801,7 @@
                             </div>
                         `;
                         card.dataset.taskId = String(task.id);
-                        
+
                         // 選択済み状態の表示クラスを復元
                         if (selectedTimelineTaskIds.includes(String(task.id))) {
                             card.classList.add('selected-for-group');
@@ -1639,7 +1822,7 @@
                                 const dragId = handle.dataset.dragId;
                                 e.dataTransfer.setData('text/plain', dragId);
                                 e.dataTransfer.effectAllowed = 'move';
-                                
+
                                 if (dragId.startsWith('group:')) {
                                     const gId = dragId.substring(6);
                                     document.querySelectorAll(`.timeline-item[data-group-id="${gId}"] .task-card, .item-card-col[data-group-id="${gId}"] .task-card`).forEach(c => {
@@ -1759,7 +1942,7 @@
 
                 } else {
                     const taskColor = colorMap[item.color] || colorMap.pink;
-                    
+
                     let groupClass = '';
                     let isGroupFirst = false;
                     if (item.groupId) {
@@ -1767,7 +1950,7 @@
                             .filter(t => t.groupId === item.groupId)
                             .sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
                         const groupIdx = groupTasks.findIndex(t => t.id === item.id);
-                        
+
                         if (groupIdx > -1) {
                             const hasPrev = groupIdx > 0;
                             const hasNext = groupIdx < groupTasks.length - 1;
@@ -1840,7 +2023,7 @@
                             const dragId = handle.dataset.dragId;
                             e.dataTransfer.setData('text/plain', dragId);
                             e.dataTransfer.effectAllowed = 'move';
-                            
+
                             if (dragId.startsWith('group:')) {
                                 const gId = dragId.substring(6);
                                 document.querySelectorAll(`.timeline-item[data-group-id="${gId}"] .task-card, .item-card-col[data-group-id="${gId}"] .task-card`).forEach(c => {
@@ -2021,6 +2204,15 @@
                 // 現在時刻ラベルの更新
                 const pad = (n) => String(n).padStart(2, '0');
                 document.getElementById('now-badge').textContent = `${pad(h)}:${pad(m)}`;
+
+                // 赤い現在時刻の線をデフォルトで上部（上から80px）にスクロール
+                if (!hasInitialScrolledToNow) {
+                    const viewport = document.querySelector('.timeline-viewport');
+                    if (viewport) {
+                        viewport.scrollTop = indicatorY - 80;
+                        hasInitialScrolledToNow = true;
+                    }
+                }
             } else {
                 nowIndicator.style.display = 'none';
             }
@@ -2161,7 +2353,7 @@
 
             const nextBtn = document.getElementById('modal-next-btn');
             if (nextBtn && currentStep === 1) {
-                nextBtn.textContent = currentScheduleTemplateSuggestion ? '作成' : '次へ';
+                nextBtn.textContent = '次へ';
             }
         }
 
@@ -2340,12 +2532,12 @@
             if (!el || !list) return;
 
             const items = list.querySelectorAll('.drum-picker-item');
-            
+
             // 中央メイン領域のインデックスを特定
             let targetIndex = -1;
             const offset = type === 'hour' ? 24 : 12;
             const itemVal = type === 'hour' ? parseInt(val) : parseInt(val);
-            
+
             // offset 番目以降のアイテム群から val が一致するものを探す
             for (let idx = offset; idx < offset * 2; idx++) {
                 if (items[idx] && parseInt(items[idx].dataset.value) === itemVal) {
@@ -2592,10 +2784,17 @@
 
             if (step === 1) {
                 backBtn.style.visibility = 'hidden';
-                nextBtn.textContent = currentScheduleTemplateSuggestion ? '作成' : '次へ';
+                nextBtn.textContent = '次へ';
             } else if (step === 2) {
                 backBtn.style.visibility = 'visible';
                 nextBtn.textContent = '次へ';
+
+                // テンプレート追加の時は所要時間UIを非表示にする
+                const durationCard = document.getElementById('duration-picker-card');
+                if (durationCard) {
+                    durationCard.style.display = currentScheduleTemplateSuggestion ? 'none' : 'block';
+                }
+
                 // ステップ2（時間選択ドラムロール）が表示されたタイミングでスクロール位置を同期
                 setTimeout(() => {
                     scrollDrumToValue('hour', selectedHour, 'auto');
@@ -2620,10 +2819,6 @@
                 const titleInput = document.getElementById('schedule-title');
                 if (!titleInput || !titleInput.value.trim()) {
                     alert('予定のタイトルを入力してください。');
-                    return;
-                }
-                if (currentScheduleTemplateSuggestion) {
-                    saveSchedule();
                     return;
                 }
                 goToStep(2);
@@ -2687,7 +2882,7 @@
             document.getElementById('structured-delete-btn').style.display = 'none';
             currentScheduleTemplateSuggestion = null;
             renderScheduleTemplateSuggestions();
-            
+
             // 新規作成時はエネルギーを 0 (なし) に初期設定
             const zeroEnergyInput = document.querySelector('input[name="energy"][value="0"]');
             if (zeroEnergyInput) zeroEnergyInput.checked = true;
@@ -2718,7 +2913,7 @@
             document.getElementById('schedule-title').value = task.title;
             document.getElementById('schedule-startdate').value = task.startDate;
             document.getElementById('schedule-notes').value = task.notes || '';
-            
+
             // 繰り返しの復元
             const recSelect = document.getElementById('schedule-recurrence');
             if (recSelect) recSelect.value = task.recurrence || 'none';
@@ -2906,7 +3101,7 @@
                                 icon: subTask.icon || getScheduleTemplateIcon(subTask.title),
                                 type: subTask.type || 'routine',
                                 notes: subTask.desc || '',
-                                recurrence: 'none',
+                                recurrence: recurrence,
                                 energy: energy,
                                 color: selectedColor,
                                 subtasks: []
@@ -2963,23 +3158,102 @@
             const targetTask = allTasks.find(t => t.id === currentEditingId);
             if (!targetTask) return;
 
+            // 選択中の日付 (例外登録用)
+            const activeDayInfo = weekDays.find(d => d.id === currentActiveDay);
+            const isoDate = activeDayInfo ? activeDayInfo.isoDate : '';
+
             if (targetTask.groupId) {
-                const choice = confirm("この予定はテンプレートから一括登録されたグループの一部です。\n\n「OK」を押すとグループの予定をすべて一括削除します。\n「キャンセル」を押すとこの予定だけを削除します。");
-                if (choice) {
-                    // グループ一括削除
-                    allTasks = allTasks.filter(t => t.groupId !== targetTask.groupId);
-                } else {
-                    // 単一削除
-                    allTasks = allTasks.filter(t => t.id !== currentEditingId);
+                // テンプレートからの一括登録グループの場合
+                const confirmModal = document.getElementById('delete-confirm-modal');
+                const messageEl = document.getElementById('delete-confirm-message');
+                const btnGroup = document.getElementById('delete-btn-group');
+                const btnSingle = document.getElementById('delete-btn-single');
+                const btnCancel = document.getElementById('delete-btn-cancel');
+
+                if (confirmModal && messageEl) {
+                    messageEl.innerHTML = `この予定はテンプレートから一括登録されたグループの一部です。<br><br><strong>「一括削除」</strong>で今日のグループ予定をすべて非表示にするか、<strong>「これだけ削除」</strong>でこの予定のみを非表示にします。`;
+
+                    btnGroup.onclick = () => {
+                        // 同じグループIDのタスクを今日から除外する
+                        allTasks = allTasks.map(t => {
+                            if (t.groupId === targetTask.groupId) {
+                                // 繰り返し予定なら、例外日付に追加
+                                if (t.recurrence && t.recurrence !== 'none') {
+                                    if (!t.excludeDates) t.excludeDates = [];
+                                    if (!t.excludeDates.includes(isoDate)) {
+                                        t.excludeDates.push(isoDate);
+                                    }
+                                    return t;
+                                }
+                                // 繰り返しでなければ物理削除するため null を返し、後で filter する
+                                return null;
+                            }
+                            return t;
+                        }).filter(Boolean);
+
+                        localStorage.setItem('savedSchedules', JSON.stringify(allTasks));
+                        confirmModal.classList.remove('active');
+                        closeScheduleModal();
+                        switchDay(currentActiveDay);
+                    };
+
+                    btnSingle.onclick = () => {
+                        // このタスクだけを今日から除外する
+                        allTasks = allTasks.map(t => {
+                            if (t.id === currentEditingId) {
+                                if (t.recurrence && t.recurrence !== 'none') {
+                                    if (!t.excludeDates) t.excludeDates = [];
+                                    if (!t.excludeDates.includes(isoDate)) {
+                                        t.excludeDates.push(isoDate);
+                                    }
+                                    return t;
+                                }
+                                return null;
+                            }
+                            return t;
+                        }).filter(Boolean);
+
+                        localStorage.setItem('savedSchedules', JSON.stringify(allTasks));
+                        confirmModal.classList.remove('active');
+                        closeScheduleModal();
+                        switchDay(currentActiveDay);
+                    };
+
+                    btnCancel.onclick = () => {
+                        confirmModal.classList.remove('active');
+                    };
+
+                    // 背景クリックでも閉じる
+                    confirmModal.onclick = (e) => {
+                        if (e.target === confirmModal) {
+                            confirmModal.classList.remove('active');
+                        }
+                    };
+
+                    confirmModal.classList.add('active');
                 }
             } else {
                 if (!confirm('本当にこの予定を削除しますか？')) return;
-                allTasks = allTasks.filter(t => t.id !== currentEditingId);
-            }
 
-            localStorage.setItem('savedSchedules', JSON.stringify(allTasks));
-            closeScheduleModal();
-            switchDay(currentActiveDay);
+                // 単一の繰り返し予定をこの日だけ非表示にする
+                allTasks = allTasks.map(t => {
+                    if (t.id === currentEditingId) {
+                        if (t.recurrence && t.recurrence !== 'none') {
+                            if (!t.excludeDates) t.excludeDates = [];
+                            if (!t.excludeDates.includes(isoDate)) {
+                                t.excludeDates.push(isoDate);
+                            }
+                            return t;
+                        }
+                        return null;
+                    }
+                    return t;
+                }).filter(Boolean);
+
+                localStorage.setItem('savedSchedules', JSON.stringify(allTasks));
+                closeScheduleModal();
+                switchDay(currentActiveDay);
+            }
         }
 
         function autoDeleteOldTasks() {
@@ -3172,7 +3446,8 @@
     <div id="task-picker-modal" class="modal-overlay">
         <div class="modal-box task-picker-modal-box">
             <div class="task-picker-header">
-                <button type="button" class="task-picker-close-btn" aria-label="閉じる" onclick="closeTaskPickerModal()">×</button>
+                <button type="button" class="task-picker-close-btn" aria-label="閉じる"
+                    onclick="closeTaskPickerModal()">×</button>
                 <div class="task-picker-title">タスクを追加</div>
                 <div class="task-picker-subtitle">空き時間に入る未完了タスクを選択すると、この日の予定として追加されます。</div>
             </div>
@@ -3188,8 +3463,25 @@
     <!-- ⚡️ 総エネルギー量変更用のポップアップ -->
     <div id="energy-prompt-modal" class="energy-prompt-modal">
         <div class="energy-prompt-box">
-            <h4 style="margin:0; font-size:14px; color:#1e293b;">1日の目標エネルギー量</h4>
-            <input type="number" id="max-energy-input" class="energy-prompt-input" min="1" max="99">
+            <h4 style="margin:0; font-size:14px; color:#1e293b;">1日の総エネルギー量</h4>
+            <div class="drum-picker-container"
+                style="height: 120px; width: 140px; margin: 12px auto; justify-content: center; position: relative;">
+                <div class="drum-picker" id="drum-energy" style="height: 100%; width: 100%;">
+                    <div class="drum-picker-scroll" id="drum-energy-scroll"
+                        style="height: 100%; overflow-y: auto; scroll-snap-type: y mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; &::-webkit-scrollbar { display: none; }">
+                        <div class="drum-picker-padding-top" style="height: 45px;"></div>
+                        <div class="drum-picker-list" id="drum-energy-list"
+                            style="display: flex; flex-direction: column; align-items: center;">
+                            <!-- JSで1〜50の数値を動的生成 -->
+                        </div>
+                        <div class="drum-picker-padding-bottom" style="height: 45px;"></div>
+                    </div>
+                </div>
+                <!-- 選択位置のハイライトバー -->
+                <div class="drum-picker-overlay"
+                    style="position: absolute; top: 45px; left: 0; right: 0; height: 30px; border-top: 1.5px solid #FF7082; border-bottom: 1.5px solid #FF7082; background: rgba(255, 112, 130, 0.05); pointer-events: none;">
+                </div>
+            </div>
             <div class="energy-prompt-buttons">
                 <button class="energy-prompt-btn energy-prompt-cancel" onclick="closeMaxEnergyPrompt()">キャンセル</button>
                 <button class="energy-prompt-btn energy-prompt-save" onclick="saveMaxEnergyConfig()">保存</button>
@@ -3223,7 +3515,27 @@
     </div>
 
     <!-- ドラッグ中のリアルタイム時間プレビュー用ツールチップ -->
-    <div id="drag-time-tooltip" style="position: fixed; display: none; background: #ff7082; color: white; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 800; pointer-events: none; z-index: 9999; box-shadow: 0 4px 12px rgba(255,112,130,0.3); font-family: sans-serif;">07:00</div>
+    <div id="drag-time-tooltip"
+        style="position: fixed; display: none; background: #ff7082; color: white; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 800; pointer-events: none; z-index: 9999; box-shadow: 0 4px 12px rgba(255,112,130,0.3); font-family: sans-serif;">
+        07:00</div>
+
+    <!-- カスタム削除確認モーダル -->
+    <div id="delete-confirm-modal" class="modal-overlay" style="z-index: 3000;">
+        <div class="modal-box delete-confirm-box"
+            style="width: 320px; background: white; border-radius: 24px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.25); text-align: center; display: flex; flex-direction: column; gap: 16px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            <h4 style="margin: 0; font-size: 16px; font-weight: 800; color: #1e293b;">予定の削除</h4>
+            <p id="delete-confirm-message"
+                style="margin: 0; font-size: 13px; color: #64748b; line-height: 1.5; text-align: left;"></p>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                <button id="delete-btn-group" class="delete-modal-btn"
+                    style="background: #ff7082; color: white; border: none; padding: 12px; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 13px; transition: all 0.2s;">一括削除</button>
+                <button id="delete-btn-single" class="delete-modal-btn"
+                    style="background: #ffe4e6; color: #ff7082; border: none; padding: 12px; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 13px; transition: all 0.2s;">これだけ削除</button>
+                <button id="delete-btn-cancel" class="delete-modal-btn"
+                    style="background: #f1f5f9; color: #64748b; border: none; padding: 12px; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 13px; transition: all 0.2s;">やっぱしない</button>
+            </div>
+        </div>
+    </div>
 
     <!-- ここまで書き加えました -->
 
