@@ -55,7 +55,6 @@
                 <div class="profile-avatar">KH</div>
                 <div class="profile-info">
                     <span class="profile-name">肥後 佳苗</span>
-                    <span class="profile-role">大学開発メンバー</span>
                 </div>
             </div>
             <nav class="sidebar-nav">
@@ -67,6 +66,7 @@
                     <span class="nav-icon">📋</span>
                     <span class="nav-text">タスクリスト</span>
                 </a>
+                <div class="sidebar-divider"></div>
                 <a href="templateRegister.html" class="nav-item">
                     <span class="nav-icon">📝</span>
                     <span class="nav-text">テンプレートの登録</span>
@@ -91,7 +91,7 @@
 
         <div class="app-container">
             <!-- アプリヘッダー -->
-            <header class="app-header">
+            <header class="app-header slim">
                 <div class="header-top">
                     <button class="icon-btn" id="menu-toggle-btn" aria-label="メニュー" style="margin-right: 8px;">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -159,12 +159,12 @@
                     <label class="config-label">学期</label>
                     <div class="config-radio-list">
                         <label class="config-radio-item">
-                           <input type="radio" name="term-semester" value="1学期 / 前期 / 春学期" class="config-radio-input" checked>
-                           <span class="config-radio-label-text">1学期 / 前期 / 春学期</span>
+                           <input type="radio" name="term-semester" value="1学期" class="config-radio-input" checked>
+                           <span class="config-radio-label-text">1学期</span>
                         </label>
                         <label class="config-radio-item">
-                           <input type="radio" name="term-semester" value="2学期 / 後期 / 秋学期" class="config-radio-input">
-                           <span class="config-radio-label-text">2学期 / 後期 / 秋学期</span>
+                           <input type="radio" name="term-semester" value="2学期" class="config-radio-input">
+                           <span class="config-radio-label-text">2学期</span>
                         </label>
                         <label class="config-radio-item">
                            <input type="radio" name="term-semester" value="3学期" class="config-radio-input">
@@ -173,10 +173,6 @@
                         <label class="config-radio-item">
                            <input type="radio" name="term-semester" value="4学期" class="config-radio-input">
                            <span class="config-radio-label-text">4学期</span>
-                        </label>
-                        <label class="config-radio-item">
-                           <input type="radio" name="term-semester" value="通年" class="config-radio-input">
-                           <span class="config-radio-label-text">通年</span>
                         </label>
                     </div>
                 </div>
@@ -318,9 +314,9 @@
                 if (oldTimetable) {
                     try {
                         const parsed = JSON.parse(oldTimetable);
-                        const termParts = parsed.term ? parsed.term.split('年 ') : ["2026", "1学期 / 前期 / 春学期"];
+                        const termParts = parsed.term ? parsed.term.split('年 ') : ["2026", "1学期"];
                         const year = termParts[0] || "2026";
-                        const semester = termParts[1] || "1学期 / 前期 / 春学期";
+                        const semester = termParts[1] || "1学期";
                         const defaultTermObj = {
                             termId: `${year}-${semester}`,
                             year: year,
@@ -352,7 +348,7 @@
                 if (list.length > 0) {
                     termId = list[0].termId;
                 } else {
-                    termId = "2026-1学期 / 前期 / 春学期";
+                    termId = "2026-1学期";
                 }
                 localStorage.setItem('currentTermId', termId);
             }
@@ -366,7 +362,7 @@
             if (!obj) {
                 const parts = termId.split('-');
                 const year = parts[0] || "2026";
-                const semester = parts[1] || "1学期 / 前期 / 春学期";
+                const semester = parts[1] || "1学期";
                 obj = {
                     termId: termId,
                     year: year,
@@ -511,7 +507,12 @@
 
             document.getElementById('term-year-select').value = termObj.year;
             
-            const radio = document.querySelector(`input[name="term-semester"][value="${termObj.semester}"]`);
+            let semesterVal = termObj.semester;
+            // 古い表記を新しい表記にマッピングしてラジオボタンの選択に合わせる
+            if (semesterVal === "1学期 / 前期 / 春学期") semesterVal = "1学期";
+            if (semesterVal === "2学期 / 後期 / 秋学期") semesterVal = "2学期";
+            
+            const radio = document.querySelector(`input[name="term-semester"][value="${semesterVal}"]`);
             if (radio) radio.checked = true;
 
             // 期間もセット

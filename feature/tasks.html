@@ -118,47 +118,45 @@
             color: #64748b;
         }
 
-        .quick-add-card .deadline-picker-input {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
-            z-index: 2;
-            border: none;
-            background: transparent;
-            outline: none;
-        }
-
-        .quick-add-card .deadline-picker-input::-webkit-calendar-picker-indicator {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            opacity: 0;
-            cursor: pointer;
-        }
-
-        /* フォーカス（入力中）になったら通常表示にしてmac Safariで時間入力を可能にする */
-        .quick-add-card .deadline-picker-input:focus {
-            opacity: 1;
-            background: #ffffff;
-            border: 1.5px solid #ffb1b6;
-            border-radius: 14px;
-            padding: 8px 12px;
-            color: #be123c;
-            font-weight: 700;
+        .deadline-picker-field {
+            min-height: 38px;
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            border: 1.5px solid #e2e8f0;
+            color: #0f172a;
+            border-radius: 12px;
+            padding: 6px 10px;
             font-size: 13px;
+            font-family: inherit;
+            font-weight: 700;
+            outline: none;
+            box-sizing: border-box;
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+            transition: all 0.2s;
+            position: relative;
         }
 
-        .quick-add-card .deadline-picker-input:focus::-webkit-calendar-picker-indicator {
-            position: static;
-            width: auto;
-            height: auto;
-            opacity: 1;
+        .deadline-picker-field:focus {
+            border-color: #ffb1b6;
+            background: linear-gradient(135deg, #fff0f1 0%, #ffffff 100%);
+            color: #be123c;
+        }
+
+        /* 未選択の時はプレースホルダーとして「期限」を表示 */
+        .deadline-picker-field:invalid::before {
+            content: "期限";
+            color: #94a3b8;
+            font-size: 13px;
+            font-weight: 700;
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            pointer-events: none;
+        }
+
+        .deadline-picker-field:invalid {
+            color: transparent;
         }
 
         .quick-add-card .deadline-helper {
@@ -245,7 +243,6 @@
         }
 
         .modal-card .deadline-field {
-            position: relative;
             width: 100%;
             min-height: 46px;
             border: 1.5px solid #e2e8f0;
@@ -259,16 +256,6 @@
             color: #1e293b;
             box-sizing: border-box;
             transition: border-color 0.2s, box-shadow 0.2s, transform 0.12s;
-        }
-
-        .modal-card .deadline-field::-webkit-calendar-picker-indicator {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            opacity: 0;
             cursor: pointer;
         }
 
@@ -301,7 +288,7 @@
 
         .task-duration-slim {
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 700;
             color: #64748b;
             background-color: #f1f5f9;
             padding: 2px 6px;
@@ -353,7 +340,6 @@
                 <div class="profile-avatar">KH</div>
                 <div class="profile-info">
                     <span class="profile-name">肥後 佳苗</span>
-                    <span class="profile-role">大学開発メンバー</span>
                 </div>
             </div>
             <nav class="sidebar-nav">
@@ -365,6 +351,7 @@
                     <span class="nav-icon">📋</span>
                     <span class="nav-text">タスクリスト</span>
                 </a>
+                <div class="sidebar-divider"></div>
                 <!-- ゆうかがテンプレートの登録を追加しました -->
                 <a href="templateRegister.html" class="nav-item">
                     <span class="nav-icon">📝</span>
@@ -375,7 +362,6 @@
                     <span class="nav-icon">🏫</span>
                     <span class="nav-text">時間割の登録</span>
                 </a>
-                <div class="sidebar-divider"></div>
                 <a href="locationSettings.html" class="nav-item">
                     <span class="nav-icon">📍</span>
                     <span class="nav-text">拠点・移動設定</span>
@@ -394,8 +380,8 @@
 
         <div class="app-container">
             <!-- アプリヘッダー -->
-            <header class="app-header">
-                <div class="header-top">
+            <header class="app-header" style="padding: 10px 20px 10px 20px;">
+                <div class="header-top" style="margin-bottom: 0;">
                     <button class="icon-btn" id="menu-toggle-btn" aria-label="メニュー" style="margin-right: 8px;">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -409,12 +395,6 @@
                         <button class="jump-btn" onclick="scrollToCompleted()"
                             style="font-size: 11px; padding: 4px 8px; border-radius: 12px; background: #FFE4E6; color: #FF7082; border: none; font-weight: bold; cursor: pointer; transition: all 0.2s ease;">完了タスク
                             ⬇</button>
-                    </div>
-                </div>
-
-                <div class="date-container">
-                    <div class="date-title">
-                        <h1 style="font-size: 24px; font-weight: 800; color: var(--text-main); margin: 0;"></h1>
                     </div>
                 </div>
             </header>
@@ -435,19 +415,15 @@
                     </div>
 
                     <div class="settings-row" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-                        <div class="deadline-picker-shell">
-                            <button type="button" class="deadline-picker-button" id="quick-date-btn" aria-label="期限を設定">
-                                <span style="display: inline-flex; align-items: center; gap: 6px;"><span
-                                        class="icon">📅</span><span id="quick-date-label">期限を設定</span></span>
-                                <span style="font-size: 10px; color: #94a3b8;">▼</span>
-                            </button>
-                            <input type="datetime-local" id="quick-task-date" class="deadline-picker-input">
+                        <div class="deadline-picker-shell" style="display: flex; gap: 8px; align-items: center;">
+                            <input type="date" id="quick-task-date-only" class="deadline-picker-field" style="width: 148px;" aria-label="日付" required>
+                            <input type="hidden" id="quick-task-date">
                         </div>
 
                         <div class="duration-select-wrapper" style="display: flex; align-items: center; gap: 8px;">
-                            <span style="font-size: 12px; font-weight: 600; color: #64748b;">所要時間:</span>
+                            <span style="font-size: 12px; font-weight: 700; color: #64748b;">所要時間:</span>
                             <button type="button" id="quick-duration-toggle-btn" class="setting-trigger-btn"
-                                style="color: #1e293b; background-color: #f1f5f9; border: 1.5px solid #e2e8f0; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s;">
+                                style="color: #1e293b; background-color: #f1f5f9; border: 1.5px solid #e2e8f0; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; font-weight: 700;">
                                 <span id="quick-duration-toggle-label">0時間30分</span>
                                 <span style="font-size: 10px; color: #94a3b8;">▼</span>
                             </button>
@@ -617,8 +593,12 @@
                             <!-- 期限選択 -->
                             <div class="modal-card">
                                 <span class="modal-card-label">📅 期限 (日付と時間)</span>
-                                <input type="datetime-local" id="schedule-startdate" class="deadline-field">
-                                <div class="deadline-note">日付と時間の両方を指定できます。未入力のままでも保存可能です。</div>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px;">
+                                    <input type="date" id="schedule-startdate-only" class="deadline-field" style="flex: 1; min-width: 120px;" aria-label="日付">
+                                    <input type="time" id="schedule-starttime-only" class="deadline-field" style="width: 106px;" aria-label="時間">
+                                    <input type="hidden" id="schedule-startdate">
+                                </div>
+                                <div class="deadline-note" style="margin-top: 6px;">日付と時間の両方を指定できます。未入力のままでも保存可能です。</div>
                             </div>
                             <!-- 所要時間クイック選択 -->
                             <div class="modal-card" id="duration-picker-card">
@@ -762,13 +742,41 @@
             if (!rawDateTime) return '';
             const dateObj = new Date(rawDateTime);
             if (isNaN(dateObj.getTime())) return '';
-            const month = dateObj.getMonth() + 1;
-            const date = dateObj.getDate();
+            
             const hours = String(dateObj.getHours()).padStart(2, '0');
             const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-            const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
-            const dayName = dayNames[dateObj.getDay()];
-            return `${month}/${date}(${dayName}) ${hours}:${minutes}`;
+            const timeStr = `${hours}:${minutes}`;
+            
+            // 今日・明日・昨日の判定
+            const today = new Date();
+            const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            const compareDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+            
+            const oneDayMs = 24 * 60 * 60 * 1000;
+            const diffMs = compareDate.getTime() - todayMidnight.getTime();
+            const diffDays = Math.round(diffMs / oneDayMs);
+            
+            let dateLabel = '';
+            if (diffDays === 0) {
+                dateLabel = '今日';
+            } else if (diffDays === 1) {
+                dateLabel = '明日';
+            } else if (diffDays === -1) {
+                dateLabel = '昨日';
+            } else {
+                const month = dateObj.getMonth() + 1;
+                const date = dateObj.getDate();
+                const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+                const dayName = dayNames[dateObj.getDay()];
+                dateLabel = `${month}/${date}(${dayName})`;
+            }
+            
+            // 23:59（締め切り）の場合は時間表示を省略する
+            if (timeStr === '23:59') {
+                return dateLabel;
+            }
+            
+            return `${dateLabel} ${timeStr}`;
         }
 
         function formatDeadlinePickerText(rawDateTime) {
@@ -1329,19 +1337,23 @@
 
             // 締め切り日付の設定
             let dVal = "";
+            let tVal = "";
             if (task.deadline) {
                 if (task.deadline.includes('T')) {
-                    dVal = task.deadline.substring(0, 16); // 秒等を取り除き YYYY-MM-DDTHH:MM にする
+                    const parts = task.deadline.split('T');
+                    dVal = parts[0];
+                    tVal = parts[1] ? parts[1].substring(0, 5) : ""; // HH:MM
                 } else {
-                    dVal = `${task.deadline}T12:00`;
+                    dVal = task.deadline;
+                    tVal = "";
                 }
-            } else {
-                const today = new Date();
-                const pad = (n) => String(n).padStart(2, '0');
-                dVal = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T12:00`;
             }
-            document.getElementById('schedule-startdate').value = dVal;
-            updateDeadlinePickerState(document.getElementById('schedule-startdate'), null, document.getElementById('schedule-startdate'));
+            const modalDateOnly = document.getElementById('schedule-startdate-only');
+            const modalTimeOnly = document.getElementById('schedule-starttime-only');
+            const modalHidden = document.getElementById('schedule-startdate');
+            if (modalDateOnly) modalDateOnly.value = dVal;
+            if (modalTimeOnly) modalTimeOnly.value = tVal;
+            if (modalHidden) modalHidden.value = task.deadline || "";
 
             // 期間の計算
             initDurationChips();
@@ -1409,9 +1421,14 @@
             // 今日をデフォルト日時にする
             const today = new Date();
             const pad = (n) => String(n).padStart(2, '0');
-            const dVal = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(today.getHours())}:${pad(today.getMinutes())}`;
-            document.getElementById('schedule-startdate').value = dVal;
-            updateDeadlinePickerState(document.getElementById('schedule-startdate'), null, document.getElementById('schedule-startdate'));
+            const dVal = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
+            const tVal = `${pad(today.getHours())}:${pad(today.getMinutes())}`;
+            const modalDateOnly = document.getElementById('schedule-startdate-only');
+            const modalTimeOnly = document.getElementById('schedule-starttime-only');
+            const modalHidden = document.getElementById('schedule-startdate');
+            if (modalDateOnly) modalDateOnly.value = dVal;
+            if (modalTimeOnly) modalTimeOnly.value = tVal;
+            if (modalHidden) modalHidden.value = `${dVal}T${tVal}`;
 
             initDurationChips();
             const container = document.getElementById('duration-chips-container');
@@ -1812,34 +1829,21 @@
             }
 
             // --- クイック追加カード制御ロジック ---
+            const quickTaskDateOnly = document.getElementById('quick-task-date-only');
             const quickTaskDate = document.getElementById('quick-task-date');
-            const quickDateLabel = document.getElementById('quick-date-label');
-            const quickDateBtn = document.getElementById('quick-date-btn');
 
-            if (quickTaskDate) {
-                updateDeadlinePickerState(quickTaskDate, quickDateLabel, quickDateBtn);
-                quickTaskDate.addEventListener('change', () => {
-                    updateDeadlinePickerState(quickTaskDate, quickDateLabel, quickDateBtn);
-                    quickTaskDate.blur();
-                });
-                quickTaskDate.addEventListener('input', () => {
-                    updateDeadlinePickerState(quickTaskDate, quickDateLabel, quickDateBtn);
-                });
+            function syncQuickDate() {
+                if (!quickTaskDateOnly || !quickTaskDate) return;
+                const dVal = quickTaskDateOnly.value;
+                if (dVal) {
+                    quickTaskDate.value = `${dVal}T23:59`;
+                } else {
+                    quickTaskDate.value = "";
+                }
             }
 
-            if (quickDateBtn && quickTaskDate) {
-                quickDateBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if (typeof quickTaskDate.showPicker === 'function') {
-                        try {
-                            quickTaskDate.showPicker();
-                        } catch (err) {
-                            quickTaskDate.click();
-                        }
-                    } else {
-                        quickTaskDate.click();
-                    }
-                });
+            if (quickTaskDateOnly) {
+                quickTaskDateOnly.addEventListener('change', syncQuickDate);
             }
 
             // --- クイック所要時間アコーディオン制御 ---
@@ -1955,8 +1959,8 @@
 
                     // フォームクリア
                     titleInput.value = '';
-                    quickTaskDate.value = '';
-                    updateDeadlinePickerState(quickTaskDate, quickDateLabel, quickDateBtn);
+                    if (quickTaskDateOnly) quickTaskDateOnly.value = '';
+                    if (quickTaskDate) quickTaskDate.value = '';
 
                     // ドラムロールのスクロール位置をリセット (0時間30分)
                     scrollQuickDurationDrumToValue('hour', '0', 'auto');
@@ -1968,16 +1972,30 @@
                 });
             }
 
-            const scheduleStartDate = document.getElementById('schedule-startdate');
-            if (scheduleStartDate) {
-                scheduleStartDate.addEventListener('change', () => {
-                    updateDeadlinePickerState(scheduleStartDate, null, scheduleStartDate);
-                    scheduleStartDate.blur();
-                });
-                scheduleStartDate.addEventListener('input', () => {
-                    updateDeadlinePickerState(scheduleStartDate, null, scheduleStartDate);
-                });
-                updateDeadlinePickerState(scheduleStartDate, null, scheduleStartDate);
+            const modalDateOnly = document.getElementById('schedule-startdate-only');
+            const modalTimeOnly = document.getElementById('schedule-starttime-only');
+            const modalHidden = document.getElementById('schedule-startdate');
+
+            function syncModalDate() {
+                if (!modalDateOnly || !modalHidden) return;
+                const dVal = modalDateOnly.value;
+                const tVal = modalTimeOnly ? modalTimeOnly.value : "";
+                if (dVal) {
+                    if (tVal) {
+                        modalHidden.value = `${dVal}T${tVal}`;
+                    } else {
+                        modalHidden.value = `${dVal}T12:00`;
+                    }
+                } else {
+                    modalHidden.value = "";
+                }
+            }
+
+            if (modalDateOnly) {
+                modalDateOnly.addEventListener('change', syncModalDate);
+            }
+            if (modalTimeOnly) {
+                modalTimeOnly.addEventListener('change', syncModalDate);
             }
 
             // 初期描画
