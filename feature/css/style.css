@@ -553,6 +553,38 @@ body.daily-main-page {
         }
     }
 
+    .timeline-item.theme-travel {
+        .icon-circle {
+            background-color: #ffedd5;
+            color: #c2410c;
+        }
+
+        .task-card {
+            background-color: transparent !important;
+            border: 2px dashed #f97316 !important;
+            border-left: 2px dashed #f97316 !important;
+            box-shadow: none !important;
+            min-height: 48px !important;
+            padding: 8px 12px 8px 52px !important;
+            cursor: grab;
+        }
+
+        .task-title {
+            color: #c2410c !important;
+            font-size: 13px !important;
+        }
+
+        .task-desc {
+            color: #ea580c !important;
+            font-size: 10px !important;
+        }
+
+        .task-duration {
+            color: #c2410c;
+            background-color: rgba(249, 115, 22, 0.1);
+        }
+    }
+
     /* Gap Item */
     .timeline-item.gap-item {
         min-height: 48px;
