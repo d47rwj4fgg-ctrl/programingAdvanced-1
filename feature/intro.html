@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salmon - 新規登録</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome (アイコン用) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 共通のCSSファイルの読み込み -->
+    <link rel="stylesheet" href="login.css">
+    
+    <!-- スライド紹介用に追加する専用のスタイル -->
+    <style>
+        /* スライドアニメーション用の設定 */
+        .onboarding-container {
+            display: none; /* 初期状態では非表示 */
+            background: #ffffff;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 30px;
+            padding: 36px 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            text-align: center;
+            position: relative;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* スライドコンテンツのラッパー */
+        .slider-wrapper {
+            position: relative;
+            overflow: hidden;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            animation: slideIn 0.4s ease forwards;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* スライド内のビジュアル画像 */
+        .slide-img {
+            width: 100%;
+            max-width: 260px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 20px;
+            margin: 0 auto 24px;
+            display: block;
+            border: 2px solid var(--primary-light);
+            background-color: var(--bg-color);
+        }
+
+        /* スライドのタイトルとテキスト */
+        .slide-title {
+            font-size: 22px;
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .slide-text {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+            margin-bottom: 24px;
+            padding: 0 16px;
+        }
+
+        /* ナビゲーションとインジケーター（ドット） */
+        .slider-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+            padding: 0 16px;
+        }
+
+        .dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .dot.active {
+            width: 24px;
+            border-radius: 4px;
+            background-color: var(--primary-color);
+        }
+
+        /* スライドのボタン */
+        .slide-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(233, 116, 143, 0.2);
+            transition: opacity 0.2s;
+        }
+        .slide-btn:hover {
+            opacity: 0.9;
+        }
+        .slide-btn.prev {
+            background-color: #edf2f7;
+            color: var(--text-color);
+            box-shadow: none;
+        }
+
+        /* --- スライドショー用のスマートフォン向け調整 --- */
+        @media (max-width: 480px) {
+            .onboarding-container {
+                padding: 24px 16px; /* スマホ用に内側の余白を少し狭める */
+                border-radius: 24px; /* スマホ画面に合わせて角丸を少しスリムに */
+                max-width: 100%; /* 画面幅いっぱいに広げる */
+            }
+
+            .slider-wrapper {
+                min-height: 360px; /* スマホの縦幅に合わせて高さを少しタイトに */
+            }
+
+            .slide-img {
+                max-width: 200px; /* 画像が大きすぎてはみ出さないよう調整 */
+                height: 140px;
+                margin-bottom: 16px;
+            }
+
+            .slide-title {
+                font-size: 18px; /* 文字サイズをスマホに最適化 */
+                margin-bottom: 8px;
+            }
+
+            .slide-text {
+                font-size: 13px; /* 説明文を少し小さくして収まりを良くする */
+                padding: 0 8px;
+                margin-bottom: 16px;
+            }
+
+            .slider-footer {
+                margin-top: 16px;
+                padding: 0 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. 新規登録フォーム (ログイン画面と共通スタイル) -->
+    <div class="auth-container" id="register-panel">
+        <!-- ロゴ部分 -->
+        <div class="logo-icon">
+            <span>S</span>
+        </div>
+        <h1 class="logo-title">Salmon</h1>
+        <p class="subtitle">アカウントを新規登録</p>
+
+        <!-- フォーム部分 -->
+        <form id="register-form" onsubmit="handleRegister(event)">
+            <!-- メールアドレス -->
+            <div class="form-group">
+                <label for="email">メールアドレス</label>
+                <div class="input-wrapper">
+                    <i class="fa-regular fa-envelope"></i>
+                    <input type="email" id="email" class="form-input" placeholder="mail@example.com" required>
+                </div>
+            </div>
+
+            <!-- パスワード -->
+            <div class="form-group">
+                <label for="password">パスワード設定</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="password" class="form-input password-input" placeholder="••••••••" required>
+                    <i class="fa-regular fa-eye toggle-password" onclick="togglePasswordVisibility()"></i>
+                </div>
+            </div>
+
+            <!-- 登録ボタン -->
+            <button type="submit" class="submit-btn">登録</button>
+        </form>
+
+        <!-- フッター（ログイン画面への導線） -->
+        <div class="switch-auth">
+            すでにアカウントをお持ちの方は<a href="login.html">ログイン</a>
+        </div>
+    </div>
+
+
+    <!-- 2. 【登録後】サイト紹介・使い方スライド -->
+    <div class="onboarding-container" id="onboarding-panel">
+        <div class="slider-wrapper">
+            
+            <!-- スライド1: コンセプト -->
+            <div class="slide active">
+                <img src="C:\いろんな課題を入れよう\dango4\programingAdvanced-1\programingAdvanced-1\feature\images\salmon_pink.jpeg" class="slide-img" alt="コンセプト">
+                <h2 class="slide-title">「Salmon」へようこそ！</h2>
+                <p class="slide-text"><br>このアプリは、目標に向かって迷わず突き進むあなたをサポートする、全く新しい予定・タスク管理ツールです。</p>
+            </div>
+
+            <!-- スライド2: タイムラインの魅力 -->
+            <div class="slide">
+                <img src="C:\いろんな課題を入れよう\dango4\programingAdvanced-1\programingAdvanced-1\feature\images\salmon_pink.jpeg" class="slide-img" alt="タイムライン機能">
+                <h2 class="slide-title">直感的なタイムライン</h2>
+                <p class="slide-text">今日の予定とタスクが一目でわかる、シンプルで美しいタイムラインを搭載。時間の「すき間」を視覚的に捉え、一日を効率的に使えます。</p>
+            </div>
+
+            <!-- スライド3: 簡単な使い方 -->
+            <div class="slide">
+                <div class="slide-img" style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px; font-size: 28px; color: var(--primary-color);">
+                    <i class="fa-regular fa-square-check"></i>
+                    <span style="font-size: 14px; font-weight: bold; color: var(--text-color);">タスクを追加して完了！</span>
+                </div>
+                <h2 class="slide-title">3つのステップで完了</h2>
+                <p class="slide-text">1. タスクを登録する<br>2. タイムラインにドラッグして配置する<br>3. 終わったらタップして気持ちよくチェック！</p>
+            </div>
+
+            <!-- スライド4: 始める -->
+            <div class="slide">
+                <div class="slide-img" style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; font-size: 36px; color: var(--primary-color);">
+                    <i class="fa-solid fa-circle-play"></i>
+                    <span style="font-size: 15px; font-weight: bold; color: var(--text-color);">準備が整いました！</span>
+                </div>
+                <h2 class="slide-title">さあ、始めよう！</h2>
+                <p class="slide-text">「Salmon」と一緒に、もっと充実した毎日をつくろう！</p>
+            </div>
+
+        </div>
+
+        <!-- スライド下部のコントロールエリア -->
+        <div class="slider-footer">
+            <button class="slide-btn prev" id="prev-btn" onclick="prevSlide()" style="visibility: hidden;">戻る</button>
+            <div class="dots" id="dots-container">
+                <!-- JavaScriptで自動生成 -->
+            </div>
+            <button class="slide-btn" id="next-btn" onclick="nextSlide()">次へ</button>
+        </div>
+    </div>
+
+
+    <script>
+        // パスワードの目玉アイコン切り替え
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.querySelector('.toggle-password');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+
+        // 登録ボタンが押されたときの挙動
+        function handleRegister(event) {
+            event.preventDefault(); // 画面リロードを防ぐ
+            
+            // 登録フォームを隠して、スライドショーを表示する
+            document.getElementById('register-panel').style.display = 'none';
+            document.getElementById('onboarding-panel').style.display = 'block';
+            
+            initSlider(); // スライドの初期化
+        }
+
+        // --- スライドショーの制御 ---
+        let currentSlideIndex = 0;
+        let slides = [];
+        
+        function initSlider() {
+            slides = document.querySelectorAll('.slide');
+            const dotsContainer = document.getElementById('dots-container');
+            
+            // インジケーター（ドット）をスライド枚数分作る
+            dotsContainer.innerHTML = '';
+            slides.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.className = `dot ${index === 0 ? 'active' : ''}`;
+                dotsContainer.appendChild(dot);
+            });
+        }
+
+        function showSlide(index) {
+            slides.forEach((slide, idx) => {
+                slide.classList.remove('active');
+                if (idx === index) {
+                    slide.classList.add('active');
+                }
+            });
+
+            // ドットの更新
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, idx) => {
+                dot.classList.toggle('active', idx === index);
+            });
+
+            // ボタンの出し分け
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+
+            // 1枚目なら「戻る」を隠す
+            prevBtn.style.visibility = index === 0 ? 'hidden' : 'visible';
+
+            // 最後のページなら「次へ」を「始める」にする
+            if (index === slides.length - 1) {
+                nextBtn.innerText = '始める';
+            } else {
+                nextBtn.innerText = '次へ';
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlideIndex < slides.length - 1) {
+                currentSlideIndex++;
+                showSlide(currentSlideIndex);
+            } else {
+                // 最後のスライドで「始める」を押したときの挙動
+                window.location.href = 'daily.html'; 
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlideIndex > 0) {
+                currentSlideIndex--;
+                showSlide(currentSlideIndex);
+            }
+        }
+    </script>
+</body>
+</html>

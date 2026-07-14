@@ -1,1 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salmon - ログイン</title>
+    <!-- Google Fonts (丸みのある洗練されたフォント) -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome (アイコン用) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 外部CSSファイルの読み込み -->
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
 
+    <div class="auth-container">
+        <!-- ロゴ部分 -->
+        <div class="logo-icon">
+            <span>S</span>
+        </div>
+        <h1 class="logo-title">Salmon</h1>
+        <p class="subtitle">アカウントにログイン</p>
+
+        <!-- フォーム部分（onsubmit イベントを追加） -->
+        <form onsubmit="handleLogin(event)">
+            <!-- メールアドレス -->
+            <div class="form-group">
+                <label for="email">メールアドレス</label>
+                <div class="input-wrapper">
+                    <i class="fa-regular fa-envelope"></i>
+                    <input type="email" id="email" class="form-input" placeholder="mail@example.com" required>
+                </div>
+            </div>
+
+            <!-- パスワード -->
+            <div class="form-group">
+                <div class="label-wrapper">
+                    <label for="password">パスワード</label>
+                    <a href="#" class="forgot-link">パスワードを忘れた場合</a>
+                </div>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="password" class="form-input password-input" placeholder="••••••••" required>
+                    <!-- 💡 クリックイベントを追加 -->
+                    <i class="fa-regular fa-eye toggle-password" onclick="togglePasswordVisibility()"></i>
+                </div>
+            </div>
+
+            <!-- ログイン状態を保持する -->
+            <label class="checkbox-wrapper">
+                <input type="checkbox" checked>
+                <div class="custom-checkbox">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <span class="checkbox-label">ログイン状態を保持する</span>
+            </label>
+
+            <!-- ボタン（不具合のあった記述を修正） -->
+            <button type="submit" class="submit-btn">ログイン</button>
+        </form>
+
+        <!-- フッター（新規登録への導線） -->
+        <div class="switch-auth">
+            アカウントをお持ちでない方は<a href="intro.html">新規登録</a>
+        </div>
+    </div>
+
+    <!-- 💡 スクリプト処理を追加 -->
+    <script>
+        // ログインボタンが押されたときの処理
+        function handleLogin(event) {
+            // フォーム本来のリロード動作を止める
+            event.preventDefault(); 
+            
+            // HTMLの「required」属性によるチェックが通ったら、daily.htmlへ遷移する
+            window.location.href = 'daily.html';
+        }
+
+        // パスワードの表示・非表示切り替え
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.querySelector('.toggle-password');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+    </script>
+</body>
+</html>
