@@ -53,7 +53,6 @@
                 <div class="profile-avatar">KH</div>
                 <div class="profile-info">
                     <span class="profile-name">肥後 佳苗</span>
-                    <span class="profile-role">大学開発メンバー</span>
                 </div>
             </div>
             <nav class="sidebar-nav">
@@ -65,6 +64,7 @@
                     <span class="nav-icon">📋</span>
                     <span class="nav-text">タスクリスト</span>
                 </a>
+                <div class="sidebar-divider"></div>
                 <a href="templateRegister.html" class="nav-item">
                     <span class="nav-icon">📝</span>
                     <span class="nav-text">テンプレートの登録</span>
@@ -137,14 +137,13 @@
                     
                     <div style="margin-top: 24px; border-top: 1.5px dashed #e2e8f0; padding-top: 20px;">
                         <h2 style="font-size: 15px; font-weight: 800; color: #ef4444; margin-top: 0; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-                            <span>⚠️</span> データの初期化・リセット
+                            <span>⚠️</span> 設定のリセット
                         </h2>
                         <p style="font-size: 12px; color: #64748b; margin-top: 0; margin-bottom: 16px; line-height: 1.5;">
-                            エネルギーの目標設定を初期状態に戻すか、アプリ全体のすべてのデータを消去して初期状態に戻します。
+                            エネルギーの目標設定を初期状態（デフォルト）に戻します。
                         </p>
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             <button type="button" onclick="resetSettings()" style="width: 100%; padding: 11px; border-radius: 12px; font-weight: bold; background-color: #f8fafc; color: #64748b; border: 1.5px solid #e2e8f0; cursor: pointer; font-size: 13px; transition: all 0.2s;">設定のみをリセット</button>
-                            <button type="button" onclick="resetAllData()" style="width: 100%; padding: 11px; border-radius: 12px; font-weight: bold; background-color: #fff5f5; color: #ef4444; border: 1.5px solid #fee2e2; cursor: pointer; font-size: 13px; transition: all 0.2s;">すべてのアプリデータを初期化</button>
                         </div>
                     </div>
                 </div>
@@ -292,14 +291,7 @@
             alert('設定をデフォルトに戻しました！');
         }
 
-        // --- アプリデータ全体の初期化 ---
-        function resetAllData() {
-            if (!confirm('警告: すべての予定、タスク、テンプレート、設定が削除され、初期状態に戻ります。この操作は取り消せません。本当によろしいですか？')) return;
-            
-            localStorage.clear();
-            alert('すべてのデータを初期化しました。アプリを再読み込みします。');
-            window.location.reload();
-        }
+
     </script>
 </body>
 </html>

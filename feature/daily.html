@@ -56,7 +56,6 @@
                 <div class="profile-avatar">KH</div>
                 <div class="profile-info">
                     <span class="profile-name">肥後 佳苗</span>
-                    <span class="profile-role">大学開発メンバー</span>
                 </div>
             </div>
 
@@ -70,6 +69,7 @@
                     <span class="nav-icon">📋</span>
                     <span class="nav-text">タスクリスト</span>
                 </a>
+                <div class="sidebar-divider"></div>
                 <!-- ゆうかがテンプレートの登録を追加しました -->
                 <a href="templateRegister.html" class="nav-item">
                     <span class="nav-icon">📝</span>
@@ -1777,9 +1777,9 @@
                     if (!activeTerm && savedList.length > 0) activeTerm = savedList[0];
                     if (activeTerm) slotsToMerge = activeTerm.selectedSlots;
                 } else {
-                    // auto (期間内のみ自動)
+                    // auto (期間内のみ自動。開始日・終了日のいずれかが未設定の場合は常に反映する)
                     const matchedTerm = savedList.find(t => {
-                        if (!t.startDate || !t.endDate) return false;
+                        if (!t.startDate || !t.endDate) return true;
                         return isoDate >= t.startDate && isoDate <= t.endDate;
                     });
                     if (matchedTerm) {
@@ -1787,8 +1787,13 @@
                     }
                 }
 
-                if (slotsToMerge && slotsToMerge[dayId]) {
-                    const periods = slotsToMerge[dayId];
+                // isoDateから曜日インデックス（月曜=0, 火曜=1, ..., 日曜=6）を求める
+                const dateObj = new Date(isoDate);
+                const rawDay = dateObj.getDay();
+                const timetableDayIdx = rawDay === 0 ? 6 : rawDay - 1;
+
+                if (slotsToMerge && slotsToMerge[timetableDayIdx]) {
+                    const periods = slotsToMerge[timetableDayIdx];
                     periods.forEach(p => {
                         if (p > parseInt(config.periods)) return;
 

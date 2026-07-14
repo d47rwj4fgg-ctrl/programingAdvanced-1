@@ -145,6 +145,14 @@ body.daily-main-page {
         z-index: 100;
     }
 
+    .app-header.slim {
+        padding: 10px 20px 10px 20px;
+    }
+
+    .app-header.slim .header-top {
+        margin-bottom: 0;
+    }
+
     .header-top {
         display: flex;
         justify-content: space-between;
@@ -1035,6 +1043,12 @@ body.daily-main-page {
         flex: 1;
     }
 
+    .sidebar-divider {
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 8px 12px;
+    }
+
     .nav-item {
         display: flex;
         align-items: center;
@@ -1843,8 +1857,11 @@ body.monthly-main-page:not(.daily-main-page) {
     }
 
     .task-deadline-slim {
+        font-size: 11px;
+        color: #94a3b8; /* 主張を抑えるために薄いグレーに */
+        font-weight: 500;
+        white-space: nowrap;
         border-radius: 8px;
-        font-weight: 700;
         cursor: pointer;
     }
 }
