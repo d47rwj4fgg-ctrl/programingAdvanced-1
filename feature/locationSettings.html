@@ -163,28 +163,7 @@
                             <!-- JSで動的に表示 -->
                         </ul>
                         
-                        <div class="travel-time-add-form" style="border-top: 1px dashed #e5e5ea; margin-top: 12px;">
-                            <span style="font-size: 12px; font-weight: 700; color: #8e8e93; margin-bottom: 4px;">移動時間を設定する</span>
-                            <div class="travel-time-input-group">
-                                <div class="select-arrow-wrapper">
-                                    <select id="travel-from-select" class="location-select">
-                                        <!-- JSで拠点リストを挿入 -->
-                                    </select>
-                                </div>
-                                <span class="travel-time-arrow" style="font-size: 16px; margin: 0 8px;">⇄</span>
-                                <div class="select-arrow-wrapper">
-                                    <select id="travel-to-select" class="location-select">
-                                        <!-- JSで拠点リストを挿入 -->
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="travel-time-input-row" style="margin-top: 8px; display: flex; align-items: center; gap: 8px;">
-                                <span style="font-size: 14px; font-weight: 600; color: #475569;">所要時間:</span>
-                                <input type="number" id="travel-minutes-input" class="minutes-input" min="1" max="999" value="30">
-                                <span style="font-size: 14px; font-weight: 600; color: #475569;">分</span>
-                            </div>
-                            <button type="button" class="action-btn-primary" onclick="addTravelTime()" style="margin-top: 12px;">移動時間を保存</button>
-                        </div>
+
                     </div>
                 </div>
 
@@ -292,6 +271,8 @@
                 saveTravelTimes();
             }
 
+            syncTravelTimePatterns(); // 全組み合わせの自動生成・同期
+
             renderLocations();
             renderTravelTimes();
         }
@@ -362,34 +343,6 @@
                 listEl.appendChild(li);
             });
 
-            // プルダウンセレクトの更新
-            updateSelectOptions();
-        }
-
-        // プルダウンメニューの更新
-        function updateSelectOptions() {
-            const fromSelect = document.getElementById('travel-from-select');
-            const toSelect = document.getElementById('travel-to-select');
-            
-            fromSelect.innerHTML = '';
-            toSelect.innerHTML = '';
-
-            locations.forEach(loc => {
-                const optFrom = document.createElement('option');
-                optFrom.value = loc.id;
-                optFrom.textContent = `${loc.icon} ${loc.name}`;
-                fromSelect.appendChild(optFrom);
-
-                const optTo = document.createElement('option');
-                optTo.value = loc.id;
-                optTo.textContent = `${loc.icon} ${loc.name}`;
-                toSelect.appendChild(optTo);
-            });
-
-            // 初期選択値をずらす (使いやすさのため)
-            if (locations.length >= 2) {
-                toSelect.selectedIndex = 1;
-            }
         }
 
         // 拠点の追加
@@ -419,11 +372,14 @@
             locations.push(newLoc);
             saveLocations();
             
+            syncTravelTimePatterns(); // 新しい拠点との組み合わせを自動生成
+
             // リセット
             nameInput.value = '';
             selectLocationEmoji('🏠');
             
             renderLocations();
+            renderTravelTimes();
         }
 
         // 拠点の削除
@@ -472,13 +428,77 @@
 
                 const infoDiv = document.createElement('div');
                 infoDiv.className = 'travel-time-item-info';
+                infoDiv.style.display = 'grid';
+                infoDiv.style.gridTemplateColumns = '1fr 40px 1fr 60px';
+                infoDiv.style.alignItems = 'center';
+                infoDiv.style.width = '100%';
                 
                 infoDiv.innerHTML = `
-                    <span>${fromLoc.icon} ${fromLoc.name}</span>
-                    <span class="travel-time-arrow" style="font-size: 16px; margin: 0 8px;">⇄</span>
-                    <span>${toLoc.icon} ${toLoc.name}</span>
-                    <span style="margin-left: 8px; font-weight: 800; color: #ff8e98;">${t.minutes}分</span>
+                    <span style="text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: bold; color: #475569; padding-right: 4px;">${fromLoc.icon} ${fromLoc.name}</span>
+                    <span class="travel-time-arrow" style="font-size: 16px; text-align: center; color: #FF7082; font-weight: bold;">⇆</span>
+                    <span style="text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: bold; color: #475569; padding-left: 4px;">${toLoc.icon} ${toLoc.name}</span>
+                    <span class="travel-minutes-btn" style="text-align: right; font-weight: 800; color: #ff8e98; font-size: 14px; cursor: pointer; text-decoration: underline; padding-right: 8px;" title="タップして編集">${t.minutes}分</span>
                 `;
+
+                const minutesBtn = infoDiv.querySelector('.travel-minutes-btn');
+                minutesBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    
+                    if (minutesBtn.querySelector('input')) return;
+
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.min = '1';
+                    input.value = t.minutes;
+                    input.style.width = '50px';
+                    input.style.padding = '2px 4px';
+                    input.style.border = '1.5px solid #FF7082';
+                    input.style.borderRadius = '6px';
+                    input.style.textAlign = 'right';
+                    input.style.fontSize = '13px';
+                    input.style.fontWeight = 'bold';
+                    input.style.color = '#1e293b';
+                    input.style.backgroundColor = '#ffffff';
+                    input.style.outline = 'none';
+                    
+                    minutesBtn.textContent = '';
+                    minutesBtn.appendChild(input);
+                    minutesBtn.style.textDecoration = 'none';
+                    
+                    input.focus();
+                    input.select();
+                    
+                    let isSaved = false;
+                    const saveChange = () => {
+                        if (isSaved) return;
+                        isSaved = true;
+                        
+                        const val = parseInt(input.value, 10);
+                        if (isNaN(val) || val <= 0) {
+                            alert('移動時間は1分以上で入力してください。');
+                            renderTravelTimes();
+                            return;
+                        }
+                        
+                        const sortedFrom = t.from < t.to ? t.from : t.to;
+                        const sortedTo = t.from < t.to ? t.to : t.from;
+                        const idx = travelTimes.findIndex(item => item.from === sortedFrom && item.to === sortedTo);
+                        
+                        if (idx > -1) {
+                            travelTimes[idx].minutes = val;
+                            saveTravelTimes();
+                        }
+                        
+                        renderTravelTimes();
+                    };
+
+                    input.onblur = saveChange;
+                    input.onkeydown = (ev) => {
+                        if (ev.key === 'Enter') {
+                            saveChange();
+                        }
+                    };
+                };
 
                 const deleteBtn = document.createElement('button');
                 deleteBtn.className = 'delete-btn-icon';
@@ -498,45 +518,33 @@
             });
         }
 
-        // 移動時間の保存
-        function addTravelTime() {
-            const fromId = document.getElementById('travel-from-select').value;
-            const toId = document.getElementById('travel-to-select').value;
-            const minutesInput = document.getElementById('travel-minutes-input');
-            const minutes = parseInt(minutesInput.value, 10);
+        // 拠点間のすべての組み合わせに対して、移動時間データが存在することを確認し同期する
+        function syncTravelTimePatterns() {
+            let updated = false;
 
-            if (fromId === toId) {
-                alert('出発地と到着地に同じ場所は設定できません。');
-                return;
+            for (let i = 0; i < locations.length; i++) {
+                for (let j = i + 1; j < locations.length; j++) {
+                    const locA = locations[i];
+                    const locB = locations[j];
+
+                    const fromId = locA.id < locB.id ? locA.id : locB.id;
+                    const toId = locA.id < locB.id ? locB.id : locA.id;
+
+                    const exists = travelTimes.some(t => t.from === fromId && t.to === toId);
+                    if (!exists) {
+                        travelTimes.push({
+                            from: fromId,
+                            to: toId,
+                            minutes: 30 // デフォルト値 30分
+                        });
+                        updated = true;
+                    }
+                }
             }
 
-            if (isNaN(minutes) || minutes <= 0) {
-                alert('移動時間は1分以上で入力してください。');
-                return;
+            if (updated) {
+                saveTravelTimes();
             }
-
-            // 相互作用（双方向）として扱うため、ID順でソートして一意にする
-            const sortedFrom = fromId < toId ? fromId : toId;
-            const sortedTo = fromId < toId ? toId : fromId;
-
-            // 重複チェック (同一区間があれば上書き)
-            const existingIndex = travelTimes.findIndex(t => t.from === sortedFrom && t.to === sortedTo);
-            
-            if (existingIndex > -1) {
-                travelTimes[existingIndex].minutes = minutes;
-            } else {
-                travelTimes.push({
-                    from: sortedFrom,
-                    to: sortedTo,
-                    minutes: minutes
-                });
-            }
-
-            saveTravelTimes();
-            renderTravelTimes();
-
-            // 初期化
-            minutesInput.value = 30;
         }
 
         // 移動時間の削除
