@@ -15,15 +15,16 @@
     <style>
         /* クイック追加カード（インライン入力欄） */
         .quick-add-card {
-            background-color: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 12px;
-            margin: 8px 4px 16px 4px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            position: relative;
+            background: linear-gradient(180deg, #ffffff 0%, #fff8fa 100%);
+            border: 1px solid #ffd4dd;
+            border-radius: 20px;
+            padding: 14px;
+            margin: 8px 4px 18px 4px;
+            box-shadow: 0 10px 28px rgba(255, 112, 130, 0.08);
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
 
         .quick-add-card .input-row {
@@ -64,27 +65,48 @@
 
         .quick-add-card .setting-btn-wrapper {
             position: relative;
+            min-width: 148px;
+            flex: 0 0 auto;
         }
 
-        .quick-add-card .setting-trigger-btn {
-            background-color: #f1f5f9;
-            border: 1px solid #e2e8f0;
-            color: #475569;
-            border-radius: 12px;
-            padding: 6px 12px;
-            font-size: 12px;
+        .quick-add-card .deadline-picker-shell {
+            position: relative;
+            min-width: 148px;
+            border-radius: 14px;
+            overflow: hidden;
+            flex: 0 0 auto;
+        }
+
+        .quick-add-card .deadline-picker-button {
+            width: 100%;
+            min-height: 44px;
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            border: 1.5px solid #e2e8f0;
+            color: #0f172a;
+            border-radius: 14px;
+            padding: 10px 12px;
+            font-size: 13px;
             font-family: inherit;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 4px;
-            transition: background-color 0.2s, border-color 0.2s;
+            justify-content: space-between;
+            gap: 8px;
+            transition: background-color 0.2s, border-color 0.2s, transform 0.12s, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
         }
 
-        .quick-add-card .setting-trigger-btn:hover {
-            background-color: #e2e8f0;
-            border-color: #cbd5e1;
+        .quick-add-card .deadline-picker-button:hover {
+            border-color: #ffb1b6;
+            box-shadow: 0 8px 18px rgba(255, 112, 130, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .quick-add-card .deadline-picker-button.has-value {
+            background: linear-gradient(135deg, #fff0f1 0%, #ffffff 100%);
+            border-color: #ffb1b6;
+            color: #be123c;
         }
 
         .quick-add-card .duration-select-wrapper {
@@ -93,6 +115,36 @@
             gap: 4px;
             font-size: 12px;
             font-weight: 600;
+            color: #64748b;
+        }
+
+        .quick-add-card .deadline-picker-input {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.01;
+            cursor: pointer;
+            z-index: 2;
+            -webkit-appearance: none;
+            appearance: none;
+            pointer-events: none;
+        }
+
+        .quick-add-card .deadline-picker-input::-webkit-calendar-picker-indicator {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .quick-add-card .deadline-helper {
+            margin-top: 4px;
+            font-size: 11px;
             color: #64748b;
         }
 
@@ -171,6 +223,51 @@
 
         .quick-add-card .quick-add-btn:active {
             transform: scale(0.95);
+        }
+
+        .modal-card .deadline-field {
+            position: relative;
+            width: 100%;
+            min-height: 46px;
+            border: 1.5px solid #e2e8f0;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            font-weight: 700;
+            color: #1e293b;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.12s;
+        }
+
+        .modal-card .deadline-field::-webkit-calendar-picker-indicator {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .modal-card .deadline-field:focus {
+            border-color: #ffb1b6;
+            box-shadow: 0 0 0 4px rgba(255, 177, 182, 0.16);
+            transform: translateY(-1px);
+        }
+
+        .modal-card .deadline-field.has-value {
+            border-color: #ffb1b6;
+            background: linear-gradient(135deg, #fff0f1 0%, #ffffff 100%);
+        }
+
+        .modal-card .deadline-note {
+            font-size: 11px;
+            color: #64748b;
+            line-height: 1.5;
         }
 
         /* タスクアイテムのカラーマーク用スタイル調整 */
@@ -319,12 +416,12 @@
                     </div>
 
                     <div class="settings-row" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-                        <div class="setting-btn-wrapper" style="position: relative; overflow: hidden; display: inline-block;">
-                            <button type="button" class="setting-trigger-btn" id="quick-date-btn" style="cursor: pointer;">
-                                <span class="icon">📅</span> <span id="quick-date-label">期限</span>
+                        <div class="deadline-picker-shell">
+                            <button type="button" class="deadline-picker-button" id="quick-date-btn" aria-label="期限を設定">
+                                <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="icon">📅</span><span id="quick-date-label">期限を設定</span></span>
+                                <span style="font-size: 10px; color: #94a3b8;">▼</span>
                             </button>
-                            <input type="datetime-local" id="quick-task-date"
-                                style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; pointer-events: none; z-index: -1;">
+                            <input type="datetime-local" id="quick-task-date" class="deadline-picker-input">
                         </div>
 
                         <div class="duration-select-wrapper" style="display: flex; align-items: center; gap: 8px;">
@@ -367,6 +464,8 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="deadline-helper">タップして期限を選択できます。未設定でも追加できます。</div>
 
                     <div class="quick-energy-row" style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; padding: 0 4px;">
                         <div style="display: flex; align-items: center; gap: 12px;">
@@ -472,7 +571,8 @@
                             <!-- 期限選択 -->
                             <div class="modal-card">
                                 <span class="modal-card-label">📅 期限 (日付と時間)</span>
-                                <input type="datetime-local" id="schedule-startdate" style="width: 100%; border: 1.5px solid #e2e8f0; padding: 10px 14px; border-radius: 12px; font-family: inherit; font-size: 14px; outline: none; background-color: #f8fafc; font-weight: 600; color: #1e293b;">
+                                <input type="datetime-local" id="schedule-startdate" class="deadline-field">
+                                <div class="deadline-note">日付と時間の両方を指定できます。未入力のままでも保存可能です。</div>
                             </div>
                             <!-- 所要時間クイック選択 -->
                             <div class="modal-card" id="duration-picker-card">
@@ -608,6 +708,34 @@
             const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
             const dayName = dayNames[dateObj.getDay()];
             return `${month}/${date}(${dayName}) ${hours}:${minutes}`;
+        }
+
+        function formatDeadlinePickerText(rawDateTime) {
+            if (!rawDateTime) return '';
+            const dateObj = new Date(rawDateTime);
+            if (isNaN(dateObj.getTime())) return '';
+            const month = dateObj.getMonth() + 1;
+            const date = dateObj.getDate();
+            const hours = String(dateObj.getHours()).padStart(2, '0');
+            const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+            return `${month}/${date} ${hours}:${minutes}`;
+        }
+
+        function updateDeadlinePickerState(inputEl, labelEl, buttonEl, emptyLabel = '期限を設定') {
+            if (!inputEl) return;
+            const hasValue = !!inputEl.value;
+            if (labelEl) {
+                labelEl.textContent = hasValue ? formatDeadlinePickerText(inputEl.value) : emptyLabel;
+            }
+            if (buttonEl) {
+                buttonEl.classList.toggle('has-value', hasValue);
+            }
+            inputEl.classList.toggle('has-value', hasValue);
+        }
+
+        function getLocalDatetimeValue(date = new Date()) {
+            const pad = (n) => String(n).padStart(2, '0');
+            return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
         }
 
         // 所要時間をわかりやすくフォーマット (例: 90 -> "1時間30分", 45 -> "45分")
@@ -1152,6 +1280,7 @@
                 dVal = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}T12:00`;
             }
             document.getElementById('schedule-startdate').value = dVal;
+            updateDeadlinePickerState(document.getElementById('schedule-startdate'), null, document.getElementById('schedule-startdate'));
 
             // 期間の計算
             initDurationChips();
@@ -1221,6 +1350,7 @@
             const pad = (n) => String(n).padStart(2, '0');
             const dVal = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}T${pad(today.getHours())}:${pad(today.getMinutes())}`;
             document.getElementById('schedule-startdate').value = dVal;
+            updateDeadlinePickerState(document.getElementById('schedule-startdate'), null, document.getElementById('schedule-startdate'));
 
             initDurationChips();
             const container = document.getElementById('duration-chips-container');
@@ -1623,26 +1753,18 @@
             // --- クイック追加カード制御ロジック ---
             const quickTaskDate = document.getElementById('quick-task-date');
             const quickDateLabel = document.getElementById('quick-date-label');
+            const quickDateBtn = document.getElementById('quick-date-btn');
 
             if (quickTaskDate) {
+                updateDeadlinePickerState(quickTaskDate, quickDateLabel, quickDateBtn);
                 quickTaskDate.addEventListener('change', () => {
-                    const val = quickTaskDate.value;
-                    if (val) {
-                        const dateObj = new Date(val);
-                        const month = dateObj.getMonth() + 1;
-                        const date = dateObj.getDate();
-                        const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
-                        const dayName = dayNames[dateObj.getDay()];
-                        const hours = String(dateObj.getHours()).padStart(2, '0');
-                        const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-                        quickDateLabel.textContent = `${month}月${date}日(${dayName}) ${hours}:${minutes}`;
-                    } else {
-                        quickDateLabel.textContent = '期限を設定';
-                    }
+                    updateDeadlinePickerState(quickTaskDate, quickDateLabel, quickDateBtn);
+                });
+                quickTaskDate.addEventListener('input', () => {
+                    updateDeadlinePickerState(quickTaskDate, quickDateLabel, quickDateBtn);
                 });
             }
 
-            const quickDateBtn = document.getElementById('quick-date-btn');
             if (quickDateBtn && quickTaskDate) {
                 quickDateBtn.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -1772,7 +1894,7 @@
                     // フォームクリア
                     titleInput.value = '';
                     quickTaskDate.value = '';
-                    quickDateLabel.textContent = '期限を設定';
+                    updateDeadlinePickerState(quickTaskDate, quickDateLabel, quickDateBtn);
                     
                     // ドラムロールのスクロール位置をリセット (0時間30分)
                     scrollQuickDurationDrumToValue('hour', '0', 'auto');
@@ -1782,6 +1904,17 @@
                     const defaultQuickEnergy = document.getElementById('qe-2');
                     if (defaultQuickEnergy) defaultQuickEnergy.checked = true;
                 });
+            }
+
+            const scheduleStartDate = document.getElementById('schedule-startdate');
+            if (scheduleStartDate) {
+                scheduleStartDate.addEventListener('change', () => {
+                    updateDeadlinePickerState(scheduleStartDate, null, scheduleStartDate);
+                });
+                scheduleStartDate.addEventListener('input', () => {
+                    updateDeadlinePickerState(scheduleStartDate, null, scheduleStartDate);
+                });
+                updateDeadlinePickerState(scheduleStartDate, null, scheduleStartDate);
             }
 
             // 初期描画
