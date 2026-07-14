@@ -369,10 +369,14 @@
                         <div class="modal-card">
                             <span class="modal-card-label">📍 場所</span>
                             <div style="display: flex; flex-direction: column; gap: 8px;">
-                                    <select id="schedule-location-select" style="width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; background-color: #f8fafc; outline: none; font-size: 14px; font-weight: 600; color: #1e293b;" onchange="onLocationSelectChange()">
-                                        <!-- JSで動的に追加 -->
-                                    </select>
-                                <input type="text" id="schedule-location-input" style="width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; background-color: #ffffff; outline: none; font-size: 14px; font-weight: 600; color: #1e293b;" placeholder="場所を入力（自由入力も可能）">
+                                <select id="schedule-location-select"
+                                    style="width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; background-color: #f8fafc; outline: none; font-size: 14px; font-weight: 600; color: #1e293b;"
+                                    onchange="onLocationSelectChange()">
+                                    <!-- JSで動的に追加 -->
+                                </select>
+                                <input type="text" id="schedule-location-input"
+                                    style="width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; background-color: #ffffff; outline: none; font-size: 14px; font-weight: 600; color: #1e293b;"
+                                    placeholder="場所を入力（自由入力も可能）">
                             </div>
                         </div>
 
@@ -1411,7 +1415,7 @@
         // 指定された日付の予定と時間割をすべて取得する（移動対象の予定は除く）
         function getExistingSchedulesForDate(isoDate, excludeIds = []) {
             const allTasks = JSON.parse(localStorage.getItem('savedSchedules')) || [];
-            
+
             // 手動予定
             const tasksForDay = allTasks.filter(t => {
                 if (excludeIds.includes(String(t.id))) return false;
@@ -1427,7 +1431,7 @@
                 }
                 return false;
             });
-            
+
             // 時間割データの自動マージ
             const defaultConfig = {
                 periods: 5,
@@ -1644,15 +1648,15 @@
         // 空き時間(Gap)に最適なタスクを推薦するロジック
         function getRecommendedTasksForGap(gapMinutes, isoDate) {
             const allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
-            
+
             // 1. 未完了、かつ所要時間が空き時間(gapMinutes)以下
             const uncompletedTasks = allTasks.filter(t => {
                 if (t.completed) return false;
-                
+
                 // 所要時間の正規化
                 const duration = normalizeTaskDurationMinutes(t.durationMinutes);
                 if (duration > gapMinutes) return false;
-                
+
                 return true;
             });
 
@@ -1661,7 +1665,7 @@
             const tomorrow = new Date(isoDate);
             tomorrow.setDate(tomorrow.getDate() + 1);
             const pad = (n) => String(n).padStart(2, '0');
-            const tomorrowStr = `${tomorrow.getFullYear()}-${pad(tomorrow.getMonth()+1)}-${pad(tomorrow.getDate())}`;
+            const tomorrowStr = `${tomorrow.getFullYear()}-${pad(tomorrow.getMonth() + 1)}-${pad(tomorrow.getDate())}`;
 
             // 残りエネルギーの取得
             const remainEnergy = getRemainingEnergy(todayStr);
@@ -1817,37 +1821,120 @@
                 }
             }
 
-             // 表示用にデータをマップ
-             const mappedTasks = tasksForDay.map(t => {
-                 const start = t.isAllDay ? "07:00" : (t.startTime || "09:00");
-                 const end = t.isAllDay ? "23:00" : (t.endTime || "10:00");
-                 
-                 let desc = t.location || "";
-                 if (t.id && typeof t.id === 'string' && t.id.startsWith('timetable-')) {
-                     desc = `大学 (${start}〜${end})`;
-                 }
+            // 表示用にデータをマップ
+            const mappedTasks = tasksForDay.map(t => {
+                const start = t.isAllDay ? "07:00" : (t.startTime || "09:00");
+                const end = t.isAllDay ? "23:00" : (t.endTime || "10:00");
 
-                 return {
-                     id: t.id,
-                     groupId: t.groupId || null,
-                     start: start,
-                     end: end,
-                     title: t.title,
-                     desc: desc,
-                     icon: t.icon || (t.type === 'reminder' ? "🔔" : "📅"),
-                     type: t.type || "routine",
-                     color: t.color || "pink",
-                     isAllDay: t.isAllDay
-                 };
-             });
+                let desc = t.location || "";
+                if (t.id && typeof t.id === 'string' && t.id.startsWith('timetable-')) {
+                    desc = `大学`;
+                }
+
+                return {
+                    id: t.id,
+                    groupId: t.groupId || null,
+                    start: start,
+                    end: end,
+                    title: t.title,
+                    desc: desc,
+                    icon: t.icon || (t.type === 'reminder' ? "🔔" : "📅"),
+                    type: t.type || "routine",
+                    color: t.color || "pink",
+                    isAllDay: t.isAllDay
+                };
+            });
 
             // 開始時間順にソート
             const sortedTasks = [...mappedTasks].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
 
             // 前後の予定の場所が拠点間移動に登録されている場合、移動時間を追加
             const tasks = [];
+
+            // 登録されている拠点を取得
+            const storedLocations = localStorage.getItem('savedLocations');
+            let locations = [];
+            if (storedLocations) {
+                try {
+                    locations = JSON.parse(storedLocations);
+                } catch (e) {
+                    locations = [];
+                }
+            }
+            if (locations.length === 0) {
+                locations = [
+                    { id: 'loc-1', name: '自宅', icon: '🏠' },
+                    { id: 'loc-2', name: '大学', icon: '🏫' }
+                ];
+            }
+
+            // 自宅以外の拠点のリスト（目的地候補）
+            const destinations = locations.filter(l => l.name !== "自宅").map(l => l.name);
+
+            // その日の最初の「目的地（自宅以外のいずれかの登録拠点）」の予定を特定する
+            const firstDestTask = sortedTasks.find(t => {
+                if (!t.desc) return false;
+                return destinations.some(dest => t.desc.startsWith(dest) || t.desc.includes(dest));
+            });
+
+            let destName = "";
+            if (firstDestTask) {
+                const matchedDest = destinations.find(dest => firstDestTask.desc.startsWith(dest) || firstDestTask.desc.includes(dest));
+                destName = matchedDest || "";
+            }
+
+            let hasAddedFirstDestTravel = false;
+
             for (let i = 0; i < sortedTasks.length; i++) {
                 const currentTask = sortedTasks[i];
+
+                // その日の最初の「目的地」の予定に対し、手前に別の予定がない場合は「自宅」からの移動を追加
+                if (currentTask === firstDestTask && !hasAddedFirstDestTravel && destName !== "") {
+                    hasAddedFirstDestTravel = true;
+                    const hasPrevLocationTask = sortedTasks.slice(0, i).some(t => t.desc && t.desc.trim() !== "");
+
+                    if (!hasPrevLocationTask) {
+                        const travelMinutes = getTravelTimeBetweenLocations("自宅", destName);
+                        if (travelMinutes > 0) {
+                            const currentStartMin = timeToMinutes(currentTask.start);
+                            const travelStartMin = currentStartMin - travelMinutes;
+
+                            const prepTimeVal = localStorage.getItem('morningPrepTime') ? parseInt(localStorage.getItem('morningPrepTime'), 10) : 30;
+                            if (prepTimeVal > 0) {
+                                tasks.push({
+                                    id: `prep-morning-${currentTask.id}`,
+                                    groupId: null,
+                                    start: minutesToTime(travelStartMin - prepTimeVal),
+                                    end: minutesToTime(travelStartMin),
+                                    title: "朝の準備",
+                                    desc: `準備所要時間: ${Math.floor(prepTimeVal / 60) > 0 ? Math.floor(prepTimeVal / 60) + '時間' + (prepTimeVal % 60) + '分' : (prepTimeVal % 60) + '分'}`,
+                                    icon: '☀️',
+                                    type: 'routine',
+                                    color: 'orange',
+                                    isAllDay: false
+                                });
+                            }
+
+                            tasks.push({
+                                id: `travel-home-${currentTask.id}`,
+                                groupId: null,
+                                start: minutesToTime(travelStartMin),
+                                end: currentTask.start,
+                                title: "自宅を出る",
+                                desc: `移動所要時間: ${travelMinutes}分 (${destName}へ)`,
+                                icon: '🚗',
+                                type: 'travel',
+                                color: 'travel',
+                                isAllDay: false,
+                                isTravel: true,
+                                nextTaskId: currentTask.id,
+                                nextTaskGroupId: currentTask.groupId,
+                                travelMinutes: travelMinutes
+                            });
+                        }
+                    }
+                }
+
                 if (i > 0) {
                     const prevTask = sortedTasks[i - 1];
                     const travelMinutes = getTravelTimeBetweenLocations(prevTask.desc, currentTask.desc);
@@ -3035,7 +3122,7 @@
             if (!selectEl) return;
 
             selectEl.innerHTML = '';
-            
+
             // デフォルトのプレースホルダー
             const defaultOpt = document.createElement('option');
             defaultOpt.value = '';
