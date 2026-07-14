@@ -365,6 +365,17 @@
                             </select>
                         </div>
 
+                        <!-- 場所設定カード -->
+                        <div class="modal-card">
+                            <span class="modal-card-label">📍 場所</span>
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    <select id="schedule-location-select" style="width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; background-color: #f8fafc; outline: none; font-size: 14px; font-weight: 600; color: #1e293b;" onchange="onLocationSelectChange()">
+                                        <!-- JSで動的に追加 -->
+                                    </select>
+                                <input type="text" id="schedule-location-input" style="width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; background-color: #ffffff; outline: none; font-size: 14px; font-weight: 600; color: #1e293b;" placeholder="場所を入力（自由入力も可能）">
+                            </div>
+                        </div>
+
                         <!-- ノートカード -->
                         <div class="modal-card">
                             <span class="modal-card-label">📝 メモ・ノート</span>
@@ -855,7 +866,8 @@
             blue: { main: '#38bdf8', bg: '#f0f9ff' },
             green: { main: '#4ade80', bg: '#f0fdf4' },
             orange: { main: '#fbbf24', bg: '#fffbeb' },
-            purple: { main: '#c084fc', bg: '#faf5ff' }
+            purple: { main: '#c084fc', bg: '#faf5ff' },
+            travel: { main: '#f97316', bg: '#fff7ed' }
         };
 
         let taskPickerState = {
@@ -974,21 +986,12 @@
 
             list.innerHTML = '';
 
-            const allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
-            const availableTasks = allTasks
-                .filter(task => !task.completed)
-                .map(task => ({
-                    ...task,
-                    durationMinutes: getTaskDurationMinutes(task)
-                }))
-                .filter(task => task.durationMinutes <= taskPickerState.gapMinutes)
-                .sort((a, b) => {
-                    const deadlineA = a.deadline || '9999-12-31T23:59';
-                    const deadlineB = b.deadline || '9999-12-31T23:59';
-                    return deadlineA.localeCompare(deadlineB);
-                });
+            const dayInfoIso = dayInfo ? dayInfo.isoDate : '';
 
-            if (availableTasks.length === 0) {
+            // 推奨ロジックからソートされた候補タスクを取得
+            const recommendedTasks = getRecommendedTasksForGap(taskPickerState.gapMinutes, dayInfoIso);
+
+            if (recommendedTasks.length === 0) {
                 const empty = document.createElement('div');
                 empty.className = 'task-picker-empty';
                 empty.textContent = 'この空き時間に入る未完了タスクがありません。タスクリストで所要時間を確認してからもう一度試してください。';
@@ -996,26 +999,75 @@
                 return;
             }
 
-            availableTasks.forEach(task => {
-                const taskColor = colorMap[task.color] || colorMap.pink;
-                const button = document.createElement('button');
-                button.type = 'button';
-                button.className = 'task-picker-item';
-                button.style.borderLeftColor = taskColor.main;
-                button.addEventListener('click', () => addTaskToDailyCalendar(task.id));
+            // 上位3件を推奨枠とし、残りをその他タスク枠とする
+            const topRecommended = recommendedTasks.slice(0, 3);
+            const otherTasks = recommendedTasks.slice(3);
 
-                button.innerHTML = `
-                    <div class="task-picker-item-main">
-                        <div class="task-picker-item-title">${task.icon || '📅'} ${task.title}</div>
-                        <div class="task-picker-item-info">所要時間: ${formatTaskDuration(task.durationMinutes)}<br>期限: ${formatTaskDeadline(task)}</div>
-                    </div>
-                    <div class="task-picker-item-meta">
-                        <span class="task-picker-item-badge">選択</span>
-                    </div>
-                `;
+            // 1. おすすめタスクセクションの描画
+            if (topRecommended.length > 0) {
+                const recHeader = document.createElement('div');
+                recHeader.className = 'task-picker-section-header';
+                recHeader.innerHTML = `⭐ この時間におすすめのタスク`;
+                recHeader.style.cssText = 'font-size: 13px; font-weight: 800; color: #f59e0b; margin: 12px 4px 8px 4px; display: flex; align-items: center; gap: 4px;';
+                list.appendChild(recHeader);
 
-                list.appendChild(button);
-            });
+                topRecommended.forEach(task => {
+                    const taskColor = colorMap[task.color] || colorMap.pink;
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'task-picker-item recommended';
+                    button.style.cssText = `border: 2px dashed #f59e0b; border-left: 5px solid ${taskColor.main}; background-color: #fffbeb; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.08); margin-bottom: 8px; width: 100%; text-align: left; padding: 12px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; transition: all 0.2s;`;
+                    button.addEventListener('click', () => addTaskToDailyCalendar(task.id));
+
+                    const deadlineText = formatTaskDeadline(task);
+                    const durationText = formatTaskDuration(normalizeTaskDurationMinutes(task.durationMinutes));
+                    const energyVal = task.energy !== undefined ? parseInt(task.energy, 10) : 2;
+
+                    button.innerHTML = `
+                        <div class="task-picker-item-main" style="flex: 1; min-width: 0;">
+                            <div class="task-picker-item-title" style="font-weight: 800; font-size: 14px; color: #1e293b; margin-bottom: 4px;">${task.icon || '📅'} ${task.title}</div>
+                            <div class="task-picker-item-info" style="font-size: 11px; color: #64748b; line-height: 1.4;">所要時間: ${durationText} / ⚡️${energyVal}${deadlineText ? ` / 期限: ${deadlineText}` : ''}</div>
+                        </div>
+                        <div class="task-picker-item-meta" style="flex-shrink: 0;">
+                            <span class="task-picker-item-badge" style="background-color: #f59e0b; color: #ffffff; font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 8px;">入れる</span>
+                        </div>
+                    `;
+                    list.appendChild(button);
+                });
+            }
+
+            // 2. その他のタスクセクションの描画
+            if (otherTasks.length > 0) {
+                const otherHeader = document.createElement('div');
+                otherHeader.className = 'task-picker-section-header';
+                otherHeader.innerHTML = `📋 その他の候補タスク`;
+                otherHeader.style.cssText = 'font-size: 12px; font-weight: 700; color: #64748b; margin: 16px 4px 8px 4px;';
+                list.appendChild(otherHeader);
+
+                otherTasks.forEach(task => {
+                    const taskColor = colorMap[task.color] || colorMap.pink;
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'task-picker-item';
+                    button.style.cssText = `border: 1px solid #e2e8f0; border-left: 5px solid ${taskColor.main}; background-color: #ffffff; margin-bottom: 8px; width: 100%; text-align: left; padding: 12px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; transition: all 0.2s;`;
+                    button.addEventListener('click', () => addTaskToDailyCalendar(task.id));
+
+                    const deadlineText = formatTaskDeadline(task);
+                    const durationText = formatTaskDuration(normalizeTaskDurationMinutes(task.durationMinutes));
+                    const energyVal = task.energy !== undefined ? parseInt(task.energy, 10) : 2;
+
+                    button.innerHTML = `
+                        <div class="task-picker-item-main" style="flex: 1; min-width: 0;">
+                            <div class="task-picker-item-title" style="font-weight: 700; font-size: 13px; color: #334155; margin-bottom: 4px;">${task.icon || '📅'} ${task.title}</div>
+                            <div class="task-picker-item-info" style="font-size: 11px; color: #64748b; line-height: 1.4;">所要時間: ${durationText} / ⚡️${energyVal}${deadlineText ? ` / 期限: ${deadlineText}` : ''}</div>
+                        </div>
+                        <div class="task-picker-item-meta" style="flex-shrink: 0;">
+                            <span class="task-picker-item-badge" style="background-color: #64748b; color: #ffffff; font-size: 10px; font-weight: 800; padding: 3px 6px; border-radius: 6px;">選択</span>
+                        </div>
+                    `;
+                    list.appendChild(button);
+                });
+            }
         }
 
         function addTaskToDailyCalendar(taskId) {
@@ -1055,7 +1107,7 @@
                 type: sourceTask.type || 'routine',
                 color: sourceTask.color || 'pink',
                 notes: sourceTask.memo || sourceTask.notes || '',
-                energy: sourceTask.energy || 3,
+                energy: sourceTask.energy !== undefined ? parseInt(sourceTask.energy, 10) : 2,
                 sourceTaskId: sourceTask.id
             };
 
@@ -1281,12 +1333,12 @@
                             tooltip.textContent = `⏰ ${targetTimeStr}`;
                         }
 
-                        // 各 Gap の上に重なっているか判定して hover クラスを切り替える
-                        document.querySelectorAll('.timeline-viewport .timeline-item.gap-item').forEach(gap => {
-                            const gapRect = gap.getBoundingClientRect();
-                            if (touchY >= gapRect.top && touchY <= gapRect.bottom) {
-                                gap.classList.add('drag-over');
-                                const timeStartEl = gap.querySelector('.time-start');
+                        // 各 予定・Gap の上に重なっているか判定して hover クラスを切り替える
+                        document.querySelectorAll('.timeline-viewport .timeline-item').forEach(itemEl => {
+                            const itemRect = itemEl.getBoundingClientRect();
+                            if (touchY >= itemRect.top && touchY <= itemRect.bottom) {
+                                itemEl.classList.add('drag-over');
+                                const timeStartEl = itemEl.querySelector('.time-start');
                                 if (timeStartEl) {
                                     if (!timeStartEl.dataset.originalText) {
                                         timeStartEl.dataset.originalText = timeStartEl.textContent;
@@ -1296,8 +1348,8 @@
                                     timeStartEl.style.fontWeight = '900';
                                 }
                             } else {
-                                gap.classList.remove('drag-over');
-                                const timeStartEl = gap.querySelector('.time-start');
+                                itemEl.classList.remove('drag-over');
+                                const timeStartEl = itemEl.querySelector('.time-start');
                                 if (timeStartEl && timeStartEl.dataset.originalText) {
                                     timeStartEl.textContent = timeStartEl.dataset.originalText;
                                     timeStartEl.dataset.originalText = '';
@@ -1327,10 +1379,10 @@
                     card.classList.remove('group-dragging');
                 }
 
-                // すべての Gap の hover を解除
-                document.querySelectorAll('.timeline-viewport .timeline-item.gap-item').forEach(gap => {
-                    gap.classList.remove('drag-over');
-                    const timeStartEl = gap.querySelector('.time-start');
+                // すべての 予定・Gap の hover を解除
+                document.querySelectorAll('.timeline-viewport .timeline-item').forEach(itemEl => {
+                    itemEl.classList.remove('drag-over');
+                    const timeStartEl = itemEl.querySelector('.time-start');
                     if (timeStartEl && timeStartEl.dataset.originalText) {
                         timeStartEl.textContent = timeStartEl.dataset.originalText;
                         timeStartEl.dataset.originalText = '';
@@ -1356,6 +1408,93 @@
             });
         }
 
+        // 指定された日付の予定と時間割をすべて取得する（移動対象の予定は除く）
+        function getExistingSchedulesForDate(isoDate, excludeIds = []) {
+            const allTasks = JSON.parse(localStorage.getItem('savedSchedules')) || [];
+            
+            // 手動予定
+            const tasksForDay = allTasks.filter(t => {
+                if (excludeIds.includes(String(t.id))) return false;
+                if (t.excludeDates && t.excludeDates.includes(isoDate)) return false;
+                if (t.startDate === isoDate) return true;
+                if (!t.recurrence || t.recurrence === 'none') return false;
+                if (t.startDate > isoDate) return false;
+                if (t.recurrence === 'daily') return true;
+                if (t.recurrence === 'weekly') {
+                    const startD = new Date(t.startDate);
+                    const targetDate = new Date(isoDate);
+                    return startD.getDay() === targetDate.getDay();
+                }
+                return false;
+            });
+            
+            // 時間割データの自動マージ
+            const defaultConfig = {
+                periods: 5,
+                daysType: "week-sat",
+                reflectMode: "auto",
+                periodTimes: {
+                    "1": { "start": "08:50", "end": "10:20" },
+                    "2": { "start": "10:30", "end": "12:00" },
+                    "3": { "start": "13:00", "end": "14:30" },
+                    "4": { "start": "14:40", "end": "16:10" },
+                    "5": { "start": "16:20", "end": "17:50" },
+                    "6": { "start": "18:00", "end": "19:30" },
+                    "7": { "start": "19:40", "end": "21:10" }
+                }
+            };
+            const config = JSON.parse(localStorage.getItem('timetableConfig')) || defaultConfig;
+            const reflectMode = config.reflectMode || "auto";
+
+            if (reflectMode !== 'off') {
+                let slotsToMerge = null;
+                const savedList = JSON.parse(localStorage.getItem('savedTimetableList')) || [];
+                const dayId = currentActiveDay;
+
+                if (reflectMode === 'always') {
+                    const activeId = localStorage.getItem('currentTermId');
+                    let activeTerm = savedList.find(t => t.termId === activeId);
+                    if (!activeTerm && savedList.length > 0) activeTerm = savedList[0];
+                    if (activeTerm) slotsToMerge = activeTerm.selectedSlots;
+                } else {
+                    const matchedTerm = savedList.find(t => {
+                        if (!t.startDate || !t.endDate) return false;
+                        return isoDate >= t.startDate && isoDate <= t.endDate;
+                    });
+                    if (matchedTerm) {
+                        slotsToMerge = matchedTerm.selectedSlots;
+                    }
+                }
+
+                if (slotsToMerge && slotsToMerge[dayId]) {
+                    const periods = slotsToMerge[dayId];
+                    periods.forEach(p => {
+                        if (p > parseInt(config.periods)) return;
+
+                        const timeConfig = config.periodTimes[p];
+                        if (timeConfig) {
+                            const timetableId = `timetable-${dayId}-${p}`;
+                            if (!excludeIds.includes(timetableId)) {
+                                tasksForDay.push({
+                                    id: timetableId,
+                                    title: `授業（${p}限）`,
+                                    startTime: timeConfig.start,
+                                    endTime: timeConfig.end,
+                                    isAllDay: false
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+
+            return tasksForDay.map(t => ({
+                start: t.isAllDay ? 7 * 60 : timeToMinutes(t.startTime || "09:00"),
+                end: t.isAllDay ? 23 * 60 : timeToMinutes(t.endTime || "10:00"),
+                title: t.title
+            }));
+        }
+
         function moveGroupToStartTime(groupId, newStartStr) {
             let allTasks = JSON.parse(localStorage.getItem('savedSchedules')) || [];
             const groupTasks = allTasks
@@ -1364,20 +1503,31 @@
 
             if (groupTasks.length === 0) return;
 
+            const dayInfo = weekDays.find(d => d.id === currentActiveDay);
+            if (!dayInfo) return;
+            const isoDate = dayInfo.isoDate;
+
             let currentMinutes = timeToMinutes(newStartStr);
             const timeUpdates = {};
+            const groupTaskIds = groupTasks.map(t => String(t.id));
 
-            groupTasks.forEach(task => {
+            // 仮の移動後の時間帯を計算
+            const proposedIntervals = [];
+            for (let i = 0; i < groupTasks.length; i++) {
+                const task = groupTasks[i];
                 const duration = timeToMinutes(task.endTime) - timeToMinutes(task.startTime);
                 const startStr = minutesToTime(currentMinutes);
+                const startMin = currentMinutes;
                 currentMinutes += duration;
+                const endMin = currentMinutes;
                 const endStr = minutesToTime(currentMinutes);
 
                 timeUpdates[task.id] = {
                     startTime: startStr,
                     endTime: endStr
                 };
-            });
+                proposedIntervals.push({ start: startMin, end: endMin });
+            }
 
             allTasks = allTasks.map(task => {
                 const update = timeUpdates[task.id];
@@ -1400,6 +1550,10 @@
             const task = allTasks.find(t => String(t.id) === String(taskId));
             if (!task) return;
 
+            const dayInfo = weekDays.find(d => d.id === currentActiveDay);
+            if (!dayInfo) return;
+            const isoDate = dayInfo.isoDate;
+
             const originalStart = timeToMinutes(task.startTime);
             const originalEnd = timeToMinutes(task.endTime);
             const duration = originalEnd - originalStart;
@@ -1420,6 +1574,154 @@
 
             localStorage.setItem('savedSchedules', JSON.stringify(allTasks));
             switchDay(currentActiveDay);
+        }
+
+        // 2つの場所の拠点間移動時間を取得する
+        function getTravelTimeBetweenLocations(locName1, locName2) {
+            if (!locName1 || !locName2) return 0;
+
+            const name1 = String(locName1).trim();
+            const name2 = String(locName2).trim();
+            if (name1 === "" || name2 === "" || name1 === name2) return 0;
+
+            // localStorageから拠点と移動時間を取得
+            const storedLocations = localStorage.getItem('savedLocations');
+            const storedTravelTimes = localStorage.getItem('savedTravelTimes');
+            if (!storedLocations || !storedTravelTimes) return 0;
+
+            const locations = JSON.parse(storedLocations);
+            const travelTimes = JSON.parse(storedTravelTimes);
+
+            // 名前から拠点オブジェクトを検索（前方一致を許容）
+            const loc1 = locations.find(l => name1.startsWith(l.name) || l.name === name1);
+            const loc2 = locations.find(l => name2.startsWith(l.name) || l.name === name2);
+            if (!loc1 || !loc2) return 0;
+
+            // 相互作用のため、ID順でソートして検索対象を一意にする
+            const sortedFrom = loc1.id < loc2.id ? loc1.id : loc2.id;
+            const sortedTo = loc1.id < loc2.id ? loc2.id : loc1.id;
+
+            const travelConfig = travelTimes.find(t => t.from === sortedFrom && t.to === sortedTo);
+            return travelConfig ? parseInt(travelConfig.minutes, 10) : 0;
+        }
+
+        // 指定された日付の残りエネルギーを取得する
+        function getRemainingEnergy(isoDate) {
+            const dailyMax = localStorage.getItem(`maxEnergyConfig_${isoDate}`);
+            const maxEnergy = dailyMax ? parseInt(dailyMax) : (parseInt(localStorage.getItem('maxEnergyConfig')) || 10);
+
+            const allTasks = JSON.parse(localStorage.getItem('savedSchedules')) || [];
+            const tasksForDay = allTasks.filter(t => {
+                if (t.excludeDates && t.excludeDates.includes(isoDate)) return false;
+                if (t.startDate === isoDate) return true;
+                if (!t.recurrence || t.recurrence === 'none') return false;
+                if (t.startDate > isoDate) return false;
+                if (t.recurrence === 'daily') return true;
+                if (t.recurrence === 'weekly') {
+                    const startD = new Date(t.startDate);
+                    const targetDate = new Date(isoDate);
+                    return startD.getDay() === targetDate.getDay();
+                }
+                return false;
+            });
+
+            const usedEnergy = tasksForDay.reduce((sum, task) => {
+                const energyVal = task.energy !== undefined ? parseInt(task.energy) : 0;
+                return sum + energyVal;
+            }, 0);
+
+            return Math.max(0, maxEnergy - usedEnergy);
+        }
+
+        function normalizeTaskDurationMinutes(minutes) {
+            const parsed = parseInt(minutes, 10);
+            if (Number.isNaN(parsed) || parsed <= 0) {
+                return 1;
+            }
+            return parsed;
+        }
+
+        // 空き時間(Gap)に最適なタスクを推薦するロジック
+        function getRecommendedTasksForGap(gapMinutes, isoDate) {
+            const allTasks = JSON.parse(localStorage.getItem('savedTasks')) || [];
+            
+            // 1. 未完了、かつ所要時間が空き時間(gapMinutes)以下
+            const uncompletedTasks = allTasks.filter(t => {
+                if (t.completed) return false;
+                
+                // 所要時間の正規化
+                const duration = normalizeTaskDurationMinutes(t.durationMinutes);
+                if (duration > gapMinutes) return false;
+                
+                return true;
+            });
+
+            // 今日と明日の日付文字列を生成
+            const todayStr = isoDate;
+            const tomorrow = new Date(isoDate);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const pad = (n) => String(n).padStart(2, '0');
+            const tomorrowStr = `${tomorrow.getFullYear()}-${pad(tomorrow.getMonth()+1)}-${pad(tomorrow.getDate())}`;
+
+            // 残りエネルギーの取得
+            const remainEnergy = getRemainingEnergy(todayStr);
+
+            // 各タスクに推奨度スコアを計算
+            const scoredTasks = uncompletedTasks.map(t => {
+                let score = 0;
+
+                // ① 期限による加点 (今日、または明日)
+                if (t.deadline) {
+                    const dlDate = t.deadline.split('T')[0];
+                    if (dlDate === todayStr) {
+                        score += 100;
+                    } else if (dlDate === tomorrowStr) {
+                        score += 80;
+                    } else if (dlDate < todayStr) {
+                        // 期限が過去（超過）しているものも優先度を高くする
+                        score += 90;
+                    }
+                }
+
+                // ② 優先度（お気に入り/星）による加点
+                if (t.starred) {
+                    score += 50;
+                }
+
+                // ③ エネルギー適性による加点
+                const taskEnergy = t.energy !== undefined ? parseInt(t.energy, 10) : 2;
+                if (remainEnergy >= 5) {
+                    // 体力が十分あるときは、エネルギー高めのタスクを優先消費するよう推奨
+                    if (taskEnergy === 3) {
+                        score += 30;
+                    } else if (taskEnergy === 2) {
+                        score += 15;
+                    }
+                } else if (remainEnergy <= 2) {
+                    // 体力が少ないときは、低負荷タスクを優先推奨、高負荷はマイナス
+                    if (taskEnergy === 0 || taskEnergy === 1) {
+                        score += 30;
+                    } else if (taskEnergy === 3) {
+                        score -= 20; // 疲れているときは避ける
+                    }
+                } else {
+                    // 普通の体力
+                    if (taskEnergy === 2 || taskEnergy === 1) {
+                        score += 10;
+                    }
+                }
+
+                return {
+                    task: t,
+                    score: score
+                };
+            });
+
+            // 推奨スコアの降順でソート
+            scoredTasks.sort((a, b) => b.score - a.score);
+
+            // ソートされたタスクオブジェクトの配列のみを抽出して返す
+            return scoredTasks.map(st => st.task);
         }
 
         // タイムラインのレンダリング (重複時の自動列分割・空き時間の自動挿入)
@@ -1495,7 +1797,7 @@
                             tasksForDay.push({
                                 id: `timetable-${dayId}-${p}`,
                                 title: `授業（${p}限）`,
-                                location: `${timeConfig.start}〜${timeConfig.end}`,
+                                location: "大学",
                                 isAllDay: false,
                                 startDate: isoDate,
                                 startTime: timeConfig.start,
@@ -1510,26 +1812,65 @@
                 }
             }
 
-            // 表示用にデータをマップ
-            const mappedTasks = tasksForDay.map(t => {
-                const start = t.isAllDay ? "07:00" : (t.startTime || "09:00");
-                const end = t.isAllDay ? "23:00" : (t.endTime || "10:00");
-                return {
-                    id: t.id,
-                    groupId: t.groupId || null,
-                    start: start,
-                    end: end,
-                    title: t.title,
-                    desc: t.location || "",
-                    icon: t.icon || (t.type === 'reminder' ? "🔔" : "📅"),
-                    type: t.type || "routine",
-                    color: t.color || "pink",
-                    isAllDay: t.isAllDay
-                };
-            });
+             // 表示用にデータをマップ
+             const mappedTasks = tasksForDay.map(t => {
+                 const start = t.isAllDay ? "07:00" : (t.startTime || "09:00");
+                 const end = t.isAllDay ? "23:00" : (t.endTime || "10:00");
+                 
+                 let desc = t.location || "";
+                 if (t.id && typeof t.id === 'string' && t.id.startsWith('timetable-')) {
+                     desc = `大学 (${start}〜${end})`;
+                 }
+
+                 return {
+                     id: t.id,
+                     groupId: t.groupId || null,
+                     start: start,
+                     end: end,
+                     title: t.title,
+                     desc: desc,
+                     icon: t.icon || (t.type === 'reminder' ? "🔔" : "📅"),
+                     type: t.type || "routine",
+                     color: t.color || "pink",
+                     isAllDay: t.isAllDay
+                 };
+             });
 
             // 開始時間順にソート
-            const tasks = [...mappedTasks].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
+            const sortedTasks = [...mappedTasks].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
+
+            // 前後の予定の場所が拠点間移動に登録されている場合、移動時間を追加
+            const tasks = [];
+            for (let i = 0; i < sortedTasks.length; i++) {
+                const currentTask = sortedTasks[i];
+                if (i > 0) {
+                    const prevTask = sortedTasks[i - 1];
+                    const travelMinutes = getTravelTimeBetweenLocations(prevTask.desc, currentTask.desc);
+                    if (travelMinutes > 0) {
+                        const currentStartMin = timeToMinutes(currentTask.start);
+                        const travelStartMin = currentStartMin - travelMinutes;
+
+                        // 移動時間アイテムを作成して挿入
+                        tasks.push({
+                            id: `travel-${prevTask.id}-${currentTask.id}`,
+                            groupId: null,
+                            start: minutesToTime(travelStartMin),
+                            end: currentTask.start,
+                            title: `${prevTask.desc} ⇄ ${currentTask.desc} の移動`,
+                            desc: `移動所要時間: ${travelMinutes}分`,
+                            icon: '🚗',
+                            type: 'travel',
+                            color: 'travel',
+                            isAllDay: false,
+                            isTravel: true, // 特別なフラグ
+                            nextTaskId: currentTask.id,
+                            nextTaskGroupId: currentTask.groupId,
+                            travelMinutes: travelMinutes
+                        });
+                    }
+                }
+                tasks.push(currentTask);
+            }
 
             const dayStart = 5 * 60; // 05:00
             const dayEnd = 23 * 60;  // 23:00
@@ -1603,94 +1944,6 @@
                         <div class="item-line-col"><div class="timeline-path"></div><div class="icon-circle"></div></div>
                         <div class="item-card-col"><div class="gap-card"><span class="gap-card-label">💤 ${getDurationText(item.start, item.end)} の空き時間</span><button type="button" class="gap-add-btn" aria-label="この空き時間にタスクを追加" onclick="openTaskPickerModal('${item.start}', '${item.end}')">＋</button></div></div>
                     `;
-
-                    // ドラッグ＆ドロップイベントの紐付け
-                    itemDiv.addEventListener('dragover', (e) => {
-                        e.preventDefault();
-                        e.dataTransfer.dropEffect = 'move';
-                        itemDiv.classList.add('drag-over');
-
-                        const timelineEl = document.getElementById('structured-timeline');
-                        if (timelineEl) {
-                            const rect = timelineEl.getBoundingClientRect();
-                            const relativeY = e.clientY - rect.top + timelineEl.scrollTop;
-                            const totalHeight = timelineEl.scrollHeight;
-
-                            const dayStart = 5 * 60;
-                            const dayEnd = 23 * 60;
-                            const totalMinutes = dayEnd - dayStart;
-
-                            if (totalHeight > 0) {
-                                const ratio = Math.max(0, Math.min(1, relativeY / totalHeight));
-                                const minutesFromStart = totalMinutes * ratio;
-                                const roundedMinutes = Math.round(minutesFromStart / 5) * 5;
-                                const targetMinutes = dayStart + roundedMinutes;
-                                const targetTimeStr = minutesToTime(targetMinutes);
-
-                                currentDragTargetTime = targetTimeStr;
-
-                                const timeStartEl = itemDiv.querySelector('.time-start');
-                                if (timeStartEl) {
-                                    if (!timeStartEl.dataset.originalText) {
-                                        timeStartEl.dataset.originalText = timeStartEl.textContent;
-                                    }
-                                    timeStartEl.textContent = targetTimeStr;
-                                    timeStartEl.style.color = '#ff7082';
-                                    timeStartEl.style.fontWeight = '900';
-                                }
-
-                                const tooltip = document.getElementById('drag-time-tooltip');
-                                if (tooltip) {
-                                    tooltip.style.display = 'block';
-                                    tooltip.style.left = `${e.clientX + 15}px`;
-                                    tooltip.style.top = `${e.clientY + 15}px`;
-                                    tooltip.textContent = `⏰ ${targetTimeStr}`;
-                                }
-                            }
-                        }
-                    });
-
-                    itemDiv.addEventListener('dragleave', () => {
-                        itemDiv.classList.remove('drag-over');
-
-                        const timeStartEl = itemDiv.querySelector('.time-start');
-                        if (timeStartEl && timeStartEl.dataset.originalText) {
-                            timeStartEl.textContent = timeStartEl.dataset.originalText;
-                            timeStartEl.dataset.originalText = '';
-                            timeStartEl.style.color = '';
-                            timeStartEl.style.fontWeight = '';
-                        }
-
-                        const tooltip = document.getElementById('drag-time-tooltip');
-                        if (tooltip) tooltip.style.display = 'none';
-                    });
-
-                    itemDiv.addEventListener('drop', (e) => {
-                        e.preventDefault();
-                        itemDiv.classList.remove('drag-over');
-
-                        const timeStartEl = itemDiv.querySelector('.time-start');
-                        if (timeStartEl && timeStartEl.dataset.originalText) {
-                            timeStartEl.textContent = timeStartEl.dataset.originalText;
-                            timeStartEl.dataset.originalText = '';
-                            timeStartEl.style.color = '';
-                            timeStartEl.style.fontWeight = '';
-                        }
-
-                        const tooltip = document.getElementById('drag-time-tooltip');
-                        if (tooltip) tooltip.style.display = 'none';
-
-                        const dragData = e.dataTransfer.getData('text/plain');
-                        if (!dragData || !currentDragTargetTime) return;
-
-                        if (dragData.startsWith('group:')) {
-                            const groupId = dragData.substring(6);
-                            moveGroupToStartTime(groupId, currentDragTargetTime);
-                        } else if (dragData.startsWith('single:')) {
-                            const taskId = dragData.substring(7);
-                            moveSingleTaskToStartTime(taskId, currentDragTargetTime);
-                        }
-                    });
 
                     container.appendChild(itemDiv);
 
@@ -1830,7 +2083,8 @@
                                     });
                                     createGroupDragImage(e, gId);
                                 } else {
-                                    card.querySelector('.task-card').classList.add('group-dragging');
+                                    const taskCard = card.querySelector('.task-card') || card;
+                                    taskCard.classList.add('group-dragging');
                                 }
                             });
                             handle.addEventListener('dragend', () => {
@@ -1841,7 +2095,8 @@
                                         c.classList.remove('group-dragging');
                                     });
                                 } else {
-                                    card.querySelector('.task-card').classList.remove('group-dragging');
+                                    const taskCard = card.querySelector('.task-card') || card;
+                                    taskCard.classList.remove('group-dragging');
                                 }
                                 const tooltip = document.getElementById('drag-time-tooltip');
                                 if (tooltip) tooltip.style.display = 'none';
@@ -1850,94 +2105,6 @@
                         }
 
                         targetCol.appendChild(card);
-                    });
-
-                    // 重複グループにもドラッグ＆ドロップイベントを紐付け
-                    itemDiv.addEventListener('dragover', (e) => {
-                        e.preventDefault();
-                        e.dataTransfer.dropEffect = 'move';
-                        itemDiv.classList.add('drag-over');
-
-                        const timelineEl = document.getElementById('structured-timeline');
-                        if (timelineEl) {
-                            const rect = timelineEl.getBoundingClientRect();
-                            const relativeY = e.clientY - rect.top + timelineEl.scrollTop;
-                            const totalHeight = timelineEl.scrollHeight;
-
-                            const dayStart = 5 * 60;
-                            const dayEnd = 23 * 60;
-                            const totalMinutes = dayEnd - dayStart;
-
-                            if (totalHeight > 0) {
-                                const ratio = Math.max(0, Math.min(1, relativeY / totalHeight));
-                                const minutesFromStart = totalMinutes * ratio;
-                                const roundedMinutes = Math.round(minutesFromStart / 5) * 5;
-                                const targetMinutes = dayStart + roundedMinutes;
-                                const targetTimeStr = minutesToTime(targetMinutes);
-
-                                currentDragTargetTime = targetTimeStr;
-
-                                const timeStartEl = itemDiv.querySelector('.time-start');
-                                if (timeStartEl) {
-                                    if (!timeStartEl.dataset.originalText) {
-                                        timeStartEl.dataset.originalText = timeStartEl.textContent;
-                                    }
-                                    timeStartEl.textContent = targetTimeStr;
-                                    timeStartEl.style.color = '#ff7082';
-                                    timeStartEl.style.fontWeight = '900';
-                                }
-
-                                const tooltip = document.getElementById('drag-time-tooltip');
-                                if (tooltip) {
-                                    tooltip.style.display = 'block';
-                                    tooltip.style.left = `${e.clientX + 15}px`;
-                                    tooltip.style.top = `${e.clientY + 15}px`;
-                                    tooltip.textContent = `⏰ ${targetTimeStr}`;
-                                }
-                            }
-                        }
-                    });
-
-                    itemDiv.addEventListener('dragleave', () => {
-                        itemDiv.classList.remove('drag-over');
-
-                        const timeStartEl = itemDiv.querySelector('.time-start');
-                        if (timeStartEl && timeStartEl.dataset.originalText) {
-                            timeStartEl.textContent = timeStartEl.dataset.originalText;
-                            timeStartEl.dataset.originalText = '';
-                            timeStartEl.style.color = '';
-                            timeStartEl.style.fontWeight = '';
-                        }
-
-                        const tooltip = document.getElementById('drag-time-tooltip');
-                        if (tooltip) tooltip.style.display = 'none';
-                    });
-
-                    itemDiv.addEventListener('drop', (e) => {
-                        e.preventDefault();
-                        itemDiv.classList.remove('drag-over');
-
-                        const timeStartEl = itemDiv.querySelector('.time-start');
-                        if (timeStartEl && timeStartEl.dataset.originalText) {
-                            timeStartEl.textContent = timeStartEl.dataset.originalText;
-                            timeStartEl.dataset.originalText = '';
-                            timeStartEl.style.color = '';
-                            timeStartEl.style.fontWeight = '';
-                        }
-
-                        const tooltip = document.getElementById('drag-time-tooltip');
-                        if (tooltip) tooltip.style.display = 'none';
-
-                        const dragData = e.dataTransfer.getData('text/plain');
-                        if (!dragData || !currentDragTargetTime) return;
-
-                        if (dragData.startsWith('group:')) {
-                            const groupId = dragData.substring(6);
-                            moveGroupToStartTime(groupId, currentDragTargetTime);
-                        } else if (dragData.startsWith('single:')) {
-                            const taskId = dragData.substring(7);
-                            moveSingleTaskToStartTime(taskId, currentDragTargetTime);
-                        }
                     });
 
                 } else {
@@ -1972,6 +2139,10 @@
                         itemDiv.dataset.groupId = item.groupId;
                     }
 
+                    const cardStyle = item.isTravel ?
+                        `border: 2px dashed #f97316; background-color: transparent; box-shadow: none; min-height: 48px; padding: 8px 16px 8px 78px; cursor: grab;` :
+                        `border-left: 4px solid ${taskColor.main}; background-color: ${taskColor.bg}; min-height: 72px; padding: 12px 16px 12px 78px; cursor: pointer;`;
+
                     itemDiv.innerHTML = `
                         <div class="item-time-col">
                             <span class="time-start">${item.start}</span>
@@ -1981,10 +2152,10 @@
                             <div class="timeline-path"></div>
                         </div>
                         <div class="item-card-col" style="margin-left: -40px; z-index: 10;">
-                            <div class="task-card" style="border-left: 4px solid ${taskColor.main}; background-color: ${taskColor.bg}; display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 12px 78px; gap: 12px; position: relative; min-height: 72px;">
+                            <div class="task-card" style="${cardStyle} display: flex; align-items: center; justify-content: space-between; gap: 12px; position: relative;">
                                 <!-- ぐりぐりボタン（☰）をカードの最左端に絶対配置し、背後のタイムライン縦線と重ねる -->
-                                ${(!item.groupId || isGroupFirst) ? `
-                                <div class="group-drag-handle" draggable="true" data-drag-id="${item.groupId ? 'group:' + item.groupId : 'single:' + item.id}" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); cursor: grab; padding: 4px 6px; font-size: 13px; color: ${taskColor.main}; font-weight: bold; background: rgba(255,255,255,0.8); border: 1px solid ${taskColor.main}; border-radius: 6px; display: flex; align-items: center; justify-content: center; user-select: none; z-index: 20;">☰</div>
+                                ${(item.isTravel || !item.groupId || isGroupFirst) ? `
+                                <div class="group-drag-handle" draggable="true" data-drag-id="${item.isTravel ? 'travel:' + (item.nextTaskGroupId ? 'group:' + item.nextTaskGroupId : 'single:' + item.nextTaskId) + ':' + item.travelMinutes : (item.groupId ? 'group:' + item.groupId : 'single:' + item.id)}" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); cursor: grab; padding: 4px 6px; font-size: 13px; color: ${taskColor.main}; font-weight: bold; background: rgba(255,255,255,0.8); border: 1px solid ${taskColor.main}; border-radius: 6px; display: flex; align-items: center; justify-content: center; user-select: none; z-index: 20;">☰</div>
                                 ` : ''}
 
                                 <!-- アイコン円をぐりぐりボタンのすぐ右（カード内部）に絶対配置 -->
@@ -2009,6 +2180,7 @@
 
                     // 予定カードをクリックした時のアクション
                     itemDiv.querySelector('.task-card').addEventListener('click', () => {
+                        if (item.isTravel) return;
                         if (selectionMode) {
                             toggleTimelineTaskSelection(String(item.id));
                             return;
@@ -2031,7 +2203,8 @@
                                 });
                                 createGroupDragImage(e, gId);
                             } else {
-                                itemDiv.querySelector('.task-card').classList.add('group-dragging');
+                                const taskCard = itemDiv.querySelector('.task-card') || itemDiv;
+                                taskCard.classList.add('group-dragging');
                             }
                         });
                         handle.addEventListener('dragend', () => {
@@ -2042,7 +2215,8 @@
                                     c.classList.remove('group-dragging');
                                 });
                             } else {
-                                itemDiv.querySelector('.task-card').classList.remove('group-dragging');
+                                const taskCard = itemDiv.querySelector('.task-card') || itemDiv;
+                                taskCard.classList.remove('group-dragging');
                             }
                             const tooltip = document.getElementById('drag-time-tooltip');
                             if (tooltip) tooltip.style.display = 'none';
@@ -2050,89 +2224,105 @@
                         setupTouchDrag(handle, itemDiv);
                     }
 
-                    // ドラッグオーバー、リーブ、ドロップの紐付け
-                    itemDiv.addEventListener('dragover', (e) => {
-                        e.preventDefault();
-                        e.dataTransfer.dropEffect = 'move';
-                        itemDiv.classList.add('drag-over');
-
-                        const timelineEl = document.getElementById('structured-timeline');
-                        if (timelineEl) {
-                            const rect = timelineEl.getBoundingClientRect();
-                            const relativeY = e.clientY - rect.top + timelineEl.scrollTop;
-                            const totalHeight = timelineEl.scrollHeight;
-
-                            const dayStart = 5 * 60;
-                            const dayEnd = 23 * 60;
-                            const totalMinutes = dayEnd - dayStart;
-
-                            if (totalHeight > 0) {
-                                const ratio = Math.max(0, Math.min(1, relativeY / totalHeight));
-                                const minutesFromStart = totalMinutes * ratio;
-                                const roundedMinutes = Math.round(minutesFromStart / 5) * 5;
-                                const targetMinutes = dayStart + roundedMinutes;
-                                const targetTimeStr = minutesToTime(targetMinutes);
-
-                                currentDragTargetTime = targetTimeStr;
-
-                                const timeStartEl = itemDiv.querySelector('.time-start');
-                                if (timeStartEl) {
-                                    if (!timeStartEl.dataset.originalText) {
-                                        timeStartEl.dataset.originalText = timeStartEl.textContent;
-                                    }
-                                    timeStartEl.textContent = targetTimeStr;
-                                    timeStartEl.style.color = '#ff7082';
-                                    timeStartEl.style.fontWeight = '900';
-                                }
-
-                                const tooltip = document.getElementById('drag-time-tooltip');
-                                if (tooltip) {
-                                    tooltip.style.display = 'block';
-                                    tooltip.style.left = `${e.clientX + 15}px`;
-                                    tooltip.style.top = `${e.clientY + 15}px`;
-                                    tooltip.textContent = `⏰ ${targetTimeStr}`;
-                                }
-                            }
-                        }
-                    });
-
-                    itemDiv.addEventListener('dragleave', () => {
-                        itemDiv.classList.remove('drag-over');
-
-                        const timeStartEl = itemDiv.querySelector('.time-start');
-                        if (timeStartEl && timeStartEl.dataset.originalText) {
-                            timeStartEl.textContent = timeStartEl.dataset.originalText;
-                            timeStartEl.dataset.originalText = '';
-                            timeStartEl.style.color = '';
-                            timeStartEl.style.fontWeight = '';
-                        }
-
-                        const tooltip = document.getElementById('drag-time-tooltip');
-                        if (tooltip) tooltip.style.display = 'none';
-                    });
-
-                    itemDiv.addEventListener('drop', (e) => {
-                        e.preventDefault();
-                        itemDiv.classList.remove('drag-over');
-
-                        const timeStartEl = itemDiv.querySelector('.time-start');
-                        if (timeStartEl && timeStartEl.dataset.originalText) {
-                            timeStartEl.textContent = timeStartEl.dataset.originalText;
-                            timeStartEl.dataset.originalText = '';
-                            timeStartEl.style.color = '';
-                            timeStartEl.style.fontWeight = '';
-                        }
-
-                        const tooltip = document.getElementById('drag-time-tooltip');
-                        if (tooltip) tooltip.style.display = 'none';
-
-                        const dragGroupId = e.dataTransfer.getData('text/plain');
-                        if (!dragGroupId || !currentDragTargetTime) return;
-
-                        moveGroupToStartTime(dragGroupId, currentDragTargetTime);
-                    });
-
                     container.appendChild(itemDiv);
+                }
+            });
+
+            // タイムライン全体（親コンテナ）に対するドラッグ＆ドロップイベントの紐付け
+            container.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+
+                const rect = container.getBoundingClientRect();
+                const relativeY = e.clientY - rect.top + container.scrollTop;
+                const totalHeight = container.scrollHeight;
+
+                const dayStart = 5 * 60;
+                const dayEnd = 23 * 60;
+                const totalMinutes = dayEnd - dayStart;
+
+                if (totalHeight > 0) {
+                    const ratio = Math.max(0, Math.min(1, relativeY / totalHeight));
+                    const minutesFromStart = totalMinutes * ratio;
+                    const roundedMinutes = Math.round(minutesFromStart / 5) * 5;
+                    const targetMinutes = dayStart + roundedMinutes;
+                    const targetTimeStr = minutesToTime(targetMinutes);
+
+                    currentDragTargetTime = targetTimeStr;
+
+                    // ドラッグ中の時間を示すツールチップを更新
+                    const tooltip = document.getElementById('drag-time-tooltip');
+                    if (tooltip) {
+                        tooltip.style.display = 'block';
+                        tooltip.style.left = `${e.clientX + 15}px`;
+                        tooltip.style.top = `${e.clientY + 15}px`;
+                        tooltip.textContent = `⏰ ${targetTimeStr}`;
+                    }
+
+                    // マウス位置の直下にある予定・Gap要素に drag-over クラスを付与してハイライトするフィードバック
+                    // (ドラッグ中の要素自身はハイライトしない)
+                    document.querySelectorAll('.timeline-viewport .timeline-item').forEach(itemEl => {
+                        const itemRect = itemEl.getBoundingClientRect();
+                        if (e.clientY >= itemRect.top && e.clientY <= itemRect.bottom && !itemEl.querySelector('.task-card.group-dragging')) {
+                            itemEl.classList.add('drag-over');
+                        } else {
+                            itemEl.classList.remove('drag-over');
+                        }
+                    });
+                }
+            });
+
+            container.addEventListener('dragleave', (e) => {
+                // マウスがコンテナから完全に出た場合、ツールチップとハイライトをクリア
+                const rect = container.getBoundingClientRect();
+                if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) {
+                    const tooltip = document.getElementById('drag-time-tooltip');
+                    if (tooltip) tooltip.style.display = 'none';
+                    document.querySelectorAll('.timeline-viewport .timeline-item').forEach(itemEl => {
+                        itemEl.classList.remove('drag-over');
+                    });
+                }
+            });
+
+            container.addEventListener('drop', (e) => {
+                e.preventDefault();
+
+                // ツールチップとハイライトのクリア
+                const tooltip = document.getElementById('drag-time-tooltip');
+                if (tooltip) tooltip.style.display = 'none';
+                document.querySelectorAll('.timeline-viewport .timeline-item').forEach(itemEl => {
+                    itemEl.classList.remove('drag-over');
+                });
+
+                const dragData = e.dataTransfer.getData('text/plain');
+                if (!dragData || !currentDragTargetTime) return;
+
+                if (dragData.startsWith('group:')) {
+                    const groupId = dragData.substring(6);
+                    moveGroupToStartTime(groupId, currentDragTargetTime);
+                } else if (dragData.startsWith('single:')) {
+                    const taskId = dragData.substring(7);
+                    moveSingleTaskToStartTime(taskId, currentDragTargetTime);
+                } else if (dragData.startsWith('travel:')) {
+                    // 移動時間ブロックをドラッグした際の処理
+                    // フォーマット: travel:single/group:nextIdOrGroupId:travelMinutes
+                    const parts = dragData.split(':');
+                    if (parts.length >= 4) {
+                        const targetType = parts[1]; // 'single' または 'group'
+                        const targetId = parts[2];
+                        const travelMinutes = parseInt(parts[3], 10) || 0;
+
+                        // ドロップされた位置(移動開始時刻)から、次の予定の開始時刻を計算
+                        const dropMinutes = timeToMinutes(currentDragTargetTime);
+                        const nextStartMinutes = dropMinutes + travelMinutes;
+                        const nextStartTimeStr = minutesToTime(nextStartMinutes);
+
+                        if (targetType === 'group') {
+                            moveGroupToStartTime(targetId, nextStartTimeStr);
+                        } else {
+                            moveSingleTaskToStartTime(targetId, nextStartTimeStr);
+                        }
+                    }
                 }
             });
 
@@ -2835,6 +3025,49 @@
             }
         }
 
+        function updateLocationSelectOptions(selectedName = "") {
+            const selectEl = document.getElementById('schedule-location-select');
+            if (!selectEl) return;
+
+            selectEl.innerHTML = '';
+            
+            // デフォルトのプレースホルダー
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = '';
+            defaultOpt.textContent = '📍 拠点を選択...';
+            selectEl.appendChild(defaultOpt);
+
+            // localStorageから拠点を読み込む
+            const storedLocations = localStorage.getItem('savedLocations');
+            let locations = [];
+            if (storedLocations) {
+                locations = JSON.parse(storedLocations);
+            } else {
+                locations = [
+                    { id: 'loc-1', name: '自宅', icon: '🏠' },
+                    { id: 'loc-2', name: '大学', icon: '🏫' }
+                ];
+            }
+
+            locations.forEach(loc => {
+                const opt = document.createElement('option');
+                opt.value = loc.name;
+                opt.textContent = `${loc.icon} ${loc.name}`;
+                if (loc.name === selectedName) {
+                    opt.selected = true;
+                }
+                selectEl.appendChild(opt);
+            });
+        }
+
+        function onLocationSelectChange() {
+            const selectEl = document.getElementById('schedule-location-select');
+            const inputEl = document.getElementById('schedule-location-input');
+            if (selectEl && inputEl && selectEl.value !== "") {
+                inputEl.value = selectEl.value;
+            }
+        }
+
         function openNewScheduleModal() {
             currentEditingId = null;
             selectedEmoji = "📅";
@@ -2844,6 +3077,8 @@
             // フォーム初期化
             document.getElementById('schedule-title').value = '';
             document.getElementById('schedule-notes').value = '';
+            document.getElementById('schedule-location-input').value = '';
+            updateLocationSelectOptions('');
             document.querySelector('input[name="energy"][value="2"]').checked = true;
             updateEnergyLabel(2);
             document.getElementById('emoji-display').textContent = selectedEmoji;
@@ -2913,6 +3148,8 @@
             document.getElementById('schedule-title').value = task.title;
             document.getElementById('schedule-startdate').value = task.startDate;
             document.getElementById('schedule-notes').value = task.notes || '';
+            document.getElementById('schedule-location-input').value = task.location || '';
+            updateLocationSelectOptions(task.location || '');
 
             // 繰り返しの復元
             const recSelect = document.getElementById('schedule-recurrence');
@@ -3004,7 +3241,7 @@
                 return;
             }
 
-            const location = '';
+            const location = document.getElementById('schedule-location-input').value.trim();
             const isAllDay = false;
             const startDate = document.getElementById('schedule-startdate').value;
             const notes = document.getElementById('schedule-notes').value;
