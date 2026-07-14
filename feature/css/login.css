@@ -1,1 +1,308 @@
+:root {
+    --primary-color: #e9748f;      /* メインのピンク */
+    --primary-light: #fde8ec;     /* 薄いピンク（アイコン背景など） */
+    --bg-color: #f7f8fa;          /* 全体の背景（薄いグレー） */
+    --input-bg: #f1f3f5;          /* 入力欄の背景 */
+    --text-color: #4a5568;         /* 通常の文字色 */
+    --text-muted: #a0aec0;         /* プレースホルダーや薄い文字色 */
+}
 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans JP', 'Nunito', sans-serif;
+    /* スマホでのタップ時の青いハイライトを消す */
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: var(--bg-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    /* スマホ画面の上下左右に程よい余白を作る */
+    padding: 24px 16px; 
+}
+
+/* ==========================================================================
+   共通のカードコンテナ・ロゴ・フォーム
+   ========================================================================== */
+
+/* カード全体のコンテナ */
+.auth-container {
+    background: #ffffff;
+    width: 100%;
+    max-width: 440px; /* パソコン表示時の最大幅 */
+    border-radius: 30px;
+    padding: 40px 32px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+    text-align: center;
+}
+
+/* カレンダー風のロゴアイコン */
+.logo-icon {
+    width: 70px;
+    height: 70px;
+    background-color: var(--primary-light);
+    border-radius: 18px;
+    margin: 0 auto 16px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.logo-icon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 12px;
+    background-color: var(--primary-color);
+}
+.logo-icon span {
+    font-size: 26px;
+    color: var(--primary-color);
+    font-weight: 800;
+    margin-top: 8px;
+}
+
+/* ロゴテキスト */
+.logo-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: 32px;
+    color: var(--primary-color);
+    font-weight: 800;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+.subtitle {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+    font-weight: 500;
+}
+
+/* フォームのレイアウト */
+.form-group {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.label-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    flex-wrap: wrap; 
+    gap: 4px;
+}
+
+.form-group label {
+    font-size: 14px;
+    color: var(--text-color);
+    font-weight: 700;
+}
+
+.forgot-link {
+    font-size: 13px;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* 入力エリア */
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper i {
+    position: absolute;
+    left: 16px;
+    color: var(--text-muted);
+    font-size: 16px;
+}
+
+.input-wrapper .toggle-password {
+    left: auto;
+    right: 16px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.input-wrapper .toggle-password:hover {
+    color: var(--text-color);
+}
+
+.form-input {
+    width: 100%;
+    padding: 16px 16px 16px 46px;
+    font-size: 15px; 
+    background-color: var(--input-bg);
+    border: none;
+    border-radius: 16px;
+    color: var(--text-color);
+    outline: none;
+    transition: background-color 0.2s;
+    -webkit-appearance: none; /* iOS特有のインプット影を消す */
+}
+.form-input:focus {
+    background-color: #eaf0f6;
+}
+.form-input::placeholder {
+    color: var(--text-muted);
+}
+
+.form-input.password-input {
+    padding-right: 46px;
+}
+
+/* チェックボックスのカスタムスタイル */
+.checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    margin-top: 16px;
+    margin-bottom: 32px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-wrapper input {
+    display: none;
+}
+
+.custom-checkbox {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--text-muted);
+    border-radius: 6px;
+    margin-right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s;
+    flex-shrink: 0; /* スマホで文字が長くなっても潰れないように固定 */
+}
+
+.custom-checkbox i {
+    color: white;
+    font-size: 12px;
+    display: none;
+}
+
+.checkbox-wrapper input:checked + .custom-checkbox {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+.checkbox-wrapper input:checked + .custom-checkbox i {
+    display: block;
+}
+
+.checkbox-label {
+    font-size: 14px;
+    color: var(--text-color);
+    font-weight: 700;
+}
+
+/* ボタン */
+.submit-btn {
+    width: 100%;
+    padding: 16px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 18px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(233, 116, 143, 0.3);
+    transition: transform 0.1s, opacity 0.2s;
+    margin-bottom: 24px;
+    -webkit-appearance: none;
+}
+.submit-btn:active {
+    transform: scale(0.98);
+}
+.submit-btn:hover {
+    opacity: 0.9;
+}
+
+/* 下部の切り替えリンク */
+.switch-auth {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 500;
+    border-top: 1px solid #edf2f7;
+    padding-top: 24px;
+    margin-top: 12px;
+}
+
+.switch-auth a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 700;
+    margin-left: 4px;
+}
+
+
+/* ==========================================================================
+   スマートフォン・タブレット向けのレスポンシブ対応
+   ========================================================================== */
+
+@media (max-width: 480px) {
+    body {
+        padding: 16px 12px; /* 外側の余白を少し狭めて画面を広く使う */
+    }
+    
+    .auth-container {
+        padding: 32px 20px; /* カード内部の余白をタイトにしてスマートに */
+        border-radius: 24px; /* スマホ画面に合わせて角丸を少し小ぶりに */
+    }
+    
+    .logo-title {
+        font-size: 28px; /* 文字サイズをスマホ最適化 */
+    }
+    
+    .subtitle {
+        font-size: 14px;
+        margin-bottom: 24px;
+    }
+
+    /* --- intro.html側の紹介スライド用スマホ対応 --- */
+    .onboarding-container {
+        padding: 24px 16px !important;
+        border-radius: 24px !important;
+        max-width: 100% !important;
+    }
+
+    .slider-wrapper {
+        min-height: 360px !important;
+    }
+
+    .slide-img {
+        max-width: 200px !important;
+        height: 140px !important;
+        margin-bottom: 16px !important;
+    }
+
+    .slide-title {
+        font-size: 18px !important;
+        margin-bottom: 8px !important;
+    }
+
+    .slide-text {
+        font-size: 13px !important;
+        padding: 0 8px !important;
+        margin-bottom: 16px !important;
+    }
+
+    .slider-footer {
+        margin-top: 16px !important;
+        padding: 0 8px !important;
+    }
+}
