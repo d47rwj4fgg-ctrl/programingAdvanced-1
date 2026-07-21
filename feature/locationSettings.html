@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -7,13 +8,16 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body class="daily-main-page">
 
     <div class="pc-info">
-        <h2>Timeline App</h2>
+        <h2>Salmon</h2>
         <p>「Structured」アプリにインスパイアされた、クリーンで視覚的なデイリープランナーのプロトタイプです。</p>
         <ul>
             <li>「拠点・移動設定」画面では、よく行く場所（拠点）と、その拠点間の移動時間を事前に登録できます。</li>
@@ -31,7 +35,8 @@
             <span id="status-bar-time">9:41</span>
             <div class="right-icons">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                    <path
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
                 </svg>
             </div>
         </div>
@@ -40,7 +45,7 @@
         <div class="sidebar-overlay" id="sidebar-overlay"></div>
         <div class="sidebar-drawer" id="sidebar-drawer">
             <div class="sidebar-header">
-                <span class="sidebar-logo">Timeline</span>
+                <span class="sidebar-logo">Salmon</span>
                 <button class="sidebar-close-btn" id="sidebar-close-btn" aria-label="閉じる">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                         stroke-linecap="round" stroke-linejoin="round">
@@ -83,7 +88,7 @@
                 </a>
             </nav>
             <div class="sidebar-footer">
-                <span>Timeline App v1.0.0</span>
+                <span>Salmon App v1.0.0</span>
             </div>
         </div>
 
@@ -99,7 +104,8 @@
                             <line x1="3" y1="18" x2="21" y2="18"></line>
                         </svg>
                     </button>
-                    <div class="header-center-title" style="flex: 1; text-align: center; font-weight: 800; font-size: 18px; color: var(--text-main);">
+                    <div class="header-center-title"
+                        style="flex: 1; text-align: center; font-weight: 800; font-size: 18px; color: var(--text-main);">
                         拠点・移動設定
                     </div>
                     <div style="width: 28px;"></div> <!-- バランス用の余白 -->
@@ -108,47 +114,67 @@
 
             <!-- スクロール可能なメインコンテンツ -->
             <div class="task-container" id="scroll-container" style="overflow-y: auto; flex: 1; padding: 16px 20px;">
-                
+
                 <!-- iOS風セグメントコントロール (タブ) -->
                 <div class="segmented-control">
-                    <button type="button" class="segment-btn active" data-tab="locations" onclick="switchTab('locations')">📍 拠点登録</button>
-                    <button type="button" class="segment-btn" data-tab="travel-times" onclick="switchTab('travel-times')">🚗 移動時間</button>
+                    <button type="button" class="segment-btn active" data-tab="locations"
+                        onclick="switchTab('locations')">📍 拠点登録</button>
+                    <button type="button" class="segment-btn" data-tab="travel-times"
+                        onclick="switchTab('travel-times')">🚗 移動時間</button>
                 </div>
 
                 <!-- 拠点設定タブコンテンツ -->
                 <div id="tab-locations" class="tab-content active">
                     <div class="card">
-                        <h2 style="font-size: 16px; font-weight: 800; color: #1c1c1e; margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                        <h2
+                            style="font-size: 16px; font-weight: 800; color: #1c1c1e; margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
                             <span>📍</span> 拠点（よく行く場所）
                         </h2>
                         <ul class="location-list" id="location-list">
                             <!-- JSで動的に表示 -->
                         </ul>
-                        
+
                         <div class="location-add-form" style="border-top: 1px dashed #e5e5ea; margin-top: 12px;">
-                            <span style="font-size: 12px; font-weight: 700; color: #8e8e93; margin-bottom: 4px;">新しい拠点をつくる</span>
+                            <span
+                                style="font-size: 12px; font-weight: 700; color: #8e8e93; margin-bottom: 4px;">新しい拠点をつくる</span>
                             <div class="location-input-group">
-                                <button type="button" class="emoji-input-btn" id="location-emoji-btn" onclick="toggleEmojiSelect()">🏠</button>
-                                <input type="text" id="location-name-input" class="text-input-field" placeholder="場所の名前（例: バイト先）">
+                                <button type="button" class="emoji-input-btn" id="location-emoji-btn"
+                                    onclick="toggleEmojiSelect()">🏠</button>
+                                <input type="text" id="location-name-input" class="text-input-field"
+                                    placeholder="場所の名前（例: バイト先）">
                             </div>
-                            
+
                             <!-- 絵文字選択パレット -->
-                            <div class="emoji-palette" id="location-emoji-palette" style="display: none; max-height: 120px; overflow-y: auto; background-color: #f2f2f6; border-radius: 10px; padding: 8px; margin-top: 4px; gap: 8px; grid-template-columns: repeat(6, 1fr);">
-                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('🏠')">🏠</button>
-                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('🏫')">🏫</button>
-                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('🍳')">🍳</button>
-                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('📚')">📚</button>
-                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('☕')">☕</button>
-                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('🏢')">🏢</button>
-                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('🌳')">🌳</button>
-                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('🛍️')">🛍️</button>
-                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('🍜')">🍜</button>
-                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('🏊')">🏊</button>
-                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('🏥')">🏥</button>
-                                <button type="button" class="emoji-palette-btn" onclick="selectLocationEmoji('🚂')">🚂</button>
+                            <div class="emoji-palette" id="location-emoji-palette"
+                                style="display: none; max-height: 120px; overflow-y: auto; background-color: #f2f2f6; border-radius: 10px; padding: 8px; margin-top: 4px; gap: 8px; grid-template-columns: repeat(6, 1fr);">
+                                <button type="button" class="emoji-palette-btn"
+                                    onclick="selectLocationEmoji('🏠')">🏠</button>
+                                <button type="button" class="emoji-palette-btn"
+                                    onclick="selectLocationEmoji('🏫')">🏫</button>
+                                <button type="button" class="emoji-palette-btn"
+                                    onclick="selectLocationEmoji('🍳')">🍳</button>
+                                <button type="button" class="emoji-palette-btn"
+                                    onclick="selectLocationEmoji('📚')">📚</button>
+                                <button type="button" class="emoji-palette-btn"
+                                    onclick="selectLocationEmoji('☕')">☕</button>
+                                <button type="button" class="emoji-palette-btn"
+                                    onclick="selectLocationEmoji('🏢')">🏢</button>
+                                <button type="button" class="emoji-palette-btn"
+                                    onclick="selectLocationEmoji('🌳')">🌳</button>
+                                <button type="button" class="emoji-palette-btn"
+                                    onclick="selectLocationEmoji('🛍️')">🛍️</button>
+                                <button type="button" class="emoji-palette-btn"
+                                    onclick="selectLocationEmoji('🍜')">🍜</button>
+                                <button type="button" class="emoji-palette-btn"
+                                    onclick="selectLocationEmoji('🏊')">🏊</button>
+                                <button type="button" class="emoji-palette-btn"
+                                    onclick="selectLocationEmoji('🏥')">🏥</button>
+                                <button type="button" class="emoji-palette-btn"
+                                    onclick="selectLocationEmoji('🚂')">🚂</button>
                             </div>
-                            
-                            <button type="button" class="action-btn-primary" onclick="addLocation()" style="margin-top: 4px;">拠点をつくる</button>
+
+                            <button type="button" class="action-btn-primary" onclick="addLocation()"
+                                style="margin-top: 4px;">拠点をつくる</button>
                         </div>
                     </div>
                 </div>
@@ -156,13 +182,14 @@
                 <!-- 移動時間設定タブコンテンツ -->
                 <div id="tab-travel-times" class="tab-content">
                     <div class="card">
-                        <h2 style="font-size: 16px; font-weight: 800; color: #1c1c1e; margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                        <h2
+                            style="font-size: 16px; font-weight: 800; color: #1c1c1e; margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
                             <span>🚗</span> 拠点間の移動時間（相互）
                         </h2>
                         <ul class="travel-time-list" id="travel-time-list">
                             <!-- JSで動的に表示 -->
                         </ul>
-                        
+
 
                     </div>
                 </div>
@@ -309,17 +336,17 @@
             locations.forEach(loc => {
                 const li = document.createElement('li');
                 li.className = 'location-item';
-                
+
                 const infoDiv = document.createElement('div');
                 infoDiv.className = 'location-item-info';
-                
+
                 const iconSpan = document.createElement('span');
                 iconSpan.className = 'location-item-icon';
                 iconSpan.textContent = loc.icon;
-                
+
                 const nameSpan = document.createElement('span');
                 nameSpan.textContent = loc.name;
-                
+
                 infoDiv.appendChild(iconSpan);
                 infoDiv.appendChild(nameSpan);
                 li.appendChild(infoDiv);
@@ -371,13 +398,13 @@
 
             locations.push(newLoc);
             saveLocations();
-            
+
             syncTravelTimePatterns(); // 新しい拠点との組み合わせを自動生成
 
             // リセット
             nameInput.value = '';
             selectLocationEmoji('🏠');
-            
+
             renderLocations();
             renderTravelTimes();
         }
@@ -432,7 +459,7 @@
                 infoDiv.style.gridTemplateColumns = '1fr 40px 1fr 60px';
                 infoDiv.style.alignItems = 'center';
                 infoDiv.style.width = '100%';
-                
+
                 infoDiv.innerHTML = `
                     <span style="text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: bold; color: #475569; padding-right: 4px;">${fromLoc.icon} ${fromLoc.name}</span>
                     <span class="travel-time-arrow" style="font-size: 16px; text-align: center; color: #FF7082; font-weight: bold;">⇆</span>
@@ -443,7 +470,7 @@
                 const minutesBtn = infoDiv.querySelector('.travel-minutes-btn');
                 minutesBtn.onclick = (e) => {
                     e.stopPropagation();
-                    
+
                     if (minutesBtn.querySelector('input')) return;
 
                     const input = document.createElement('input');
@@ -460,35 +487,35 @@
                     input.style.color = '#1e293b';
                     input.style.backgroundColor = '#ffffff';
                     input.style.outline = 'none';
-                    
+
                     minutesBtn.textContent = '';
                     minutesBtn.appendChild(input);
                     minutesBtn.style.textDecoration = 'none';
-                    
+
                     input.focus();
                     input.select();
-                    
+
                     let isSaved = false;
                     const saveChange = () => {
                         if (isSaved) return;
                         isSaved = true;
-                        
+
                         const val = parseInt(input.value, 10);
                         if (isNaN(val) || val <= 0) {
                             alert('移動時間は1分以上で入力してください。');
                             renderTravelTimes();
                             return;
                         }
-                        
+
                         const sortedFrom = t.from < t.to ? t.from : t.to;
                         const sortedTo = t.from < t.to ? t.to : t.from;
                         const idx = travelTimes.findIndex(item => item.from === sortedFrom && item.to === sortedTo);
-                        
+
                         if (idx > -1) {
                             travelTimes[idx].minutes = val;
                             saveTravelTimes();
                         }
-                        
+
                         renderTravelTimes();
                     };
 
@@ -563,4 +590,5 @@
         }
     </script>
 </body>
+
 </html>
